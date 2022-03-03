@@ -418,6 +418,10 @@
     [
       "b8df6840-ecc7-4e2f-ad45-8c79faac2b74",
       "External Interface"
+    ],
+    [
+      "602636dc-d049-47b5-aa22-9e4cd7a5ce25",
+      "Input Stage"
     ]
   ],
   "text_variables": {}
