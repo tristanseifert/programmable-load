@@ -366,7 +366,9 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
+    "pinned_footprint_libs": [
+      "programmable-load"
+    ],
     "pinned_symbol_libs": [
       "programmable-load"
     ]
@@ -461,6 +463,10 @@
     [
       "602636dc-d049-47b5-aa22-9e4cd7a5ce25",
       "Input Stage"
+    ],
+    [
+      "e84c78e9-1bd1-4873-b52a-cb877e8caf7e",
+      "Mains Supply (Optional)"
     ]
   ],
   "text_variables": {}
