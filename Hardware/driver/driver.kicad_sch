@@ -932,6 +932,9 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/7ad3efa0-d9e7-43dc-9f75-5a8f51ce80e6"
       (reference "#PWR0121") (unit 1) (value "GND") (footprint "")
     )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/148e0e87-e274-430c-b56e-84d0766eaa9f"
+      (reference "#PWR0122") (unit 1) (value "GNDPWR") (footprint "")
+    )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/5cc426dc-ea3e-4d4f-8540-3d6f6e72fffe"
       (reference "#PWR0201") (unit 1) (value "+3V3") (footprint "")
     )
@@ -1087,12 +1090,6 @@
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/31363749-395b-43c1-bfa0-b01a08cfa015"
       (reference "#PWR0308") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/9759cb9f-cfd5-4ecb-80c3-f28555d0169d"
-      (reference "#PWR0309") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/dda8fc7f-9bc9-45ba-a130-776e14e652e1"
-      (reference "#PWR0310") (unit 1) (value "GND") (footprint "")
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/d0390f77-cca4-4b8f-8690-7c4e74d1cbea"
       (reference "#PWR0311") (unit 1) (value "+3V3") (footprint "")
@@ -1282,9 +1279,6 @@
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/c3209a9f-4f4d-4a4d-ad2f-295fcf199610"
       (reference "C303") (unit 1) (value "10µF") (footprint "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder")
-    )
-    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/060e6764-6abf-4c97-a245-94db8f43711d"
-      (reference "C304") (unit 1) (value "33pF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/2806be2d-f2a8-42ed-bc80-3d0d995308c1"
       (reference "C305") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
