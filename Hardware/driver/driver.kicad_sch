@@ -748,14 +748,8 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/c194245d-bbf5-485e-8d1d-740d4d6cf671"
       (reference "#PWR0232") (unit 1) (value "+3V3A") (footprint "")
     )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/a906b24f-b9b6-4003-a735-0129a7cb7354"
-      (reference "#PWR0233") (unit 1) (value "+5VA") (footprint "")
-    )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/b881d44c-fd9c-4723-b547-5f312b090c5a"
       (reference "#PWR0234") (unit 1) (value "+3V3A") (footprint "")
-    )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/2da954cc-1ae7-4b7f-8714-34d84b95fc52"
-      (reference "#PWR0235") (unit 1) (value "+5VA") (footprint "")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/b539d960-c5ab-42eb-97a0-7245d89d9298"
       (reference "#PWR0236") (unit 1) (value "GND") (footprint "")
@@ -964,6 +958,9 @@
     (path "/e84c78e9-1bd1-4873-b52a-cb877e8caf7e/465cb822-cddf-441d-8f53-8ae0b192b81a"
       (reference "#PWR0407") (unit 1) (value "+5V") (footprint "")
     )
+    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/1feba6fc-86d0-45a9-8174-be7a71dd14ea"
+      (reference "#PWR?") (unit 1) (value "+3V3A") (footprint "")
+    )
     (path "/197dcd41-dc00-4af3-b319-2664e57df5a0"
       (reference "C102") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
@@ -990,12 +987,6 @@
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/4e6bf6af-8d3f-459e-b2cd-aaef80e9bf9a"
       (reference "C208") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/6ffc4233-4460-4d80-8e80-d72f9ee33657"
-      (reference "C209") (unit 1) (value "10µF") (footprint "Capacitor_Tantalum_SMD:CP_EIA-3528-21_Kemet-B_Pad1.50x2.35mm_HandSolder")
-    )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/5f28fbee-9048-4366-b618-ae43ea89b3f0"
-      (reference "C210") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/45a90b14-1014-479c-88a9-85a5e510020e"
       (reference "C211") (unit 1) (value "10µF") (footprint "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder")
