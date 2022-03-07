@@ -2351,7 +2351,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 155.575 185.42 0) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
+    (in_bom no) (on_board no) (fields_autoplaced)
     (uuid 8b41574e-83b0-4f77-a894-ce484be1f178)
     (property "Reference" "H103" (id 0) (at 158.115 184.1499 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -2648,7 +2648,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole") (at 155.575 191.77 0) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
+    (in_bom no) (on_board no) (fields_autoplaced)
     (uuid ea1f67da-3a17-4e5b-ab3b-83aa621211f9)
     (property "Reference" "H104" (id 0) (at 158.115 190.4999 0)
       (effects (font (size 1.27 1.27)) (justify left))
@@ -3051,6 +3051,15 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/0110d4bc-1780-4cec-b6b6-ff36e6006946"
       (reference "#PWR0301") (unit 1) (value "GND") (footprint "")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/27d04097-dd24-4264-b94c-a228735c1e3c"
+      (reference "#PWR0302") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/70885d7c-10f5-42ba-aacc-b662dabb0a25"
+      (reference "#PWR0303") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/1a6c0af9-b3cc-4317-be5b-db970dc37caa"
+      (reference "#PWR0304") (unit 1) (value "GND") (footprint "")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/3d7784df-c8e2-4106-a3a7-78a62758c053"
       (reference "#PWR0309") (unit 1) (value "+3V3") (footprint "")
     )
@@ -3357,6 +3366,12 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/a9329654-36d1-42fd-ba5e-b9b8a813dcdd"
       (reference "R301") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/582450e5-33c6-49b9-a128-ebcee0b3b7b9"
+      (reference "R302") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/f1dd52e2-6d74-4588-b051-531a5b71342b"
+      (reference "R303") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/6a1005ed-52d4-4ba5-999c-e5ff374e6b5f"
       (reference "R305") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
@@ -3386,6 +3401,9 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/08d4895d-284a-4aba-8ca8-6d8ee5e43677"
       (reference "SW302") (unit 1) (value "B3F-1002") (footprint "Button_Switch_THT:SW_TH_Tactile_Omron_B3F-10xx")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/ced2f86a-019c-4ada-b9d8-dcba74e6ec76"
+      (reference "SW303") (unit 1) (value "228ADS2AAWFCMBA") (footprint "programmable-load:CTS-228ADS2")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/8c817047-fd15-4e68-86a0-712117539a95"
       (reference "TP201") (unit 1) (value "+3V3") (footprint "TestPoint:TestPoint_Keystone_5000-5004_Miniature")
