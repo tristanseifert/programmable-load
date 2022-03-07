@@ -4,6 +4,12 @@
 
   (paper "A4")
 
+  (title_block
+    (title "Power")
+    (date "2022-03-06")
+    (rev "1")
+  )
+
   (lib_symbols
     (symbol "68komputer-common:BD9C301FJ" (in_bom yes) (on_board yes)
       (property "Reference" "U" (id 0) (at 0 3.81 0)
