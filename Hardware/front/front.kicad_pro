@@ -366,7 +366,9 @@
     }
   },
   "libraries": {
-    "pinned_footprint_libs": [],
+    "pinned_footprint_libs": [
+      "programmable-load"
+    ],
     "pinned_symbol_libs": [
       "programmable-load"
     ]
