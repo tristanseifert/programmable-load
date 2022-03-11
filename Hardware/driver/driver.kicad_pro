@@ -89,6 +89,8 @@
         "silk_over_copper|97750000|162650000|b78cb2c1-ae4b-4d9b-acd8-d7fe342342f2|e413cfad-d7bd-41ab-b8dd-4b67484671a6",
         "silk_over_copper|99100000|127231000|82be7aae-5d06-4178-8c3e-98760c41b054|e40e8cef-4fb0-4fc3-be09-3875b2cc8469",
         "silk_overlap|69900000|25600000|6a851aa1-ca12-4842-b035-ec4775906a4b|f47134a4-be82-4ad4-a1ad-bf72ff4ae546",
+        "silk_overlap|69900000|25600000|f47134a4-be82-4ad4-a1ad-bf72ff4ae546|6a851aa1-ca12-4842-b035-ec4775906a4b",
+        "silk_overlap|69900000|54400000|45da367c-fc2c-42ee-903c-c1df37d60691|6a851aa1-ca12-4842-b035-ec4775906a4b",
         "silk_overlap|69900000|54400000|6a851aa1-ca12-4842-b035-ec4775906a4b|45da367c-fc2c-42ee-903c-c1df37d60691"
       ],
       "meta": {

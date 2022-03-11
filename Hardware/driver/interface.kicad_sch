@@ -5,6 +5,9 @@
   (paper "A4")
 
   (title_block
+    (title "Dual Programmable Load Driver")
+    (date "2022-03-10")
+    (rev "1")
     (comment 1 "~{ACTIVE} indicates the control loop is running and input shall be enabled")
   )
 
@@ -2733,7 +2736,7 @@
   (symbol (lib_id "programmable-load:+3V3A") (at 233.68 113.03 90) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 1feba6fc-86d0-45a9-8174-be7a71dd14ea)
-    (property "Reference" "#PWR?" (id 0) (at 237.49 113.03 0)
+    (property "Reference" "#PWR0105" (id 0) (at 237.49 113.03 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "+3V3A" (id 1) (at 230.505 113.03 90)

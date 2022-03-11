@@ -5,6 +5,9 @@
   (paper "A4")
 
   (title_block
+    (title "Dual Programmable Load Driver")
+    (date "2022-03-10")
+    (rev "1")
     (comment 1 "AC/DC mains supply to generate 12V")
     (comment 2 "Omit all components (except D402, R401) if not using built in mains switching supply")
     (comment 3 "Populate J402 for external +12V supply")
