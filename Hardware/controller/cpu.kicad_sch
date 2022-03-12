@@ -8,6 +8,7 @@
     (title "Processor Complex")
     (date "2022-03-06")
     (rev "1")
+    (comment 1 "For Ethernet, substitute U302 with SAME53J20")
   )
 
   (lib_symbols
