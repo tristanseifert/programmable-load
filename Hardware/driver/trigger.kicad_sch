@@ -9,6 +9,7 @@
     (date "2022-03-10")
     (rev "1")
     (comment 1 "External trigger circuit (for transient mode)")
+    (comment 2 "RV501 adjusts pulse width")
   )
 
   (lib_symbols
