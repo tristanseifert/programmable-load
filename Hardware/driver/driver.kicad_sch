@@ -829,7 +829,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 54204ad7-f595-4faa-bd26-1b82527580d4)
   )
-  (text "-5V Regulator" (at 22.225 109.855 0)
+  (text "GPIO Expander" (at 22.225 109.855 0)
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid b138c419-f40e-4deb-b125-6de7abbfc2d0)
   )
@@ -2204,6 +2204,9 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/711526a0-0a07-4709-b556-57ae70bd39f2"
       (reference "D203") (unit 1) (value "Red") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
     )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/494dbac6-4432-4b87-8abb-b1023a21de1a"
+      (reference "D301") (unit 1) (value "DSA120C150QB") (footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
+    )
     (path "/e84c78e9-1bd1-4873-b52a-cb877e8caf7e/03288cb1-6505-446e-b653-9038eaafb14d"
       (reference "D401") (unit 1) (value "SM6T22A") (footprint "Diode_SMD:D_SMB")
     )
@@ -2239,6 +2242,9 @@
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/e298ea3c-3cf6-4b89-9d0a-ea277cc0ea14"
       (reference "HS301") (unit 1) (value "2x C40-058-AE") (footprint "programmable-load:C40-058-AE-DUAL")
+    )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/672ae083-7804-4142-9a37-8284137926d7"
+      (reference "HS302") (unit 1) (value "WV-T247-101E") (footprint "programmable-load:Ohmite-WA-T247-101E-MFG")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/f83f0a9a-85dc-4ae3-8b32-8863f8282cd1"
       (reference "J201") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_IDC:IDC-Header_2x10_P2.54mm_Vertical")
