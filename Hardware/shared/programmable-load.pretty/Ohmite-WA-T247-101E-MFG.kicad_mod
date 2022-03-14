@@ -1,6 +1,6 @@
 (footprint "Ohmite-WA-T247-101E-MFG" (version 20211014) (generator pcbnew)
   (layer "F.Cu")
-  (tedit 622EE090)
+  (tedit 622F8E4E)
   (attr through_hole)
   (fp_text reference "REF**" (at -8 -12.5) (layer "F.SilkS")
     (effects (font (size 1 1) (thickness 0.15)) (justify left))
@@ -32,8 +32,8 @@
   (fp_line (start -8 -11.7) (end 8 -11.7) (layer "F.Fab") (width 0.15) (tstamp 9a2c90c4-d108-490c-a4ef-f90839b42fec))
   (fp_line (start -8 11.7) (end -8 -11.7) (layer "F.Fab") (width 0.15) (tstamp 9ba4c7ff-e95d-44f3-9130-7648a30c506e))
   (fp_line (start 8 -11.7) (end 8 11.7) (layer "F.Fab") (width 0.15) (tstamp afe0cfde-94cc-4693-91a4-31be17812179))
-  (pad "1" thru_hole rect (at -1.1 -9.05) (size 3.05 3.05) (drill 2) (layers *.Cu) (tstamp 28524fc6-37a9-43e6-ad36-677957a0532a))
-  (pad "2" thru_hole circle (at -1.1 9.05) (size 3.05 3.05) (drill 2) (layers *.Cu) (tstamp 6182facb-9838-4626-8330-5d06c1a16807))
+  (pad "1" thru_hole rect (at -1.1 -9.05) (size 3.05 3.05) (drill 2) (layers *.Cu "B.Paste" "B.Mask") (tstamp 28524fc6-37a9-43e6-ad36-677957a0532a))
+  (pad "2" thru_hole circle (at -1.1 9.05) (size 3.05 3.05) (drill 2) (layers *.Cu "B.Paste" "B.Mask") (tstamp 6182facb-9838-4626-8330-5d06c1a16807))
   (model "eec.models/Ohmite_-_WA-T247-101E.step" hide
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))

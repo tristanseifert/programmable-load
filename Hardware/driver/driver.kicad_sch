@@ -2249,8 +2249,11 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/f83f0a9a-85dc-4ae3-8b32-8863f8282cd1"
       (reference "J201") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_IDC:IDC-Header_2x10_P2.54mm_Vertical")
     )
-    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/63fdf478-0c5f-4fcd-a9b4-dd10d581d81b"
-      (reference "J301") (unit 1) (value "1017526") (footprint "programmable-load:Phoenix-TDPT-2,1017526")
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/1263cdc5-bc28-443a-ba35-caf2eecff4f6"
+      (reference "J302") (unit 1) (value "Würth 74651194R") (footprint "programmable-load:WE-74651194")
+    )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/c8d40e5a-4b80-48e1-8cbf-31cc421d164b"
+      (reference "J303") (unit 1) (value "Würth 74651194R") (footprint "programmable-load:WE-74651194")
     )
     (path "/e84c78e9-1bd1-4873-b52a-cb877e8caf7e/ac127401-9557-44c6-bdd3-d4dc61661b7d"
       (reference "J401") (unit 1) (value "TBP02R2W-381-03BE") (footprint "programmable-load:CUI_TBP02R2W-381-03BE")
