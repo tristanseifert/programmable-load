@@ -51,6 +51,11 @@ endif()
 ###############
 # Define the target/system flags
 
+# disable exceptions, stack unwinding
+add_compile_options(-fno-exceptions -fno-unwind-tables)
+# note that we can only support single precision float: warn when promoting to double
+add_compile_options(-Wdouble-promotion)
+
 ###############
 # Set up the primary firmware target
 add_executable(firmware
@@ -63,15 +68,15 @@ add_executable(firmware
 )
 
 # Set defines for the platform
-add_compile_definitions(__SAME51J20A__ __FPU_USED)
+add_compile_definitions(__SAME51J20A__ __FPU_PRESENT __FPU_USED)
 
 # Include directories
 target_include_directories(firmware PUBLIC Includes)
 target_include_directories(firmware PRIVATE Sources)
 
 # Configure it to build a static image
-target_compile_options(firmware PRIVATE -ffreestanding -flto -fno-exceptions -fno-unwind-tables)
-target_link_options(firmware PRIVATE --static -nostartfiles -nostdlib -ffreestanding -flto -fno-exceptions -fno-unwind-tables)
+target_compile_options(firmware PRIVATE -ffreestanding -flto)
+target_link_options(firmware PRIVATE --static -nostartfiles -nostdlib -ffreestanding -flto)
 
 # Use the appropriate linker script
 set_target_properties(firmware PROPERTIES OUTPUT_NAME "programmable-load-firmware")

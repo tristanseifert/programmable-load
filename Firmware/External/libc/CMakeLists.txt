@@ -3,6 +3,8 @@
 # is straight up copied from OpenBSD's libc.
 ####################################################################################################
 add_library(libc STATIC
+    Sources/stdlib/abort.cpp
+
     Sources/string/memcpy.c
 
     Sources/aeabi/aeabi_memcpy.c

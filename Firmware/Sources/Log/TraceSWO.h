@@ -1,6 +1,8 @@
 #ifndef LOG_TRACESWO_H
 #define LOG_TRACESWO_H
 
+#include <stdint.h>
+
 namespace Log {
 /**
  * @brief Log output to trace SWO mechanism
@@ -12,7 +14,7 @@ class TraceSWO {
     public:
         TraceSWO() = delete;
 
-        static void Init();
+        static void Init(const uint32_t freq);
         static void PutChar(const char ch);
 };
 }

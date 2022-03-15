@@ -75,7 +75,7 @@ extern "C" void Reset_Handler(void) {
     _init_chip();
 
     // set up SWO output
-    Log::TraceSWO::Init();
+    // Log::TraceSWO::Init(120'000'000u);
 
     // run C library initializers
     // __libc_init_array();
