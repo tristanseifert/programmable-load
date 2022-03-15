@@ -1652,6 +1652,9 @@
     (path "/5c14108d-a7a4-4812-b875-d1dc9cf45917"
       (reference "#PWR0125") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/7eac5909-e8b0-44ed-beef-901c326195bd"
+      (reference "#PWR0126") (unit 1) (value "GNDPWR") (footprint "")
+    )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/1da88dc4-5345-4e0d-a84c-400631092f11"
       (reference "#PWR0201") (unit 1) (value "+3V3") (footprint "")
     )
@@ -2206,6 +2209,9 @@
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/494dbac6-4432-4b87-8abb-b1023a21de1a"
       (reference "D301") (unit 1) (value "DSA120C150QB") (footprint "Package_TO_SOT_THT:TO-247-3_Vertical")
+    )
+    (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/d554b27c-0a63-4840-94f2-56f4d934091d"
+      (reference "D302") (unit 1) (value "5KP78A") (footprint "Diode_THT:D_P600_R-6_P20.00mm_Horizontal")
     )
     (path "/e84c78e9-1bd1-4873-b52a-cb877e8caf7e/03288cb1-6505-446e-b653-9038eaafb14d"
       (reference "D401") (unit 1) (value "SM6T22A") (footprint "Diode_SMD:D_SMB")
