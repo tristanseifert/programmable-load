@@ -50,17 +50,23 @@ endif()
 
 ###############
 # Define the target/system flags
-
+# place functions into their own sections (for LTO)
+add_compile_options(-ffunction-sections -fdata-sections -fno-common)
 # disable exceptions, stack unwinding
-add_compile_options(-fno-exceptions -fno-unwind-tables)
+add_compile_options(-ffreestanding -fno-exceptions -fno-unwind-tables -fno-rtti)
 # note that we can only support single precision float: warn when promoting to double
 add_compile_options(-Wdouble-promotion)
+# no need for teardown code/destructors
+add_compile_options(-fno-use-cxa-atexit)
+# enable stack guards
+add_compile_options(-fstack-protector-strong)
 
 ###############
 # Set up the primary firmware target
 add_executable(firmware
     Sources/Init/Vectors.c
     Sources/Init/Startup.cpp
+    Sources/Init/StackGuard.cpp
     Sources/Main.cpp
     Sources/Log/Logger.cpp
     Sources/Log/TraceSWO.cpp
@@ -75,7 +81,7 @@ target_include_directories(firmware PUBLIC Includes)
 target_include_directories(firmware PRIVATE Sources)
 
 # Configure it to build a static image
-target_compile_options(firmware PRIVATE -ffreestanding -flto)
+target_compile_options(firmware PRIVATE -flto)
 target_link_options(firmware PRIVATE --static -nostartfiles -nostdlib -ffreestanding -flto)
 
 # Use the appropriate linker script
