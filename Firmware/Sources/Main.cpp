@@ -1,6 +1,7 @@
 #include <hpl_gpio.h>
 
 #include "Log/Logger.h"
+#include "Rtos/Start.h"
 
 uint32_t shit{0xdeadbeef};
 

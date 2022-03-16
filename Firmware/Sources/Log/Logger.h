@@ -53,7 +53,7 @@ class Logger {
             va_end(va);
         }
 
-/**
+        /**
          * @brief Output a warning level message.
          *
          * @param fmt Format string

@@ -26,9 +26,16 @@ int main(void);
 /** \endcond */
 
 extern void _init_chip();
-extern void __libc_init_array(void);
 
+/**
+ * @brief CPU core clock
+ *
+ * This variable is set to the frequency of the CPU core, in Hz.
+ */
+uint32_t SystemCoreClock{0};
 }
+
+static void InvokeConstructors();
 
 /**
  * @brief Reset handler
@@ -73,12 +80,13 @@ extern "C" void Reset_Handler(void) {
      * for the RTC.
      */
     _init_chip();
+    SystemCoreClock = 120'000'000u; // TODO: can we figure this automatically?
 
     // set up SWO output
     // Log::TraceSWO::Init(120'000'000u);
 
     // run C library initializers
-    // __libc_init_array();
+    InvokeConstructors();
 
     // jump to main function; abort if return
     main();
@@ -88,3 +96,17 @@ extern "C" void Reset_Handler(void) {
     }
 }
 
+/**
+ * @brief Invoke initializer functions
+ *
+ * Runs all initializer functions that are stored in the `init_array` section in the executable,
+ * for functions marked as constructors, and static variables.
+ */
+static void InvokeConstructors() {
+    extern void (*__init_array_start)();
+    extern void (*__init_array_end)();
+
+    for (void (**p)() = &__init_array_start; p < &__init_array_end; ++p) {
+        (*p)();
+    }
+}

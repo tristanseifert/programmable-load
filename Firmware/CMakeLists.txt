@@ -70,6 +70,8 @@ add_executable(firmware
     Sources/Main.cpp
     Sources/Log/Logger.cpp
     Sources/Log/TraceSWO.cpp
+    Sources/Rtos/Memory.cpp
+    Sources/Rtos/Start.cpp
     ${BuildInfoFile}
 )
 
@@ -94,9 +96,13 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_options(firmware PRIVATE "-Wl,-T${CMAKE_CURRENT_LIST_DIR}/same51j20a_flash.ld")
 endif()
 
-###############
-# Build various external components
+####################################################################################################
+# Build various external components and libraries
+#
+# Most of these are declared in external projects, fetched as needed, but some are in the source
+# tree and included here.
 
+###############
 # CMSIS 5
 FetchContent_Declare(cmsis_5
     GIT_REPOSITORY https://github.com/ARM-software/CMSIS_5.git
@@ -105,12 +111,20 @@ FetchContent_Declare(cmsis_5
 FetchContent_MakeAvailable(cmsis_5)
 
 set(CMSIS_INCLUDE_DIR ${cmsis_5_SOURCE_DIR}/CMSIS/Core/Include)
-target_include_directories(firmware PRIVATE ${CMSIS_INCLUDE_DIR})
 
+# let everything we compile pull in the CMSIS headers
+include_directories(${CMSIS_INCLUDE_DIR})
+
+###############
 # C library
+#
+# This is our loose conglomeration of C/C++ code flying in close formation that resembles a C
+# library. It's most definitely not standards compliant, but sufficient to get embedded stuff
+# going.
 add_subdirectory(External/libc)
 target_link_libraries(firmware PRIVATE libc)
 
+###############
 # Embedded template library
 option(NO_STL "" ON)
 
@@ -129,6 +143,7 @@ add_subdirectory(External/atmel)
 target_include_directories(firmware PUBLIC External/atmel/Includes)
 target_link_libraries(firmware PRIVATE vendor-atmel)
 
+###############
 # printf
 set(BUILD_STATIC_LIBRARY "" ON)
 set(SUPPORT_WRITEBACK_SPECIFIER "" OFF)
@@ -141,6 +156,23 @@ FetchContent_MakeAvailable(printf_library)
 
 target_compile_options(printf PRIVATE -Wno-implicit-int-float-conversion)
 target_link_libraries(firmware PRIVATE printf)
+
+###############
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" )
+#set(FREERTOS_HEAP 4)
+# give it a dummy heap file
+set(FREERTOS_HEAP ${CMAKE_CURRENT_LIST_DIR}/Includes/BuildInfo.h)
+set(FREERTOS_PORT GCC_ARM_CM4F)
+
+FetchContent_Declare(FreeRTOS-Kernel
+    GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+    # CMake support not yet in a release version
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(FreeRTOS-Kernel)
+
+target_link_libraries(firmware PRIVATE freertos_kernel)
+target_link_libraries(freertos_kernel libc vendor-atmel)
 
 ###############
 # Produce a firmware image from the primary target, ready to be flashed into the microcontroller;

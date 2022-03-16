@@ -15,6 +15,7 @@ extern "C" {
 #endif
 
 void *memcpy(void *dst0, const void *src0, size_t length);
+void *memset(void *b, int c, size_t len);
 
 #ifdef __cplusplus
 }

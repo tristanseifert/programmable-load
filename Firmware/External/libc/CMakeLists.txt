@@ -6,6 +6,7 @@ add_library(libc STATIC
     Sources/stdlib/abort.cpp
 
     Sources/string/memcpy.c
+    Sources/string/memset.c
 
     Sources/aeabi/aeabi_memcpy.c
     Sources/aeabi/aeabi_memcpy.S
