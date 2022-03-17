@@ -113,7 +113,6 @@ class Logger {
             va_end(va);
         }
 
-    private:
         static void Log(const Level lvl, const etl::string_view &fmt, va_list args);
 
     private:

@@ -39,3 +39,48 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
 #pragma clang diagnostic pop
 }
 
+/**
+ * @brief C logging thunk
+ *
+ * Calls through to the actual logging implementation from C.
+ *
+ * @param inLevel Message level to output at; equal to one of the constant values of Level enum
+ * @param fmt Format string
+ * @param ... Arguments to format (in format string)
+ */
+extern "C" void do_log(const unsigned int inLevel, const char *fmt, ...) {
+    using Level = Log::Logger::Level;
+
+    va_list va;
+    va_start(va, fmt);
+
+    // validate priority
+    Level lvl;
+    switch(inLevel) {
+        case 5:
+            lvl = Level::Error;
+            break;
+        case 4:
+            lvl = Level::Warning;
+            break;
+        case 3:
+            lvl = Level::Notice;
+            break;
+        case 2:
+            lvl = Level::Debug;
+            break;
+        case 1:
+            lvl = Level::Trace;
+            break;
+
+        // unknown log level
+        default:
+            Logger::Error("Invalid log level: %u", inLevel);
+            return;
+    }
+
+    // perform logging
+    Log::Logger::Log(lvl, fmt, va);
+    va_end(va);
+}
+

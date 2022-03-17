@@ -158,8 +158,8 @@ target_compile_options(printf PRIVATE -Wno-implicit-int-float-conversion)
 target_link_libraries(firmware PRIVATE printf)
 
 ###############
+# FreeRTOS
 set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" )
-#set(FREERTOS_HEAP 4)
 # give it a dummy heap file
 set(FREERTOS_HEAP ${CMAKE_CURRENT_LIST_DIR}/Includes/BuildInfo.h)
 set(FREERTOS_PORT GCC_ARM_CM4F)
@@ -173,6 +173,11 @@ FetchContent_MakeAvailable(FreeRTOS-Kernel)
 
 target_link_libraries(firmware PRIVATE freertos_kernel)
 target_link_libraries(freertos_kernel libc vendor-atmel)
+
+###############
+# LittleFS (for NOR flash)
+add_subdirectory(External/littlefs)
+target_link_libraries(firmware PRIVATE littlefs)
 
 ###############
 # Produce a firmware image from the primary target, ready to be flashed into the microcontroller;
