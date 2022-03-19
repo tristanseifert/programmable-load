@@ -1,8 +1,6 @@
 #include "Start.h"
+#include "Rtos.h"
 #include "Log/Logger.h"
-
-#include <FreeRTOS.h>
-#include <task.h>
 
 using namespace Rtos;
 

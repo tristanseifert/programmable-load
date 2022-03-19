@@ -20,7 +20,7 @@
  *
  * The idle hook is used to place the processor into a low power state until the next interrupt.
  */
-#define configUSE_IDLE_HOOK                                     0
+#define configUSE_IDLE_HOOK                                     1
 /// Disable tick hook
 #define configUSE_TICK_HOOK                                     0
 
@@ -39,7 +39,7 @@
  */
 #define configTICK_RATE_HZ                                      ((TickType_t) 1000)\
 
-#define configMAX_PRIORITIES                                    (5)
+#define configMAX_PRIORITIES                                    (6)
 #define configMINIMAL_STACK_SIZE                                ((unsigned short ) 130)
 
 /**
@@ -73,11 +73,11 @@
 
 /// Disable coroutines
 #define configUSE_CO_ROUTINES                                   0
-#define configMAX_CO_ROUTINE_PRIORITIES                         (2)
 
 /// Enable software timers
 #define configUSE_TIMERS                                        1
-#define configTIMER_TASK_PRIORITY                               (2)
+// Run at middleware priority
+#define configTIMER_TASK_PRIORITY                               (3)
 #define configTIMER_QUEUE_LENGTH                                5
 #define configTIMER_TASK_STACK_DEPTH                            (configMINIMAL_STACK_SIZE * 2)
 

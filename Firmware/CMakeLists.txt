@@ -70,6 +70,7 @@ add_executable(firmware
     Sources/Main.cpp
     Sources/Log/Logger.cpp
     Sources/Log/TraceSWO.cpp
+    Sources/Rtos/Idle.cpp
     Sources/Rtos/Memory.cpp
     Sources/Rtos/Start.cpp
     ${BuildInfoFile}

@@ -41,6 +41,23 @@ class Logger {
         Logger() = delete;
 
         /**
+         * @brief Panic the system
+         *
+         * This is the same as logging an error and then invoking halt callback.
+         *
+         * @param fmt Format string
+         * @param ... Arguments to message
+         */
+        [[noreturn]] static void Panic(const etl::string_view fmt, ...) {
+            va_list va;
+            va_start(va, fmt);
+            Log(Level::Error, fmt, va);
+            va_end(va);
+
+            Panic();
+        }
+
+        /**
          * @brief Output an error level message.
          *
          * @param fmt Format string
@@ -114,6 +131,9 @@ class Logger {
         }
 
         static void Log(const Level lvl, const etl::string_view &fmt, va_list args);
+
+    private:
+        [[noreturn]] static void Panic();
 
     private:
         static bool gInitialized;

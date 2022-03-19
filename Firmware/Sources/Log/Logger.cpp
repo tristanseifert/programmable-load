@@ -5,6 +5,8 @@
 
 #include <stdarg.h>
 
+#include <vendor/sam.h>
+
 using namespace Log;
 
 /**
@@ -37,6 +39,21 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
             TraceSWO::PutChar(c);
     }, nullptr, format.data(), args);
 #pragma clang diagnostic pop
+}
+
+/**
+ * @brief Panic the system
+ *
+ * This disables interrupts and lands ourselves into an infinite loop and/or breakpoint.
+ */
+void Logger::Panic() {
+    // print a message
+    Error("Panic! halting system");
+
+    __disable_irq();
+    __BKPT(0xf3);
+
+    while(1) {}
 }
 
 /**

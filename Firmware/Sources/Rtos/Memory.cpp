@@ -3,13 +3,13 @@
  *
  * Implements callbacks to get static memory for FreeRTOS tasks
  */
+#include "Rtos.h"
+#include "Log/Logger.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
-#include <FreeRTOS.h>
-#include <task.h>
-
-#include "Log/Logger.h"
+namespace Rtos {
 
 /// TCB for the idle task
 static StaticTask_t gIdleTcb;
@@ -35,11 +35,7 @@ static StackType_t gTimerStack[kTimerStackSize];
  */
 extern "C" void vApplicationStackOverflowHook(TaskHandle_t xTask,
         char *taskName) {
-    Logger::Error("Stack overflow (task '%s')", taskName);
-
-    // TODO: call panic routine
-    asm volatile("bkpt 0xf3" ::: "memory");
-    while(1) {}
+    Logger::Panic("Stack overflow (task '%s')", taskName);
 }
 
 /**
@@ -73,4 +69,5 @@ extern "C" void vApplicationGetTimerTaskMemory(StaticTask_t **outTcb, StackType_
     *outTcb = &gTimerTcb;
     *outStack = gTimerStack;
     *outStackSize = kTimerStackSize;
+}
 }
