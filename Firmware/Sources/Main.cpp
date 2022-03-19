@@ -1,9 +1,8 @@
 #include <hpl_gpio.h>
 
+#include "App/MainTask.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
-
-uint32_t shit{0xdeadbeef};
 
 /**
  * @brief Application entry point
@@ -15,18 +14,32 @@ uint32_t shit{0xdeadbeef};
  * Lastly, the RTOS scheduler is launched to actually begin execution.
  */
 extern "C" int main() {
-    // configure RGB outputs
+    /*
+     * Configure the RGB status LED, as well as the power button and its associated indicator
+     * light, to show some early indications of life.
+     */
     _gpio_set_direction(GPIO_PORTA, GPIO_PIN(3), GPIO_DIRECTION_OUT); // B
     _gpio_set_direction(GPIO_PORTB, GPIO_PIN(4), GPIO_DIRECTION_OUT); // G
     _gpio_set_direction(GPIO_PORTB, GPIO_PIN(5), GPIO_DIRECTION_OUT); // R
 
     _gpio_set_level(GPIO_PORTA, GPIO_PIN(3), 1); // B
-    _gpio_set_level(GPIO_PORTB, GPIO_PIN(4), 1); // G
+    _gpio_set_level(GPIO_PORTB, GPIO_PIN(4), 0); // G
     _gpio_set_level(GPIO_PORTB, GPIO_PIN(5), 1); // R
 
     Logger::Warning("Hello world!");
 
-    // set them
+    /*
+     * Create the main app task
+     *
+     * This task is responsible for performing additional application initialization. Once the
+     * initialization stage is over, the task handles the user interface.
+     */
+    App::MainTask::Start();
+
+    // then, start the scheduler
+    Rtos::StartScheduler();
+
+    // XXX: blink status LED
     uint8_t temp{1};
     while(1) {
         // write them
@@ -40,8 +53,6 @@ extern "C" int main() {
         do {
             n = n + 1;
         } while(n != 20000000);
-
-        shit++;
     }
 
     // should never get here...

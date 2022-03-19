@@ -74,6 +74,10 @@ add_executable(firmware
     Sources/Rtos/Memory.cpp
     Sources/Rtos/Start.cpp
     Sources/Drivers/Gpio.cpp
+    Sources/Usb/Descriptors.cpp
+    Sources/Usb/Init.cpp
+    Sources/Usb/Task.cpp
+    Sources/App/MainTask.cpp
     ${BuildInfoFile}
 )
 
@@ -175,6 +179,18 @@ FetchContent_MakeAvailable(FreeRTOS-Kernel)
 
 target_link_libraries(firmware PRIVATE freertos_kernel)
 target_link_libraries(freertos_kernel libc vendor-atmel)
+
+###############
+# TinyUSB (Generic USB stack)
+set(TINYUSB_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}/Includes/TinyUSB/")
+
+add_subdirectory(External/tinyusb)
+
+target_link_libraries(firmware PRIVATE tinyusb)
+target_link_libraries(tinyusb libc vendor-atmel freertos_kernel)
+
+target_link_libraries(firmware PRIVATE tinyusb-platform-atsamd)
+target_link_libraries(tinyusb-platform-atsamd libc vendor-atmel)
 
 ###############
 # LittleFS (for NOR flash)
