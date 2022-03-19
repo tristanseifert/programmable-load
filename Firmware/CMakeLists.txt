@@ -73,6 +73,7 @@ add_executable(firmware
     Sources/Rtos/Idle.cpp
     Sources/Rtos/Memory.cpp
     Sources/Rtos/Start.cpp
+    Sources/Drivers/Gpio.cpp
     ${BuildInfoFile}
 )
 
