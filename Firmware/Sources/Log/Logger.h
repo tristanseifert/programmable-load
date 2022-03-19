@@ -143,4 +143,6 @@ class Logger {
 
 using Logger = Log::Logger;
 
+#define REQUIRE(cond, ...) {if(!(cond)) { Logger::Panic(__VA_ARGS__); }}
+
 #endif

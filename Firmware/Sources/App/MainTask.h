@@ -46,7 +46,7 @@ class MainTask {
         /// Runtime priority level
         static const constexpr uint8_t kRuntimePriority{Rtos::TaskPriority::AppLow};
 
-        /// Size of the USB stack, in words
+        /// Size of the task stack, in words
         static const constexpr size_t kStackSize{420};
         /// Task name (for display purposes)
         static const constexpr etl::string_view kName{"AppMain"};

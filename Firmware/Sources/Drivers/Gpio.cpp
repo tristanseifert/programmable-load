@@ -31,6 +31,8 @@ static void ConfigurePull(PortGroup *regs, const uint8_t pin, const Gpio::PinCon
  * @param config Detailed pin configuration
  */
 void Gpio::ConfigurePin(const Port port, const uint8_t pin, const PinConfig &config) {
+    REQUIRE(pin <= 32, "invalid pin: %u", pin);
+
     switch(config.mode) {
         /*
          * Disable all digital circuitry on the pin (unused)
@@ -162,6 +164,12 @@ static void ConfigureDigitalIo(const Gpio::Port port, const uint8_t pin,
 
     // configure the direction
     if(config.mode == Gpio::Mode::DigitalOut) {
+        if(config.initialOutput) {
+            regs->OUTSET.reg = (1U << static_cast<uint32_t>(pin));
+        } else {
+            regs->OUTCLR.reg = (1U << static_cast<uint32_t>(pin));
+        }
+
         regs->DIRSET.reg = (1UL << static_cast<uint32_t>(pin));
     } else {
         regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin));

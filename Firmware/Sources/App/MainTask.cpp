@@ -48,6 +48,8 @@ void MainTask::main() {
 
     // start processing messages
     vTaskPrioritySet(nullptr, kRuntimePriority);
+    Logger::Debug("MainTask: %s", "start msg loop");
+
     while(1) {
         // TODO: implement
         vTaskDelay(pdMS_TO_TICKS(500));
@@ -66,8 +68,21 @@ void MainTask::main() {
  * - TC5: PWM generation for beeper
  */
 void MainTask::initHardware() {
-    Logger::Trace("MainTask: %s", "init hw");
-    // TODO: implement
+    Logger::Debug("MainTask: %s", "init hw");
+
+    // TODO: initialize the IO I2C bus
+    Logger::Debug("MainTask: %s", "init io i2c");
+
+    // initialize user interface IO: display SPI, power button
+    Logger::Debug("MainTask: %s", "init io spi");
+
+    // TODO: initialize NOR flash SPI
+    Logger::Debug("MainTask: %s", "init nor spi");
+
+    // TODO: initialize driver I2C bus
+    Logger::Debug("MainTask: %s", "init driver i2c");
+
+    // TODO: timer for beeper
 }
 
 /**
@@ -81,7 +96,7 @@ void MainTask::initHardware() {
  * - SPI NOR flash (AT25SF321)
  */
 void MainTask::initOnboardPeripherals() {
-    Logger::Trace("MainTask: %s", "init onboard periph");
+    Logger::Debug("MainTask: %s", "init onboard periph");
     // TODO: implement
 }
 
@@ -92,7 +107,7 @@ void MainTask::initOnboardPeripherals() {
  * system configuration data, which later parts of the startup process will need to consult.
  */
 void MainTask::initNorFs() {
-    Logger::Trace("MainTask: %s", "init nor fs");
+    Logger::Debug("MainTask: %s", "init nor fs");
     // TODO: implement
 }
 
@@ -104,7 +119,7 @@ void MainTask::initNorFs() {
  * board id that we can then look up in a table to figure out what drivers are needed.
  */
 void MainTask::discoverIoHardware() {
-    Logger::Trace("MainTask: %s", "discover io hw");
+    Logger::Debug("MainTask: %s", "discover io hw");
     // TODO: implement
 }
 
@@ -119,7 +134,7 @@ void MainTask::discoverIoHardware() {
  *         the future.
  */
 void MainTask::discoverDriverHardware() {
-    Logger::Trace("MainTask: %s", "discover driver hw");
+    Logger::Debug("MainTask: %s", "discover driver hw");
     // TODO: implement
 }
 
@@ -133,6 +148,6 @@ void MainTask::discoverDriverHardware() {
  * - Control loop
  */
 void MainTask::startApp() {
-    Logger::Trace("MainTask: %s", "start app");
+    Logger::Debug("MainTask: %s", "start app");
     // TODO: implement
 }

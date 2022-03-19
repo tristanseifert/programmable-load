@@ -96,6 +96,14 @@ class Gpio {
              * When set (1) the pin uses a higher drive strength value.
              */
             uint8_t driveStrength: 1{0};
+
+            /**
+             * @brief Initial output state
+             *
+             * When configured as a digital output, this bit is written to the output latch before
+             * the output driver is enabled, so the pin starts at a predictable level.
+             */
+            uint8_t initialOutput: 1{0};
         };
 
     public:
