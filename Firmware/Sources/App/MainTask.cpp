@@ -1,4 +1,6 @@
 #include "MainTask.h"
+#include "Pinball/Hardware.h"
+#include "Pinball/Task.h"
 
 #include "Log/Logger.h"
 #include "Usb/Usb.h"
@@ -73,16 +75,15 @@ void MainTask::initHardware() {
     // TODO: initialize the IO I2C bus
     Logger::Debug("MainTask: %s", "init io i2c");
 
-    // initialize user interface IO: display SPI, power button
+    // initialize user interface IO: display SPI, power button, encoder, beeper
     Logger::Debug("MainTask: %s", "init io spi");
+    Pinball::Hw::Init();
 
     // TODO: initialize NOR flash SPI
     Logger::Debug("MainTask: %s", "init nor spi");
 
     // TODO: initialize driver I2C bus
     Logger::Debug("MainTask: %s", "init driver i2c");
-
-    // TODO: timer for beeper
 }
 
 /**
@@ -149,5 +150,6 @@ void MainTask::discoverDriverHardware() {
  */
 void MainTask::startApp() {
     Logger::Debug("MainTask: %s", "start app");
-    // TODO: implement
+
+    Pinball::Task::Start();
 }

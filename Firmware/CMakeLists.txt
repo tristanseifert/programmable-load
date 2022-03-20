@@ -82,6 +82,8 @@ add_executable(firmware
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp
     Sources/App/MainTask.cpp
+    Sources/App/Pinball/Hardware.cpp
+    Sources/App/Pinball/Task.cpp
     ${BuildInfoFile}
 )
 
