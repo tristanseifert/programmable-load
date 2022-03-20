@@ -114,8 +114,10 @@ class Spi {
         void enable();
 
     private:
-        static void ApplyConfiguration(::SercomSpi *regs, const Config &conf);
-        static void UpdateSckFreq(::SercomSpi *regs, const uint32_t frequency);
+        static void ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs,
+                const Config &conf);
+        static void UpdateSckFreq(const SercomBase::Unit unit,
+                ::SercomSpi *regs, const uint32_t frequency);
 
     private:
         /// Unit number

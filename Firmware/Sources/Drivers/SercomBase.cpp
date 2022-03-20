@@ -4,11 +4,75 @@
 #include "Rtos/Rtos.h"
 
 #include <vendor/sam.h>
+#include <vendor/config/peripheral_clk_config.h>
 
 using namespace Drivers;
 
 SercomBase::Handler SercomBase::gHandlers[kNumHandlers]{};
 uint32_t SercomBase::gUsed{0};
+
+/*
+ * SERCOM fast/core clocks, from peripheral_clk_config
+ */
+const uint32_t SercomBase::kFastClocks[kNumUnits]{
+#ifdef CONF_GCLK_SERCOM0_CORE_FREQUENCY
+    CONF_GCLK_SERCOM0_CORE_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM1_CORE_FREQUENCY
+    CONF_GCLK_SERCOM1_CORE_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM2_CORE_FREQUENCY
+    CONF_GCLK_SERCOM2_CORE_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM3_CORE_FREQUENCY
+    CONF_GCLK_SERCOM3_CORE_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM4_CORE_FREQUENCY
+    CONF_GCLK_SERCOM4_CORE_FREQUENCY,
+#else
+    0,
+#endif
+};
+
+/*
+ * SERCOM fast/slow clocks, from peripheral_clk_config
+ */
+const uint32_t SercomBase::kSlowClocks[kNumUnits]{
+#ifdef CONF_GCLK_SERCOM0_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM0_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM1_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM1_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM2_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM2_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM3_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM3_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM4_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM4_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+};
+
 
 /**
  * @brief Marks a SERCOM instance as used

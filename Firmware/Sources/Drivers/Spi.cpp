@@ -9,8 +9,6 @@
 
 using namespace Drivers;
 
-extern "C" uint32_t SystemCoreClock;
-
 /**
  * @brief Initialize the SERCOM in SPI master mode.
  *
@@ -34,7 +32,7 @@ Spi::Spi(const SercomBase::Unit unit, const Config &conf) : unit(unit),
 
     // TODO: IRQ config
 
-    ApplyConfiguration(this->regs, conf);
+    ApplyConfiguration(this->unit, this->regs, conf);
 
     // enable the peripheral
     this->enable();
@@ -95,7 +93,7 @@ void Spi::enable() {
  * @remark The peripheral should be disabled when invoking this; it's best to perform a reset
  *         before.
  */
-void Spi::ApplyConfiguration(::SercomSpi *regs, const Config &conf) {
+void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, const Config &conf) {
     uint32_t temp{0};
 
     /*
@@ -159,12 +157,13 @@ void Spi::ApplyConfiguration(::SercomSpi *regs, const Config &conf) {
     regs->CTRLC.reg = temp & SERCOM_SPI_CTRLC_MASK;
 
     // then last, calculate the correct baud rate
-    UpdateSckFreq(regs, conf.sckFrequency);
+    UpdateSckFreq(unit, regs, conf.sckFrequency);
 }
 
 /**
  * @brief Sets the SPI clock frequency
  *
+ * @param unit SERCOM unit
  * @param regs Registers to receive the configuration
  * @param frequency Desired frequency, in Hz
  *
@@ -173,13 +172,18 @@ void Spi::ApplyConfiguration(::SercomSpi *regs, const Config &conf) {
  * @remark This assumes that the baud rate reference clock is the same as the system core clock.
  * @todo Determine if we can better figure out the input clock
  */
-void Spi::UpdateSckFreq(::SercomSpi *regs, const uint32_t frequency) {
-    const auto baud = (SystemCoreClock / (2 * frequency)) - 1;
-    const auto actual = SystemCoreClock / (2 * (baud + 1));
+void Spi::UpdateSckFreq(const SercomBase::Unit unit, ::SercomSpi *regs,
+        const uint32_t frequency) {
+    const auto core = SercomBase::CoreClockFor(unit);
+    REQUIRE(core, "SERCOM%u: core clock unknown", static_cast<unsigned int>(unit));
+
+    const auto baud = (core / (2 * frequency)) - 1;
+    const auto actual = core / (2 * (baud + 1));
 
     REQUIRE(baud <= 0xFF, "SPI baud rate out of range (%u Hz = $%08x)", frequency, baud);
 
-    Logger::Debug("Sercom %p freq: request %u Hz, got %u Hz", regs, frequency, actual);
+    Logger::Debug("SERCOM%u SPI freq: request %u Hz, got %u Hz", static_cast<unsigned int>(unit),
+            frequency, actual);
     regs->BAUD.reg = baud;
 }
 

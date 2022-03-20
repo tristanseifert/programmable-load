@@ -119,6 +119,28 @@ class SercomBase {
             }
         }
 
+        /**
+         * @brief Get core clock for unit
+         *
+         * @param unit SERCOM unit ([0, 5])
+         *
+         * @return SERCOM core clock frequency, in Hz, or 0 if unknown
+         */
+        constexpr static inline uint32_t CoreClockFor(const Unit unit) {
+            return kFastClocks[static_cast<size_t>(unit)];
+        }
+
+        /**
+         * @brief Get slow clock for unit
+         *
+         * @param unit SERCOM unit ([0, 5])
+         *
+         * @return SERCOM slow clock frequency, in Hz, or 0 if unknown
+         */
+        constexpr static inline uint32_t SlowClockFor(const Unit unit) {
+            return kSlowClocks[static_cast<size_t>(unit)];
+        }
+
     private:
         /**
          * @brief SERCOM interrupt handler
@@ -150,6 +172,21 @@ class SercomBase {
          * Each SERCOM has 4 interrupt vectors. Currently, we only have 6 SERCOM instances.
          */
         constexpr static const size_t kNumHandlers{4*kNumUnits};
+
+        /**
+         * @brief SERCOM fast clocks
+         *
+         * Contains the fast clocks for each SERCOM unit, or 0 if unknown.
+         */
+        static const uint32_t kFastClocks[kNumUnits];
+
+        /**
+         * @brief SERCOM slow clocks
+         *
+         * Contains the slow clocks for each SERCOM unit, or 0 if unknown. Some SERCOM drivers do
+         * not need to use the slow clock.
+         */
+        static const uint32_t kSlowClocks[kNumUnits];
 
         /**
          * @brief Interrupt handler routines
