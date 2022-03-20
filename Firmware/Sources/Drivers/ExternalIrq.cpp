@@ -52,7 +52,7 @@ void ExternalIrq::Init() {
  *         and enable it there to actually receive an interrupt.
  */
 void ExternalIrq::ConfigureLine(const uint8_t line, const Config &conf) {
-    REQUIRE(line >= 15, "invalid EIC line %u", line);
+    REQUIRE(line <= 15, "invalid EIC line %u", line);
 
     taskENTER_CRITICAL();
 

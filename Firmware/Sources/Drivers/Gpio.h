@@ -104,6 +104,15 @@ class Gpio {
              * the output driver is enabled, so the pin starts at a predictable level.
              */
             uint8_t initialOutput: 1{0};
+
+            /**
+             * @brief Enable pin mux
+             *
+             * If the pin is configured as a digital input or output, set this bit to enable the
+             * pin mux to the specified function. This can be used to, for example, route an input
+             * to the external interrupt controller.
+             */
+            uint8_t pinMuxEnable: 1{0};
         };
 
     public:

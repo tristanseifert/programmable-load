@@ -77,6 +77,7 @@ add_executable(firmware
     Sources/Drivers/ExternalIrq.cpp
     Sources/Drivers/SercomBase.cpp
     Sources/Drivers/Spi.cpp
+    Sources/Drivers/TimerCounter.cpp
     Sources/Usb/Descriptors.cpp
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp

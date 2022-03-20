@@ -175,13 +175,24 @@ static void ConfigureDigitalIo(const Gpio::Port port, const uint8_t pin,
         regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin));
     }
 
+    // build the base pin config (enable pin mux, if requested)
+    uint8_t base{0};
+
+    if(config.pinMuxEnable) {
+        base |= PORT_PINCFG_PMUXEN;
+    }
+
     // configure pull resistors for inputs
     if(config.mode == Gpio::Mode::DigitalIn) {
-        ConfigurePull(regs, pin, config, PORT_PINCFG_INEN);
+        base |= PORT_PINCFG_INEN;
+        ConfigurePull(regs, pin, config, base);
     }
     // configure drive strength for outputs
     else {
-        regs->PINCFG[pin].bit.DRVSTR = (!!config.driveStrength) ? 1 : 0;
+        if(config.driveStrength) {
+            base |= PORT_PINCFG_DRVSTR;
+        }
+        regs->PINCFG[pin].reg = base;
     }
 
     taskEXIT_CRITICAL();

@@ -55,7 +55,7 @@ void Spi::reset() {
     // reset the peripheral and wait
     taskENTER_CRITICAL();
 
-    this->regs->CTRLA.reg |= SERCOM_SPI_CTRLA_SWRST;
+    this->regs->CTRLA.reg = SERCOM_SPI_CTRLA_SWRST;
     size_t timeout{kResetSyncTimeout};
     do {
         REQUIRE(--timeout, "SPI %s timed out", "reset");
