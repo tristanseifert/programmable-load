@@ -1,6 +1,7 @@
 #include <hpl_gpio.h>
 
 #include "App/MainTask.h"
+#include "Drivers/ExternalIrq.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
 
@@ -27,6 +28,14 @@ extern "C" int main() {
     _gpio_set_level(GPIO_PORTB, GPIO_PIN(5), 1); // R
 
     Logger::Warning("Hello world!");
+
+    /*
+     * Do early hardware initialization
+     *
+     * These are peripherals that are embedded in the processor and will always be present and
+     * used for something.
+     */
+    Drivers::ExternalIrq::Init();
 
     /*
      * Create the main app task

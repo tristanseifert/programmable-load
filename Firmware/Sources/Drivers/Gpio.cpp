@@ -208,7 +208,10 @@ static void ConfigurePeripheralIo(const Gpio::Port port, const uint8_t pin,
 
     // enable pin multiplexer mode
     regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin));
-    regs->PINCFG[pin].reg = (PORT_PINCFG_PMUXEN) | (config.driveStrength ? PORT_PINCFG_DRVSTR : 0);
+    const uint32_t base = (PORT_PINCFG_PMUXEN) | (config.driveStrength ? PORT_PINCFG_DRVSTR : 0);
+
+    // optionally configure pull resistors also
+    ConfigurePull(regs, pin, config, base);
 
     taskEXIT_CRITICAL();
 }

@@ -74,6 +74,7 @@ add_executable(firmware
     Sources/Rtos/Memory.cpp
     Sources/Rtos/Start.cpp
     Sources/Drivers/Gpio.cpp
+    Sources/Drivers/ExternalIrq.cpp
     Sources/Drivers/SercomBase.cpp
     Sources/Drivers/Spi.cpp
     Sources/Usb/Descriptors.cpp
