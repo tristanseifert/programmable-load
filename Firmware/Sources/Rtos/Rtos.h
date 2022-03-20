@@ -58,6 +58,17 @@ enum TaskPriority: UBaseType_t {
 static_assert(TaskPriority::Background >= 0);
 static_assert(TaskPriority::Background < configMAX_PRIORITIES);
 
+/**
+ * @brief Task notification indices
+ *
+ * System-wide reserved indices in the task notification array
+ */
+enum TaskNotifyIndex: size_t {
+    /// reserved for FreeRTOS message buffer api
+    Stream                              = 0,
+    /// First task specific value
+    TaskSpecific                        = 1,
+};
 }
 
 #endif

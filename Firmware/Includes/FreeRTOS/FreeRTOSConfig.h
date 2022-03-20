@@ -81,6 +81,12 @@
 #define configTIMER_QUEUE_LENGTH                                5
 #define configTIMER_TASK_STACK_DEPTH                            (configMINIMAL_STACK_SIZE * 2)
 
+/*
+ * Enable direct-to-task notifications. Each task should get 4 notification values.
+ */
+#define configUSE_TASK_NOTIFICATIONS                            1
+#define configTASK_NOTIFICATION_ARRAY_ENTRIES                   4
+
 /// Enable static allocation support
 #define configSUPPORT_STATIC_ALLOCATION                         1
 /// Disable dynamic allocation support
