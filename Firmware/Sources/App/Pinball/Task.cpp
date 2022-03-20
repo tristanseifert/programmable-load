@@ -19,7 +19,7 @@ StackType_t Task::gStack[kStackSize];
  *
  * This initializes the shared pinball task instance.
  */
-void Task::Start() {
+void App::Pinball::Start() {
     static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(alignof(Task))));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 

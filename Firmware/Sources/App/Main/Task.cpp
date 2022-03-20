@@ -1,31 +1,31 @@
-#include "MainTask.h"
-#include "Pinball/Hardware.h"
-#include "Pinball/Task.h"
+#include "Task.h"
+#include "../Pinball/Hardware.h"
+#include "../Pinball/Task.h"
 
 #include "Log/Logger.h"
 #include "Usb/Usb.h"
 
-using namespace App;
+using namespace App::Main;
 
-StaticTask_t MainTask::gTcb;
-StackType_t MainTask::gStack[kStackSize];
+StaticTask_t Task::gTcb;
+StackType_t Task::gStack[kStackSize];
 
 /**
  * @brief Initialize the app main task.
  */
-void MainTask::Start() {
-    static uint8_t gTaskBuf[sizeof(MainTask)] __attribute__((aligned(4)));
-    auto ptr = reinterpret_cast<MainTask *>(gTaskBuf);
+void App::Main::Start() {
+    static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(4)));
+    auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
-    new (ptr) MainTask();
+    new (ptr) Task();
 }
 
 /**
  * @brief Start app main task
  */
-MainTask::MainTask() {
+Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
-        reinterpret_cast<MainTask *>(ctx)->main();
+        reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
     }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
 }
@@ -33,7 +33,7 @@ MainTask::MainTask() {
 /**
  * @brief Task entry point
  */
-void MainTask::main() {
+void Task::main() {
     // initialize onboard hardware, associated busses, and devices connected thereto
     this->initHardware();
     this->initOnboardPeripherals();
@@ -69,10 +69,10 @@ void MainTask::main() {
  * - SERCOM5: SPI for local NOR flash
  * - TC5: PWM generation for beeper
  */
-void MainTask::initHardware() {
+void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init hw");
 
-    // TODO: initialize the IO I2C bus
+    // initialize the IO I2C bus
     Logger::Debug("MainTask: %s", "init io i2c");
 
     // initialize user interface IO: display SPI, power button, encoder, beeper
@@ -94,11 +94,15 @@ void MainTask::initHardware() {
  *
  * - Front/rear IO bus multiplexer (PCA9543A)
  *   - On rear IO bus: Fan controller (EMC2101-R)
- * - SPI NOR flash (AT25SF321)
  */
-void MainTask::initOnboardPeripherals() {
+void Task::initOnboardPeripherals() {
     Logger::Debug("MainTask: %s", "init onboard periph");
-    // TODO: implement
+
+    // initialize bus multiplexer
+
+    // set up the busses into the user interface handler
+
+    // TODO: initialize the fan controller
 }
 
 /**
@@ -106,8 +110,11 @@ void MainTask::initOnboardPeripherals() {
  *
  * Sets up the littlefs filesystem against the just initialized SPI NOR flash. This flash contains
  * system configuration data, which later parts of the startup process will need to consult.
+ *
+ * The SPI flash is a AT25SF321, but the actual type isn't really important as long as it follows
+ * the JEDEC command assignments.
  */
-void MainTask::initNorFs() {
+void Task::initNorFs() {
     Logger::Debug("MainTask: %s", "init nor fs");
     // TODO: implement
 }
@@ -119,7 +126,7 @@ void MainTask::initNorFs() {
  * serial number EEPROM (AT24CS32 type) and attempting to read out its contents, which hold a
  * board id that we can then look up in a table to figure out what drivers are needed.
  */
-void MainTask::discoverIoHardware() {
+void Task::discoverIoHardware() {
     Logger::Debug("MainTask: %s", "discover io hw");
     // TODO: implement
 }
@@ -134,7 +141,7 @@ void MainTask::discoverIoHardware() {
  * @remark Currently, only a single driver board is supported; this may change at some point in
  *         the future.
  */
-void MainTask::discoverDriverHardware() {
+void Task::discoverDriverHardware() {
     Logger::Debug("MainTask: %s", "discover driver hw");
     // TODO: implement
 }
@@ -148,8 +155,8 @@ void MainTask::discoverDriverHardware() {
  * - Pinball (front panel UI)
  * - Control loop
  */
-void MainTask::startApp() {
+void Task::startApp() {
     Logger::Debug("MainTask: %s", "start app");
 
-    Pinball::Task::Start();
+    Pinball::Start();
 }

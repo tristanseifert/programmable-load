@@ -1,6 +1,6 @@
 #include <hpl_gpio.h>
 
-#include "App/MainTask.h"
+#include "App/Main/Task.h"
 #include "Drivers/ExternalIrq.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
@@ -43,7 +43,7 @@ extern "C" int main() {
      * This task is responsible for performing additional application initialization. Once the
      * initialization stage is over, the task handles the user interface.
      */
-    App::MainTask::Start();
+    App::Main::Start();
 
     // then, start the scheduler
     Rtos::StartScheduler();

@@ -18,8 +18,7 @@ namespace App::Pinball {
  * and handles the power button.
  */
 class Task {
-    public:
-        static void Start();
+    friend void Start();
 
     private:
         Task();
@@ -44,6 +43,8 @@ class Task {
         /// Preallocated stack for the task
         static StackType_t gStack[kStackSize];
 };
+
+void Start();
 }
 
 #endif

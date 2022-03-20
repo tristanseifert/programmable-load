@@ -8,8 +8,8 @@
 
 #include <etl/string_view.h>
 
-/// Programmable load app
-namespace App {
+/// Main app task
+namespace App::Main {
 /**
  * @brief Main app task
  *
@@ -17,12 +17,11 @@ namespace App {
  * initialization is complete, it receives messages from various other components (such as remote
  * controls and the local UI) to update the state of the system.
  */
-class MainTask {
-    public:
-        static void Start();
+class Task {
+    friend void Start();
 
     private:
-        MainTask();
+        Task();
 
         void main();
 
@@ -56,6 +55,8 @@ class MainTask {
         /// Preallocated stack for the task
         static StackType_t gStack[kStackSize];
 };
+
+void Start();
 }
 
 #endif
