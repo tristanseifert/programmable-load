@@ -6,8 +6,8 @@
 
   (title_block
     (title "Power")
-    (date "2022-03-06")
-    (rev "1")
+    (date "2022-03-20")
+    (rev "2")
   )
 
   (lib_symbols

@@ -6,8 +6,8 @@
 
   (title_block
     (title "Processor Complex – Ethernet PHY")
-    (date "2022-03-06")
-    (rev "1")
+    (date "2022-03-20")
+    (rev "2")
     (comment 1 "All components on this page can be omitted if Ethernet is not desired")
   )
 

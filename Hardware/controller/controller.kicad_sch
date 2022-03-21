@@ -6,8 +6,8 @@
 
   (title_block
     (title "Programmable Load Controller")
-    (date "2022-03-06")
-    (rev "1")
+    (date "2022-03-20")
+    (rev "2")
   )
 
   (lib_symbols
@@ -4594,9 +4594,6 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/832ef282-b2fc-44cc-8cd8-9d1a4960b409"
       (reference "#PWR0327") (unit 1) (value "GND") (footprint "")
     )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/225add0d-c84c-4895-967c-6f9c536aa1fe"
-      (reference "#PWR0328") (unit 1) (value "GND") (footprint "")
-    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/bf92557a-c10a-4f08-acca-4cd6e2a152ef/72e10bdd-4da2-43e1-88d4-87db161e0e0a"
       (reference "#PWR0401") (unit 1) (value "+3V3") (footprint "")
     )
@@ -4812,9 +4809,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/41b76217-00c9-43a3-a053-470df31396a3"
       (reference "J301") (unit 1) (value "Conn_ARM_JTAG_SWD_10") (footprint "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/6ab04b0f-c658-47d6-9aee-de29ce97e07d"
-      (reference "J302") (unit 1) (value "Conn_01x03_Male") (footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
     )
     (path "/7c11a07f-525c-45a7-9ad1-361ea90615cc"
       (reference "L101") (unit 1) (value "Choke") (footprint "programmable-load:Bourns-SRF4532-0-0-MFG")
