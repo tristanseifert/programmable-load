@@ -15,22 +15,28 @@ using namespace App::Pinball;
 Drivers::Spi *Hw::gDisplaySpi{nullptr};
 Drivers::TimerCounter *Hw::gBeeperTc{nullptr};
 
+Drivers::I2CBus *Hw::gFrontI2C{nullptr};
+Drivers::I2CBus *Hw::gRearI2C{nullptr};
+
 /**
  * @brief Initialize user interface hardware
  *
  * Initializes the display SPI interface, various GPIOs for the encoder, front panel control, the
  * timer for generating beeps, and the power button.
  *
- * The I2C bus is initialized later on.
+ * @param busses A list containing two I²C bus instances: the first for the front panel, the latter
+ *        for the rear IO.
  */
-void Hw::Init() {
+void Hw::Init(const etl::span<Drivers::I2CBus *, 2> &busses) {
+    gFrontI2C = busses[0];
+    gRearI2C = busses[1];
+
     InitDisplaySpi();
     InitPowerButton();
     InitMisc();
     InitEncoder();
     InitBeeper();
     InitMisc();
-
 }
 
 /**

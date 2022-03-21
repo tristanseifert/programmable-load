@@ -14,6 +14,8 @@ using namespace App::Pinball;
 StaticTask_t Task::gTcb;
 StackType_t Task::gStack[kStackSize];
 
+Task *Task::gShared{nullptr};
+
 /**
  * @brief Start the pinball task
  *
@@ -23,7 +25,7 @@ void App::Pinball::Start() {
     static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(alignof(Task))));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
-    new (ptr) Task();
+    Task::gShared = new (ptr) Task();
 }
 
 /**
@@ -43,6 +45,9 @@ Task::Task() {
  * updates the interface (display, indicators) appropriately.
  */
 void Task::main() {
+    BaseType_t ok;
+    uint32_t note;
+
     /*
      * Initialize front panel hardware
      *
@@ -53,18 +58,28 @@ void Task::main() {
     Logger::Trace("pinball: %s", "reset hw");
     Hw::ResetFrontPanel();
 
-    Logger::Trace("pinball: %s", "init display");
     // TODO: initialize display
+    Logger::Trace("pinball: %s", "init display");
 
-    Logger::Trace("pinball: %s", "init front panel");
     // TODO: discover front panel
+    Logger::Trace("pinball: %s", "init front panel");
 
-    // begin message handling
+    /*
+     * Start handling messages
+     *
+     * As with the app main task, we chill waiting on the task notification value. This will be
+     * set to one or more bits, which in turn indicate what we need to do. If additional data needs
+     * to be passed, it'll be in the appropriate queues.
+     */
     Logger::Trace("pinball: %s", "start message loop");
 
     while(1) {
-        // TODO: implement
-        vTaskDelay(pdMS_TO_TICKS(500));
+        ok = xTaskNotifyWaitIndexed(kNotificationIndex, 0, TaskNotifyBits::All, &note,
+                portMAX_DELAY);
+        REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
+
+        // TODO: handle
+        Logger::Warning("pinball notify: $%08x", note);
     }
 }
 

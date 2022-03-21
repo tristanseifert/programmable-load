@@ -92,10 +92,10 @@ class I2CBus {
          *         returns. The buffer memory of each transaction must be in memory accessible to
          *         peripherals.
          */
-        virtual int perform(etl::span<const Transaction> &transactions) = 0;
+        virtual int perform(etl::span<const Transaction> transactions) = 0;
 
     protected:
-        static int ValidateTransactions(etl::span<const Transaction> &transactions);
+        static int ValidateTransactions(etl::span<const Transaction> transactions);
 };
 }
 

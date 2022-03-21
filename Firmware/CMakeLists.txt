@@ -81,9 +81,11 @@ add_executable(firmware
     Sources/Drivers/I2C.cpp
     Sources/Drivers/Spi.cpp
     Sources/Drivers/TimerCounter.cpp
+    Sources/Drivers/I2CDevice/PCA9543A.cpp
     Sources/Usb/Descriptors.cpp
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp
+    Sources/App/Main/Hardware.cpp
     Sources/App/Main/Task.cpp
     Sources/App/Pinball/Hardware.cpp
     Sources/App/Pinball/Task.cpp

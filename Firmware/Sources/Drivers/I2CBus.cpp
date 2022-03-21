@@ -14,7 +14,7 @@ using namespace Drivers;
  *
  * @return 0 on success, or a negative error code
  */
-int I2CBus::ValidateTransactions(etl::span<const Transaction> &transactions) {
+int I2CBus::ValidateTransactions(etl::span<const Transaction> transactions) {
     for(size_t i = 0; i < transactions.size(); i++) {
         const auto &txn = transactions[i];
 

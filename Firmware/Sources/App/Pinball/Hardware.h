@@ -3,7 +3,10 @@
 
 #include <stdint.h>
 
+#include <etl/span.h>
+
 namespace Drivers {
+class I2CBus;
 class Spi;
 class TimerCounter;
 }
@@ -31,7 +34,7 @@ class Hw {
     friend class Task;
 
     public:
-        static void Init();
+        static void Init(const etl::span<Drivers::I2CBus *, 2> &busses);
 
     private:
         static void InitDisplaySpi();
@@ -50,6 +53,11 @@ class Hw {
         static Drivers::Spi *gDisplaySpi;
         /// Timer used to drive beeper in waveform mode
         static Drivers::TimerCounter *gBeeperTc;
+
+        /// Front panel bus
+        static Drivers::I2CBus *gFrontI2C;
+        /// rear IO bus
+        static Drivers::I2CBus *gRearI2C;
 };
 }
 

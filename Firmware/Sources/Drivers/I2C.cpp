@@ -172,7 +172,7 @@ void I2C::waitSysOpSync() {
  *
  * Execute the provided transactions, one after another.
  */
-int I2C::perform(etl::span<const Transaction> &transactions) {
+int I2C::perform(etl::span<const Transaction> transactions) {
     int err{-1};
     uint32_t note{0};
     BaseType_t ok;
@@ -555,6 +555,8 @@ void I2C::beginTransaction(const Transaction &txn, const bool needsStop) {
     // send the address
     this->regs->ADDR.reg = ((txn.address & 0x7f) << 1) | (txn.read ? 0b1 : 0b0);
     __DSB();
+
+    this->waitSysOpSync();
 }
 
 

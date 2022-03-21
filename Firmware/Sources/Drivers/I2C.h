@@ -141,7 +141,7 @@ class I2C: public I2CBus {
         void enable();
         void disable();
 
-        virtual int perform(etl::span<const Transaction> &transactions) override;
+        virtual int perform(etl::span<const Transaction> transactions) override;
 
     private:
         void waitSysOpSync();

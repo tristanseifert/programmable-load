@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "Hardware.h"
 #include "../Pinball/Hardware.h"
 #include "../Pinball/Task.h"
 
@@ -9,6 +10,7 @@ using namespace App::Main;
 
 StaticTask_t Task::gTcb;
 StackType_t Task::gStack[kStackSize];
+Task *Task::gShared{nullptr};
 
 /**
  * @brief Initialize the app main task.
@@ -17,7 +19,7 @@ void App::Main::Start() {
     static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(4)));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
-    new (ptr) Task();
+    Task::gShared = new (ptr) Task();
 }
 
 /**
@@ -34,6 +36,10 @@ Task::Task() {
  * @brief Task entry point
  */
 void Task::main() {
+    int err;
+    BaseType_t ok;
+    uint32_t note;
+
     // initialize onboard hardware, associated busses, and devices connected thereto
     this->initHardware();
     this->initOnboardPeripherals();
@@ -53,8 +59,33 @@ void Task::main() {
     Logger::Debug("MainTask: %s", "start msg loop");
 
     while(1) {
-        // TODO: implement
-        vTaskDelay(pdMS_TO_TICKS(500));
+        /*
+         * Receive a task notification
+         *
+         * This is a 32-bit integer, where each bit indicates some event that we need to attend to;
+         * these are each provided with their own handler functions, which may pull data from
+         * additional queues.
+         *
+         * It's important that any handlers here don't block for extended amounts of time,
+         * particularly when reading from queues for additional data.
+         */
+        ok = xTaskNotifyWaitIndexed(kNotificationIndex, 0,
+                static_cast<uint32_t>(TaskNotifyBits::All), &note, portMAX_DELAY);
+        REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
+
+        // service IO bus interrupt
+        if(note & TaskNotifyBits::IoBusInterrupt) {
+            bool frontIrq{false}, rearIrq{false};
+            err = Hw::QueryIoIrq(frontIrq, rearIrq);
+
+            if(err) {
+                Logger::Error("Failed to query IO bus irq: %d", err);
+            }
+            // notify the pinball task
+            else {
+                Pinball::Task::NotifyIrq(frontIrq, rearIrq);
+            }
+        }
     }
 }
 
@@ -63,7 +94,8 @@ void Task::main() {
  *
  * Perform initialization of all low level hardware drivers on the board:
  *
- * - SERCOM0: Local I2C bus (used for front panel, rear IO; multiplexed with PCA9543A)
+ * - SERCOM0: Local I2C bus (used for front panel, rear IO)
+ *   - PCA9543A: Multiplexes bus into two separate front/rear IO
  * - SERCOM3: Load driver board I2C bus
  * - SERCOM4: SPI for front panel display
  * - SERCOM5: SPI for local NOR flash
@@ -72,12 +104,26 @@ void Task::main() {
 void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init hw");
 
-    // initialize the IO I2C bus
+    /*
+     * Initialize the local IO I²C bus
+     *
+     * This is multiplexed with a PCA9543A into a separate front IO and rear IO bus. The rear IO
+     * bus is shared with the following on-board peripherals:
+     *
+     * - EMC2101-R: Fan controller (address 0b100'1100)
+     */
+    etl::array<Drivers::I2CBus *, 2> ioBusses{};
+
     Logger::Debug("MainTask: %s", "init io i2c");
+
+    Hw::InitIoBus();
+    Hw::InitIoBusMux(ioBusses);
+
+    Logger::Trace("IO busses: %p %p", ioBusses[0], ioBusses[1]);
 
     // initialize user interface IO: display SPI, power button, encoder, beeper
     Logger::Debug("MainTask: %s", "init io spi");
-    Pinball::Hw::Init();
+    Pinball::Hw::Init(ioBusses);
 
     // TODO: initialize NOR flash SPI
     Logger::Debug("MainTask: %s", "init nor spi");
