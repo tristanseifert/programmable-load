@@ -14,6 +14,7 @@ namespace Drivers {
  * dispatching.
  */
 class SercomBase {
+    friend class I2C;
     friend class Spi;
 
     friend void ::SERCOM0_0_Handler();
@@ -81,7 +82,9 @@ class SercomBase {
     private:
         static void RegisterHandler(const Unit unit, const uint8_t irq,
                 void (*fn)(void *ctx), void *ctx = nullptr);
+
         static void MarkAsUsed(const Unit unit);
+        static void MarkAsAvailable(const Unit unit);
 
         /**
          * @brief Get offset into IRQ handler array
@@ -93,6 +96,16 @@ class SercomBase {
          */
         constexpr static inline size_t HandlerOffset(const uint8_t unit, const uint8_t irq) {
             return (unit * 0x4) + (irq & 0x3);
+        }
+
+        /**
+         * @brief Get the IRQ number for the given unit's interrupt line.
+         *
+         * @param unit SERCOM unit ([0, 5])
+         * @param irq Interrupt number for this SERCOM ([0, 3])
+         */
+        constexpr static inline auto GetIrqVector(const Unit unit, const uint8_t irq) {
+            return kHandlerIrqn[HandlerOffset(static_cast<uint8_t>(unit), irq)];
         }
 
         /**
@@ -159,6 +172,14 @@ class SercomBase {
             operator bool() const {
                 return !!this->fn;
             }
+
+            /**
+             * Clear the handler.
+             */
+            void reset() {
+                this->fn = nullptr;
+                this->ctx = nullptr;
+            }
         };
 
         /**
@@ -187,6 +208,21 @@ class SercomBase {
          * not need to use the slow clock.
          */
         static const uint32_t kSlowClocks[kNumUnits];
+
+        /**
+         * @brief Interrupt vectors
+         *
+         * Maps an interrupt handler to the corresponding hardware vector, such as is required to
+         * configure the NVIC. Use the same HandlerOffset here.
+         */
+        constexpr static const IRQn_Type kHandlerIrqn[kNumHandlers]{
+            SERCOM0_0_IRQn, SERCOM0_1_IRQn, SERCOM0_2_IRQn, SERCOM0_3_IRQn,
+            SERCOM1_0_IRQn, SERCOM1_1_IRQn, SERCOM1_2_IRQn, SERCOM1_3_IRQn,
+            SERCOM2_0_IRQn, SERCOM2_1_IRQn, SERCOM2_2_IRQn, SERCOM2_3_IRQn,
+            SERCOM3_0_IRQn, SERCOM3_1_IRQn, SERCOM3_2_IRQn, SERCOM3_3_IRQn,
+            SERCOM4_0_IRQn, SERCOM4_1_IRQn, SERCOM4_2_IRQn, SERCOM4_3_IRQn,
+            SERCOM5_0_IRQn, SERCOM5_1_IRQn, SERCOM5_2_IRQn, SERCOM5_3_IRQn,
+        };
 
         /**
          * @brief Interrupt handler routines

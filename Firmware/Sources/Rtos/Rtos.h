@@ -10,6 +10,7 @@
 
 // pull in all the FreeRTOS stuff
 #include <FreeRTOS.h>
+#include <semphr.h>
 #include <task.h>
 
 namespace Rtos {
@@ -66,8 +67,10 @@ static_assert(TaskPriority::Background < configMAX_PRIORITIES);
 enum TaskNotifyIndex: size_t {
     /// reserved for FreeRTOS message buffer api
     Stream                              = 0,
+    /// Reserved for drivers
+    DriverPrivate                       = 1,
     /// First task specific value
-    TaskSpecific                        = 1,
+    TaskSpecific                        = 2,
 };
 }
 

@@ -77,6 +77,8 @@ add_executable(firmware
     Sources/Drivers/Gpio.cpp
     Sources/Drivers/ExternalIrq.cpp
     Sources/Drivers/SercomBase.cpp
+    Sources/Drivers/I2CBus.cpp
+    Sources/Drivers/I2C.cpp
     Sources/Drivers/Spi.cpp
     Sources/Drivers/TimerCounter.cpp
     Sources/Usb/Descriptors.cpp

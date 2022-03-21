@@ -118,7 +118,7 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
 
     temp |= SERCOM_SPI_CTRLA_MODE(static_cast<uint8_t>(SercomBase::Mode::SpiMaster));
 
-    Logger::Debug("Sercom %p %s: $%08x", regs, "CTRLA", temp);
+    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLA", temp);
     regs->CTRLA.reg = temp & SERCOM_SPI_CTRLA_MASK;
 
     /*
@@ -142,7 +142,7 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
 
     temp |= SERCOM_SPI_CTRLB_PLOADEN; // preload data register
 
-    Logger::Debug("Sercom %p %s: $%08x", regs, "CTRLB", temp);
+    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLB", temp);
     regs->CTRLB.reg = temp & SERCOM_SPI_CTRLB_MASK;
 
     /**
@@ -153,7 +153,7 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
      */
     temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
 
-    Logger::Debug("Sercom %p %s: $%08x", regs, "CTRLC", temp);
+    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLC", temp);
     regs->CTRLC.reg = temp & SERCOM_SPI_CTRLC_MASK;
 
     // then last, calculate the correct baud rate
@@ -168,9 +168,6 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
  * @param frequency Desired frequency, in Hz
  *
  * @remark If the exact frequency cannot be achieved, the calculation will round down.
- *
- * @remark This assumes that the baud rate reference clock is the same as the system core clock.
- * @todo Determine if we can better figure out the input clock
  */
 void Spi::UpdateSckFreq(const SercomBase::Unit unit, ::SercomSpi *regs,
         const uint32_t frequency) {

@@ -89,6 +89,26 @@ void SercomBase::MarkAsUsed(const Unit unit) {
 }
 
 /**
+ * @brief Marks a SERCOM instance as avaialble
+ *
+ * It clears the bit in the usage bitmask, and asserts it was set before. Also, any handlers will
+ * be removed.
+ */
+void SercomBase::MarkAsAvailable(const Unit unit) {
+    const uint32_t bit{1UL << static_cast<uint8_t>(unit)};
+
+    taskENTER_CRITICAL();
+    REQUIRE((gUsed & bit), "SERCOM %u already in use!", static_cast<unsigned int>(unit));
+    gUsed &= ~bit;
+
+    for(size_t i = 0; i < 3; i++) {
+        gHandlers[HandlerOffset(static_cast<uint8_t>(unit), i)].reset();
+    }
+
+    taskEXIT_CRITICAL();
+}
+
+/**
  * @brief Register a new SERCOM interrupt handler
  *
  * Install the specified function for the given SERCOM unit and interrupt index.
