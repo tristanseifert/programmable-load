@@ -43,12 +43,7 @@ class I2CBus {
              * @brief Continuation from last transaction
              *
              * When set, this transaction is a continuation of the last one. The bus will not be
-             * relinquished. Note that the address of the device will be put on the bus again, so
-             * you cannot use this to split the data from one bus transaction across multiple
-             * buffers.
-             *
-             * @remark This can only be set if a) there is a previous transaction, and b) that
-             *         previous transaction's address and R/W mode is the same.
+             * relinquished, and a repeated START is used instead of a STOP, START sequence.
              */
             uint8_t continuation:1{0};
 

@@ -328,8 +328,8 @@ void I2C::irqHandler() {
                     else {
                         const auto &next = this->currentTxns[this->currentTxn + 1];
                         if(next.continuation) {
-                            // XXX: this path _might_ be broken
-                            this->issueReStart();
+                            // XXX: Do nothing; writing the new device address will cause a restart
+                            // this->issueReStart();
                         } else {
                             this->issueStop();
                         }
@@ -539,7 +539,8 @@ void I2C::beginTransaction(const Transaction &txn, const bool needsStop) {
     // issue either a stop or repeated start
     if(needsStop) {
         if(txn.continuation) {
-            this->issueReStart();
+            // XXX: the write to ADDR.ADDR will cause a repeated start?
+            // this->issueReStart();
         } else {
             this->issueStop();
         }

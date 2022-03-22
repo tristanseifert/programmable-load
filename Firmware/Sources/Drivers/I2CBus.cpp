@@ -33,11 +33,6 @@ int I2CBus::ValidateTransactions(etl::span<const Transaction> transactions) {
             if(!i) {
                 return -1002;
             }
-            // ensure the previous entry is the same address and rw mode
-            const auto &prev = transactions[i - 1];
-            if(prev.address != txn.address || prev.read != txn.read) {
-                return -1003;
-            }
         }
     }
 

@@ -1,13 +1,11 @@
 #ifndef DRIVERS_I2CDEVICE_PCA9543A_H
 #define DRIVERS_I2CDEVICE_PCA9543A_H
 
+#include "Drivers/I2CBus.h"
 #include "Rtos/Rtos.h"
 
+#include <etl/array.h>
 #include <etl/optional.h>
-
-namespace Drivers {
-class I2CBus;
-}
 
 /// I²C device drivers
 namespace Drivers::I2CDevice {
@@ -21,13 +19,71 @@ namespace Drivers::I2CDevice {
  *
  * Additionally, the implementation guarantees that all transactions on one downstream bus will
  * complete without being interrupted by ones sent to the other bus.
+ *
+ * @remark Though the hardware supports multiple simultaneous channels enabled, this driver will
+ *         enforce that only a single channel is active at a time.
  */
 class PCA9543A {
+    public:
+        /**
+         * @brief An I²C downstream bus
+         *
+         * This is a thin wrapper around the upstream bus that will switch to the appropriate
+         * downstream bus, if needed, before the transaction is performed.
+         *
+         * You can use this from application code the same way as other I²C busses.
+         */
+        class DownstreamBus: public Drivers::I2CBus {
+            friend class PCA9543A;
+
+            private:
+                /**
+                 * @brief Initialize a downstream bus
+                 *
+                 * @param parent Multiplexer instance that owns this bus
+                 * @param channel Channel index of this downstream bus
+                 *
+                 * @remark This is automatically done when the mux is initialized. You should not
+                 *         try to manually create one.
+                 */
+                DownstreamBus(PCA9543A *parent, const uint8_t channel) : parent(parent),
+                    channel(channel) {}
+
+            public:
+                int perform(etl::span<const Transaction> transactions) override;
+
+            private:
+                /**
+                 * @brief Bus switch that owns this downstream bus
+                 *
+                 * This is the bus switch on which this downstream bus is located. The upsteram
+                 * bus of the mux is used to perform all transactions; this mux is also used to
+                 * handle the locking.
+                 */
+                PCA9543A *parent;
+
+                /**
+                 * @brief Bus index
+                 *
+                 * Index, on the parent mux, of this channel. Used to activate the bus if needed.
+                 */
+                uint8_t channel;
+        };
+
     public:
         PCA9543A(const uint8_t address, Drivers::I2CBus *parent);
         ~PCA9543A();
 
         int readIrqState(bool &irq0, bool &irq1);
+
+        /**
+         * @brief Determine the currently active bus
+         *
+         * @return Active bus number, or `etl::nullopt` if none is active
+         */
+        inline etl::optional<uint8_t> getActiveBus() const {
+            return this->activeBus;
+        }
 
         int activateBus(const uint8_t bus);
         int deactivateBus();
@@ -36,20 +92,20 @@ class PCA9543A {
          * @brief Get downstream bus 0
          */
         constexpr inline Drivers::I2CBus *getDownstream0() {
-            return nullptr;
+            return &this->busses[0];
         }
         /**
          * @brief Get downstream bus 1
          */
         constexpr inline Drivers::I2CBus *getDownstream1() {
-            return nullptr;
+            return &this->busses[1];
         }
 
-    private:
+    protected:
         int sendPacket(const uint8_t data);
         int readStatus(uint8_t &outStatus);
 
-    private:
+    protected:
         /// Parent bus
         Drivers::I2CBus *bus;
         /// Device address
@@ -70,6 +126,15 @@ class PCA9543A {
         SemaphoreHandle_t busLock;
         /// storage for the bus lock
         StaticSemaphore_t busLockStorage;
+
+        /**
+         * @brief Downstream busses
+         *
+         * A list of downstream busses, which is initialized when we construct the mux. Each of
+         * these busses corresponds to one downstream bus, and automagically handles switching the
+         * appropriate channel.
+         */
+        etl::array<DownstreamBus, 2> busses;
 };
 }
 

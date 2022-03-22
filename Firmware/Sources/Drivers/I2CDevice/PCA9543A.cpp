@@ -13,7 +13,8 @@ using namespace Drivers::I2CDevice;
  * @remark This assumes the switch has been just initialized the same as a power on reset, or by
  *         toggling /RESET.
  */
-PCA9543A::PCA9543A(const uint8_t address, Drivers::I2CBus *parent) : bus(parent), address(address) {
+PCA9543A::PCA9543A(const uint8_t address, Drivers::I2CBus *parent) : bus(parent), address(address),
+    busses({DownstreamBus(this, 0), DownstreamBus(this, 1)}) {
     // initialize locking
     this->busLock = xSemaphoreCreateRecursiveMutexStatic(&this->busLockStorage);
 
@@ -168,6 +169,42 @@ int PCA9543A::readStatus(uint8_t &outStatus) {
 
     // release bus lock
     xSemaphoreGiveRecursive(this->busLock);
+    return err;
+}
+
+
+
+/**
+ * @brief Perform a bus transaction on a downstream bus
+ *
+ * This will ensure that the mux has activated the appropriate channel, then forwards the actual
+ * transaction to the parent bus we're connected to. The bus lock on the mux is held for the entire
+ * duration of the call.
+ */
+int PCA9543A::DownstreamBus::perform(etl::span<const Transaction> transactions) {
+    BaseType_t ok;
+    int err;
+
+    // acquire bus lock
+    ok = xSemaphoreTakeRecursive(this->parent->busLock, portMAX_DELAY);
+    if(ok != pdTRUE) {
+        return -1;
+    }
+
+    // switch channel, if needed
+    if(this->parent->activeBus != this->channel) {
+        err = this->parent->activateBus(this->channel);
+        if(err) {
+            goto beach;
+        }
+    }
+
+    // perform txn
+    err = this->parent->bus->perform(transactions);
+
+    // release bus lock
+beach:;
+    xSemaphoreGiveRecursive(this->parent->busLock);
     return err;
 }
 
