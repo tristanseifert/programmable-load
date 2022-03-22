@@ -2,6 +2,8 @@
 #include "Hardware.h"
 #include "../Pinball/Hardware.h"
 #include "../Pinball/Task.h"
+#include "../Thermal/Hardware.h"
+#include "../Thermal/Task.h"
 
 #include "Log/Logger.h"
 #include "Usb/Usb.h"
@@ -104,13 +106,14 @@ void Task::main() {
 void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init hw");
 
+    // TODO: initialize driver I2C bus
+    Logger::Debug("MainTask: %s", "init driver i2c");
+
     /*
      * Initialize the local IO I²C bus
      *
      * This is multiplexed with a PCA9543A into a separate front IO and rear IO bus. The rear IO
-     * bus is shared with the following on-board peripherals:
-     *
-     * - EMC2101-R: Fan controller (address 0b100'1100)
+     * bus is shared with some peripherals on the processor board.
      */
     etl::array<Drivers::I2CBus *, 2> ioBusses{};
 
@@ -128,8 +131,14 @@ void Task::initHardware() {
     // TODO: initialize NOR flash SPI
     Logger::Debug("MainTask: %s", "init nor spi");
 
-    // TODO: initialize driver I2C bus
-    Logger::Debug("MainTask: %s", "init driver i2c");
+    /*
+     * Initialize onboard peripherals.
+     *
+     * This consists of the following:
+     *
+     * - EMC2101-R: Fan controller (rear IO bus; address 0b100'1100)
+     */
+    Thermal::Hw::InitFanController(ioBusses[1]);
 }
 
 /**
@@ -198,11 +207,13 @@ void Task::discoverDriverHardware() {
  * Called once all hardware and drivers have been initialized, and all services are available. It
  * will start the application tasks:
  *
+ * - Thermal management (fan control, overheat protection)
  * - Pinball (front panel UI)
  * - Control loop
  */
 void Task::startApp() {
     Logger::Debug("MainTask: %s", "start app");
 
+    Thermal::Start();
     Pinball::Start();
 }

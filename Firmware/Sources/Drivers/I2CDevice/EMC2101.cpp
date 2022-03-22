@@ -237,7 +237,7 @@ int EMC2101::getExternalTemp(float &outExternalTemp) {
  *
  * @return 0 on success, error code otherwise
  */
-int EMC2101::getFanSpeed(unsigned int &outRpm) {
+int EMC2101::getFanSpeed(int &outRpm) {
     int err;
     uint8_t low, high;
 
@@ -327,15 +327,14 @@ int EMC2101::setFanMap(etl::span<const FanMapEntry> map) {
 /**
  * @brief Set the fan mode
  *
- * @param automatic Whether the fan controller uses the programmed fan control curve to drive the
- *        fan, or the manually specified fan value.
+ * @param mode How the fan's speed should be controlled
  *
  * @return 0 on success
  *
  * @remark When disabling the automatic fan control mode, the controller will continue to drive the
  *         fan at the most recent speed, until manually changed.
  */
-int EMC2101::setFanMode(const bool automatic) {
+int EMC2101::setFanMode(const FanMode mode) {
     int err;
     uint8_t temp;
 
@@ -344,14 +343,14 @@ int EMC2101::setFanMode(const bool automatic) {
     temp |= (this->invertPwm ? (1 << 4) : 0);
 
     // fan control mode
-    if(!automatic) {
+    if(mode == FanMode::Manual) {
         temp |= (1 << 5);
     }
 
     // write it
     err = this->writeRegister(Regs::FanConfig, temp);
     if(!err) {
-        this->useFanTable = automatic;
+        this->useFanTable = (mode == FanMode::Automatic);
     }
     return err;
 }

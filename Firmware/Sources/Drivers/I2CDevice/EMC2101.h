@@ -110,16 +110,43 @@ class EMC2101 {
             uint8_t speed;
         };
 
+        /**
+         * @brief Fan control mode
+         *
+         * Choice of the different fan control modes of the fan controller hardware.
+         */
+        enum class FanMode: uint8_t {
+            /**
+             * @brief Manual fan control
+             *
+             * The host must update the fan speed (by continuously invoking setFanSpeed) to
+             * maintain thermal control. Additionally, in this state, the fan map may be written to
+             * the device.
+             */
+            Manual,
+            /**
+             * @brief Automatic fan control
+             *
+             * In this mode, the controller assumes full control over the speed of the fan. It is
+             * not possible to override the output speed (beyond faking the temperature input to
+             * the logic.)
+             *
+             * The controller will automatically select the appropriate speed based on the entries
+             * in the fan map.
+             */
+            Automatic,
+        };
+
     public:
         EMC2101(Drivers::I2CBus *bus, const Config &conf, const uint8_t address = 0b100'1100);
 
         int getInternalTemp(float &outInternalTemp);
         int getExternalTemp(float &outExternalTemp);
 
-        int getFanSpeed(unsigned int &outRpm);
+        int getFanSpeed(int &outRpm);
 
         int setFanMap(etl::span<const FanMapEntry> temps);
-        int setFanMode(const bool automatic);
+        int setFanMode(const FanMode mode);
         int setFanSpeed(const uint8_t speed);
 
     private:
