@@ -8,6 +8,15 @@
 
 using namespace UsbStack;
 
+/// USB D+
+constexpr static const Drivers::Gpio::Pin kUsbDp{
+    Drivers::Gpio::Port::PortA, 25
+};
+/// USB D-
+constexpr static const Drivers::Gpio::Pin kUsbDm{
+    Drivers::Gpio::Port::PortA, 24
+};
+
 static void InitHardware();
 
 void UsbStack::Init() {
@@ -30,16 +39,14 @@ static void InitHardware() {
     using Drivers::Gpio;
 
     // configure the IO pins (PA24 (D-), PA25 (D+))
-    const Gpio::PinConfig cfgDm{
+    Gpio::ConfigurePin(kUsbDm, {
         .mode = Gpio::Mode::Peripheral,
         .function = MUX_PA24H_USB_DM
-    }, cfgDp{
+    });
+    Gpio::ConfigurePin(kUsbDp, {
         .mode = Gpio::Mode::Peripheral,
         .function = MUX_PA25H_USB_DP
-    };
-
-    Gpio::ConfigurePin(Gpio::Port::PortA, PIN_PA24H_USB_DM, cfgDm);
-    Gpio::ConfigurePin(Gpio::Port::PortA, PIN_PA25H_USB_DP, cfgDp);
+    });
 
     // set IRQ priorities
     NVIC_SetPriority(USB_0_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);

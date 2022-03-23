@@ -1,4 +1,5 @@
 #include "Hardware.h"
+#include "Task.h"
 
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
@@ -54,7 +55,7 @@ void Hw::InitDisplaySpi() {
     /**
      * Set up the display command/data IO.
      */
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 4, {
+    Drivers::Gpio::ConfigurePin(kDisplayCmdData, {
         .mode = Drivers::Gpio::Mode::DigitalOut,
         .pull = Drivers::Gpio::Pull::Up,
         .initialOutput = 0,
@@ -67,22 +68,22 @@ void Hw::InitDisplaySpi() {
      * does not send out any data.
      */
     // PAD0: SPI master in, slave out (MISO)
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 12, {
+    Drivers::Gpio::ConfigurePin(kDisplayMiso, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB12C_SERCOM4_PAD0,
     });
     // PAD1: SPI clock (SCK)
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 13, {
+    Drivers::Gpio::ConfigurePin(kDisplaySck, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB13C_SERCOM4_PAD1,
     });
     // PAD2:  Chip select
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 14, {
+    Drivers::Gpio::ConfigurePin(kDisplayCs, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB14C_SERCOM4_PAD2,
     });
     // PAD3: SPI master out, slave in (MOSI)
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 15, {
+    Drivers::Gpio::ConfigurePin(kDisplayMosi, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB15C_SERCOM4_PAD3,
     });
@@ -116,7 +117,7 @@ void Hw::InitPowerButton() {
      * Configure the power button input, with a weak pull up. Also set up an external interrupt
      * that's triggered on a falling edge.
      */
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 31, {
+    Drivers::Gpio::ConfigurePin(kPowerSwitch, {
         .mode = Drivers::Gpio::Mode::DigitalIn,
         .pull = Drivers::Gpio::Pull::Up,
         .function = MUX_PB31A_EIC_EXTINT15,
@@ -152,13 +153,13 @@ void Hw::InitEncoder() {
     // TODO: reset the encoder state machine
 
     // configure encoder A and B inputs
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 7, { // A
+    Drivers::Gpio::ConfigurePin(kEncoderA, { // A
         .mode = Drivers::Gpio::Mode::DigitalIn,
         .pull = Drivers::Gpio::Pull::Up,
         .function = MUX_PB07A_EIC_EXTINT7,
         .pinMuxEnable = 1,
     });
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 8, { // B
+    Drivers::Gpio::ConfigurePin(kEncoderB, { // B
         .mode = Drivers::Gpio::Mode::DigitalIn,
         .pull = Drivers::Gpio::Pull::Up,
         .function = MUX_PB08A_EIC_EXTINT8,
@@ -197,7 +198,7 @@ void Hw::InitEncoder() {
  */
 void Hw::InitBeeper() {
     // configure IO
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortB, 10, {
+    Drivers::Gpio::ConfigurePin(kBeeper, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB10E_TC5_WO0,
     });
@@ -226,7 +227,7 @@ void Hw::InitBeeper() {
  */
 void Hw::InitMisc() {
     // front panel reset line
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 5, {
+    Drivers::Gpio::ConfigurePin(kFrontIoReset, {
         .mode = Drivers::Gpio::Mode::DigitalOut,
         .initialOutput = 1,
     });
@@ -241,9 +242,9 @@ void Hw::InitMisc() {
  * all peripherals on the front IO board, as well as the display.
  */
 void Hw::ResetFrontPanel() {
-    Drivers::Gpio::SetOutputState(Drivers::Gpio::Port::PortA, 5, false);
+    Drivers::Gpio::SetOutputState(kFrontIoReset, false);
     vTaskDelay(pdMS_TO_TICKS(100));
-    Drivers::Gpio::SetOutputState(Drivers::Gpio::Port::PortA, 5, true);
+    Drivers::Gpio::SetOutputState(kFrontIoReset, true);
 }
 
 /**
@@ -252,7 +253,7 @@ void Hw::ResetFrontPanel() {
  * @param isData Whether the next transaction contains data or commands
  */
 void Hw::SetDisplayDataCommandFlag(const bool isData) {
-    Drivers::Gpio::SetOutputState(Drivers::Gpio::Port::PortA, 4, isData);
+    Drivers::Gpio::SetOutputState(kDisplayCmdData, isData);
 }
 
 /**
@@ -266,11 +267,11 @@ void Hw::SetDisplayDataCommandFlag(const bool isData) {
 void Hw::SetPowerLight(const PowerLightMode mode) {
     // float IO to disable
     if(mode == PowerLightMode::Off) {
-        Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 27, {
+        Drivers::Gpio::ConfigurePin(kPowerIndicator, {
             .mode = Drivers::Gpio::Mode::Off,
         });
     } else {
-        Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 27, {
+        Drivers::Gpio::ConfigurePin(kPowerIndicator, {
             .mode = Drivers::Gpio::Mode::DigitalOut,
             .initialOutput = static_cast<uint8_t>((mode == PowerLightMode::Primary) ? 1 : 0),
         });
@@ -284,10 +285,10 @@ void Hw::SetPowerLight(const PowerLightMode mode) {
  */
 uint8_t Hw::ReadEncoder() {
     uint8_t temp{0};
-    if(Drivers::Gpio::GetInputState(Drivers::Gpio::Port::PortB, 7)) {
+    if(Drivers::Gpio::GetInputState(kEncoderA)) {
         temp |= (1 << 0);
     }
-    if(Drivers::Gpio::GetInputState(Drivers::Gpio::Port::PortB, 8)) {
+    if(Drivers::Gpio::GetInputState(kEncoderB)) {
         temp |= (1 << 1);
     }
     return temp;
@@ -302,9 +303,13 @@ uint8_t Hw::ReadEncoder() {
  * the encoder and transition the state machine appropriately.
  */
 void EIC_7_Handler() {
+    BaseType_t woken{pdFALSE};
+
     if(Drivers::ExternalIrq::HandleIrq(7)) {
-        // TODO: implement
+        Task::NotifyFromIsr(Task::TaskNotifyBits::EncoderChanged, &woken);
     }
+
+    portYIELD_FROM_ISR(woken);
 }
 
 /**
@@ -314,9 +319,13 @@ void EIC_7_Handler() {
  * the encoder and transition the state machine appropriately.
  */
 void EIC_8_Handler() {
+    BaseType_t woken{pdFALSE};
+
     if(Drivers::ExternalIrq::HandleIrq(8)) {
-        // TODO: implement
+        Task::NotifyFromIsr(Task::TaskNotifyBits::EncoderChanged, &woken);
     }
+
+    portYIELD_FROM_ISR(woken);
 }
 
 /**
@@ -326,8 +335,12 @@ void EIC_8_Handler() {
  * task that this happened.
  */
 void EIC_15_Handler() {
+    BaseType_t woken{pdFALSE};
+
     if(Drivers::ExternalIrq::HandleIrq(15)) {
-        // TODO: implement
+        Task::NotifyFromIsr(Task::TaskNotifyBits::PowerPressed, &woken);
     }
+
+    portYIELD_FROM_ISR(woken);
 }
 

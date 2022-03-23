@@ -61,6 +61,8 @@ Task::Task() {
         etl::delegate<int(int &)>::create<Drivers::I2CDevice::EMC2101,
                 &Drivers::I2CDevice::EMC2101::getFanSpeed>(*Hw::gFanController),
         "Case Rear",
+        // its speed is manually controlled by firmware
+        false,
     });
 
     // then create the task

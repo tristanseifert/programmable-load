@@ -5,6 +5,8 @@
 
 #include <etl/span.h>
 
+#include "Drivers/Gpio.h"
+
 namespace Drivers {
 class I2CBus;
 class Spi;
@@ -32,6 +34,64 @@ enum class PowerLightMode {
  */
 class Hw {
     friend class Task;
+
+    /**
+     * @brief Front panel reset
+     *
+     * Active low signal to reset all peripherals on the front panel, including the display.
+     */
+    constexpr static const Drivers::Gpio::Pin kFrontIoReset{
+        Drivers::Gpio::Port::PortA, 5
+    };
+
+    /// Display SPI - SCK
+    constexpr static const Drivers::Gpio::Pin kDisplaySck{
+        Drivers::Gpio::Port::PortB, 13
+    };
+    /// Display SPI - MISO
+    constexpr static const Drivers::Gpio::Pin kDisplayMiso{
+        Drivers::Gpio::Port::PortB, 12
+    };
+    /// Display SPI - MOSI
+    constexpr static const Drivers::Gpio::Pin kDisplayMosi{
+        Drivers::Gpio::Port::PortB, 15
+    };
+    /// Display SPI - Chip select (/CS)
+    constexpr static const Drivers::Gpio::Pin kDisplayCs{
+        Drivers::Gpio::Port::PortB, 14
+    };
+    /// Display - command/data strobe
+    constexpr static const Drivers::Gpio::Pin kDisplayCmdData{
+        Drivers::Gpio::Port::PortA, 4
+    };
+
+    /// Power button - switch input
+    constexpr static const Drivers::Gpio::Pin kPowerSwitch{
+        Drivers::Gpio::Port::PortB, 31
+    };
+    /**
+     * @brief Power LED
+     *
+     * Line to control the bicolor LED inside the power switch; 0 activates the primary color, 1
+     * activates the secondary. Put the pin in hi-Z/input mode to extinguish the LED.
+     */
+    constexpr static const Drivers::Gpio::Pin kPowerIndicator{
+        Drivers::Gpio::Port::PortB, 27
+    };
+
+    /// Rotary encoder, A line
+    constexpr static const Drivers::Gpio::Pin kEncoderA{
+        Drivers::Gpio::Port::PortB, 7
+    };
+    /// Rotary encoder, B line
+    constexpr static const Drivers::Gpio::Pin kEncoderB{
+        Drivers::Gpio::Port::PortB, 8
+    };
+
+    /// Beeper output
+    constexpr static const Drivers::Gpio::Pin kBeeper{
+        Drivers::Gpio::Port::PortB, 10
+    };
 
     public:
         static void Init(const etl::span<Drivers::I2CBus *, 2> &busses);

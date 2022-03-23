@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <etl/utility.h>
+
 namespace Drivers {
 /**
  * @brief PORT / GPIO driver
@@ -58,6 +60,13 @@ class Gpio {
             /// Enable a pull-down resistor (towards GND)
             Down,
         };
+
+        /**
+         * @brief Pin location
+         *
+         * A combination of GPIO port and pin that can be used to uniquely identify a GPIO pin.
+         */
+        using Pin = etl::pair<Port, uint8_t>;
 
         /**
          * @brief Pin mode definition
@@ -118,9 +127,11 @@ class Gpio {
     public:
         Gpio() = delete;
 
-        static void ConfigurePin(const Port port, const uint8_t pin, const PinConfig &config);
-        static void SetOutputState(const Port port, const uint8_t pin, const bool state);
-        static bool GetInputState(const Port port, const uint8_t pin);
+        static void ConfigurePin(const Pin pin, const PinConfig &config);
+
+        static void SetOutputState(const Pin pin, const bool state);
+
+        static bool GetInputState(const Pin pin);
 };
 }
 

@@ -6,6 +6,8 @@
 
 #include <etl/span.h>
 
+#include "Drivers/Gpio.h"
+
 namespace Drivers {
 class I2C;
 class I2CBus;
@@ -17,6 +19,23 @@ class PCA9543A;
 
 namespace App::Main {
 class Hw {
+    /// IO bus - I²C SCL
+    constexpr static const Drivers::Gpio::Pin kIoBusScl{
+        Drivers::Gpio::Port::PortA, 9
+    };
+    /// IO bus - I²C SDA
+    constexpr static const Drivers::Gpio::Pin kIoBusSda{
+        Drivers::Gpio::Port::PortA, 8
+    };
+    /// IO bus - I²C IRQ
+    constexpr static const Drivers::Gpio::Pin kIoBusIrq{
+        Drivers::Gpio::Port::PortA, 10
+    };
+    /// IO bus - mux reset
+    constexpr static const Drivers::Gpio::Pin kIoBusReset{
+        Drivers::Gpio::Port::PortA, 6
+    };
+
     public:
         static Drivers::I2C *InitIoBus();
         static void InitIoBusMux(etl::span<Drivers::I2CBus *, 2> outBusses);
@@ -31,7 +50,18 @@ class Hw {
         static int QueryIoIrq(bool &front, bool &rear);
 
     private:
-        static void SetIoBusReset(const bool asserted);
+        /**
+         * @brief Set the state of the /I2C_RESET line
+         *
+         * This is connected to the multiplexer's reset line, and allows resetting its internal
+         * state machine on powerup if the bus got wedged in a weird state. It does not reset
+         * devices beyond the multiplexer, on either of the secondary busses.
+         *
+         * @param asserted When set, the reset line is asserted (low)
+         */
+        inline static void SetIoBusReset(const bool asserted) {
+            Drivers::Gpio::SetOutputState(kIoBusReset, !asserted);
+        }
 
     private:
         /**

@@ -168,6 +168,9 @@ target_link_libraries(firmware PRIVATE vendor-atmel)
 set(BUILD_STATIC_LIBRARY "" ON)
 set(SUPPORT_WRITEBACK_SPECIFIER "" OFF)
 
+set(SUPPORT_DECIMAL_SPECIFIERS "" OFF)
+set(SUPPORT_EXPONENTIAL_SPECIFIERS "" OFF)
+
 FetchContent_Declare(printf_library
     GIT_REPOSITORY https://github.com/eyalroz/printf.git
     GIT_TAG v6.0.0

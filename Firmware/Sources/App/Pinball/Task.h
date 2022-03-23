@@ -41,11 +41,26 @@ class Task {
             RearIrq                     = (1 << 1),
 
             /**
+             * @brief Power button pressed
+             *
+             * A falling edge (press) was detected on the power button.
+             */
+            PowerPressed                = (1 << 2),
+
+            /**
+             * @brief Encoder changed
+             *
+             * Either of the encoder inputs have changed; the encoder state machine should read
+             * them out and update the UI state.
+             */
+            EncoderChanged              = (1 << 3),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
-            All                         = (FrontIrq | RearIrq),
+            All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged),
         };
 
     public:
@@ -72,6 +87,19 @@ class Task {
             if(bits) {
                 xTaskNotifyIndexed(gShared->task, kNotificationIndex, bits, eSetBits);
             }
+        }
+
+        /**
+         * @brief Send a notification (from ISR)
+         *
+         * Notify the pinball task that some event happened, from within an ISR.
+         *
+         * @param bits Notification bits to set
+         * @param woken Whether a higher priority task is woken
+         */
+        static void NotifyFromIsr(const TaskNotifyBits bits, BaseType_t *woken) {
+            xTaskNotifyIndexedFromISR(gShared->task, kNotificationIndex,
+                    static_cast<BaseType_t>(bits), eSetBits, woken);
         }
 
     private:

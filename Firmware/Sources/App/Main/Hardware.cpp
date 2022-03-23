@@ -30,11 +30,11 @@ Drivers::I2C *Hw::InitIoBus() {
     /*
      * Configure the IO lines used for the bus
      */
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 8, { // SDA
+    Drivers::Gpio::ConfigurePin(kIoBusSda, { // SDA
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PA08C_SERCOM0_PAD0,
     });
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 9, { // SDA
+    Drivers::Gpio::ConfigurePin(kIoBusScl, { // SCL
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PA09C_SERCOM0_PAD1,
     });
@@ -46,14 +46,14 @@ Drivers::I2C *Hw::InitIoBus() {
      * determine whether the front or rear panel caused the interrupt, and then notifying the
      * appropriate task.
      */
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 10, {
+    Drivers::Gpio::ConfigurePin(kIoBusIrq, {
         .mode = Drivers::Gpio::Mode::DigitalIn,
         .pull = Drivers::Gpio::Pull::Up,
         .function = MUX_PA10A_EIC_EXTINT10,
         .pinMuxEnable = 1,
     });
 
-    Drivers::Gpio::ConfigurePin(Drivers::Gpio::Port::PortA, 6, {
+    Drivers::Gpio::ConfigurePin(kIoBusReset, {
         .mode = Drivers::Gpio::Mode::DigitalOut,
         .pull = Drivers::Gpio::Pull::Up,
         .initialOutput = 1,
@@ -128,22 +128,6 @@ void Hw::InitIoBusMux(etl::span<Drivers::I2CBus *, 2> outBusses) {
  */
 int Hw::QueryIoIrq(bool &front, bool &rear) {
     return gIoMux->readIrqState(front, rear);
-}
-
-
-
-
-/**
- * @brief Set the state of the /I2C_RESET line
- *
- * This is connected to the multiplexer's reset line, and allows resetting its internal state
- * machine on powerup if the bus got wedged in a weird state. It does not reset devices beyond the
- * multiplexer, on either of the secondary busses.
- *
- * @param asserted When set, the reset line is asserted (low)
- */
-void Hw::SetIoBusReset(const bool asserted) {
-    Drivers::Gpio::SetOutputState(Drivers::Gpio::Port::PortA, 6, !asserted);
 }
 
 
