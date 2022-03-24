@@ -92,6 +92,7 @@ add_executable(firmware
     Sources/App/Pinball/Task.cpp
     Sources/App/Thermal/Hardware.cpp
     Sources/App/Thermal/Task.cpp
+    Sources/App/Control/Hardware.cpp
     ${BuildInfoFile}
 )
 

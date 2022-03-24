@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "Hardware.h"
+#include "../Control/Hardware.h"
 #include "../Pinball/Hardware.h"
 #include "../Pinball/Task.h"
 #include "../Thermal/Hardware.h"
@@ -106,8 +107,9 @@ void Task::main() {
 void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init hw");
 
-    // TODO: initialize driver I2C bus
+    // initialize the driver control bus
     Logger::Debug("MainTask: %s", "init driver i2c");
+    Control::Hw::Init();
 
     /*
      * Initialize the local IO I²C bus
