@@ -4,8 +4,11 @@
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
 #include "Drivers/Spi.h"
+#include "Drivers/I2CDevice/AT24CS32.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
+
+#include <etl/array.h>
 
 #include <vendor/sam.h>
 
@@ -61,8 +64,9 @@ void Task::main() {
     // TODO: initialize display
     Logger::Trace("pinball: %s", "init display");
 
-    // TODO: discover front panel
+    // discover front panel hardware, and initialize itz
     Logger::Trace("pinball: %s", "init front panel");
+    this->detectFrontPanel();
 
     /*
      * Start handling messages
@@ -83,3 +87,32 @@ void Task::main() {
     }
 }
 
+
+
+/**
+ * @brief Detect front panel hardware
+ *
+ * Tries to find an AT24CS32 EEPROM on the front panel bus. This in turn will contain a small
+ * struct that identifies what type of hardware we have installed.
+ */
+void Task::detectFrontPanel() {
+    int err;
+    etl::array<uint8_t, 16> serial;
+
+    // try to read the serial number EEPROM
+    Drivers::I2CDevice::AT24CS32 eeprom(Hw::gFrontI2C);
+
+    err = eeprom.readSerial(serial);
+    if(err) {
+        Logger::Warning("failed to ID front panel: %d", err);
+        return;
+    }
+
+    // TODO: run it through base32 or something else to make it less crappy to look at
+    Logger::Notice("front panel serial: %02x%02x%02x%02x%02x%02x%02x%02x"
+            "%02x%02x%02x%02x%02x%02x%02x%02x", serial[0], serial[1], serial[2], serial[3],
+            serial[4], serial[5], serial[6], serial[7], serial[8], serial[9], serial[10],
+            serial[11], serial[12], serial[13], serial[14], serial[15]);
+
+    // TODO: further identification
+}

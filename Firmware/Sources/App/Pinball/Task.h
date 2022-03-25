@@ -106,6 +106,7 @@ class Task {
         Task();
 
         void main();
+        void detectFrontPanel();
 
     private:
         /// Task handle

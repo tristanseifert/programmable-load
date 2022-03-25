@@ -83,6 +83,7 @@ add_executable(firmware
     Sources/Drivers/TimerCounter.cpp
     Sources/Drivers/I2CDevice/PCA9543A.cpp
     Sources/Drivers/I2CDevice/EMC2101.cpp
+    Sources/Drivers/I2CDevice/AT24CS32.cpp
     Sources/Usb/Descriptors.cpp
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp
