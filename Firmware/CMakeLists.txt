@@ -185,10 +185,10 @@ target_link_libraries(firmware PRIVATE printf)
 
 ###############
 # FreeRTOS
-set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" )
+set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" CACHE STRING "")
 # give it a dummy heap file
-set(FREERTOS_HEAP ${CMAKE_CURRENT_LIST_DIR}/Includes/BuildInfo.h)
-set(FREERTOS_PORT GCC_ARM_CM4F)
+set(FREERTOS_HEAP ${CMAKE_CURRENT_LIST_DIR}/Includes/BuildInfo.h CACHE STRING "")
+set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "")
 
 FetchContent_Declare(FreeRTOS-Kernel
     GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git

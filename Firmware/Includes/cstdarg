@@ -1,0 +1,12 @@
+/**
+ * @file
+ *
+ * @brief C++ variadic argument wrapper
+ *
+ * Provide the standard C variadic function support in the C++ header file, as is required by
+ * some of our third party libraries.
+ */
+
+extern "C" {
+#include <stdarg.h>
+}

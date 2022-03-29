@@ -83,7 +83,7 @@ extern "C" void Reset_Handler(void) {
     SystemCoreClock = 120'000'000u; // TODO: can we figure this automatically?
 
     // set up SWO output
-    // Log::TraceSWO::Init(120'000'000u);
+    Log::TraceSWO::Init(SystemCoreClock);
 
     // run C library initializers
     InvokeConstructors();

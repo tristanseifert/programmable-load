@@ -1,0 +1,10 @@
+/**
+ * @file
+ *
+ * @brief C++ wrapper for stddef.h
+ */
+
+extern "C" {
+#include <stddef.h>
+}
+

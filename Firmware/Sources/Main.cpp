@@ -5,6 +5,8 @@
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
 
+#include "Drivers/Gpio.h"
+
 /**
  * @brief Application entry point
  *
@@ -19,15 +21,20 @@ extern "C" int main() {
      * Configure the RGB status LED, as well as the power button and its associated indicator
      * light, to show some early indications of life.
      */
-    _gpio_set_direction(GPIO_PORTA, GPIO_PIN(3), GPIO_DIRECTION_OUT); // B
-    _gpio_set_direction(GPIO_PORTB, GPIO_PIN(4), GPIO_DIRECTION_OUT); // G
-    _gpio_set_direction(GPIO_PORTB, GPIO_PIN(5), GPIO_DIRECTION_OUT); // R
+    static const Drivers::Gpio::PinConfig kLedOutput{
+        .mode = Drivers::Gpio::Mode::DigitalOut,
+    };
 
-    _gpio_set_level(GPIO_PORTA, GPIO_PIN(3), 1); // B
-    _gpio_set_level(GPIO_PORTB, GPIO_PIN(4), 0); // G
-    _gpio_set_level(GPIO_PORTB, GPIO_PIN(5), 1); // R
+    Drivers::Gpio::ConfigurePin({Drivers::Gpio::Port::PortA, 3}, kLedOutput); // B
+    Drivers::Gpio::ConfigurePin({Drivers::Gpio::Port::PortB, 4}, kLedOutput); // G
+    Drivers::Gpio::ConfigurePin({Drivers::Gpio::Port::PortB, 5}, kLedOutput); // R
+
+    Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortA, 3}, 1); // B
+    Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 4}, 0); // G
+    Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, 1); // R
 
     Logger::Warning("Hello world!");
+
 
     /*
      * Do early hardware initialization
@@ -52,16 +59,16 @@ extern "C" int main() {
     uint8_t temp{1};
     while(1) {
         // write them
-        _gpio_set_level(GPIO_PORTA, GPIO_PIN(3), !!(temp & 0b100)); // B
-        _gpio_set_level(GPIO_PORTB, GPIO_PIN(4), !!(temp & 0b010)); // G
-        _gpio_set_level(GPIO_PORTB, GPIO_PIN(5), !!(temp & 0b001)); // R
+//        Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortA, 3}, !!(temp & 0b100)); // B
+        Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 4}, !!(temp & 0b010)); // G
+        Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, !!(temp & 0b001)); // R
 
         // advance
         temp++;
         volatile uint32_t n{0};
         do {
             n = n + 1;
-        } while(n != 20000000);
+        } while(n != 2000000);
     }
 
     // should never get here...
