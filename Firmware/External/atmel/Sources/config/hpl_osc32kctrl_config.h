@@ -64,7 +64,7 @@
 // <0x6=>8000092us
 // <id> xosc32k_arch_startup
 #ifndef CONF_XOSC32K_STARTUP
-#define CONF_XOSC32K_STARTUP 0x0
+#define CONF_XOSC32K_STARTUP 0x2
 #endif
 
 // <q> On Demand Control
@@ -106,7 +106,7 @@
 // <i> Indicates whether Clock Failure Detector is enabled or not
 // <id> xosc32k_arch_cfden
 #ifndef CONF_XOSC32K_CFDEN
-#define CONF_XOSC32K_CFDEN 1
+#define CONF_XOSC32K_CFDEN 0
 #endif
 
 // <q> Clock Failure Detector Event Out

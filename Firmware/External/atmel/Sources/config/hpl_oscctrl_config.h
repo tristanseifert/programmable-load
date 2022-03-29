@@ -158,7 +158,7 @@
 // <0xF=>1000000us
 // <id> xosc1_arch_startup
 #ifndef CONF_XOSC1_STARTUP
-#define CONF_XOSC1_STARTUP 0
+#define CONF_XOSC1_STARTUP 6
 #endif
 
 // <q> Clock Switch Back
@@ -172,7 +172,7 @@
 // <i> Indicates whether Clock Failure Detector is enabled or not
 // <id> xosc1_arch_cfden
 #ifndef CONF_XOSC1_CFDEN
-#define CONF_XOSC1_CFDEN 1
+#define CONF_XOSC1_CFDEN 0
 #endif
 
 // <q> Automatic Loop Control Enable

@@ -29,35 +29,14 @@ void TraceSWO::Init(const uint32_t cpuFreq) {
     GCLK->PCHCTRL[47].reg = GCLK_PCHCTRL_GEN_GCLK0 | GCLK_PCHCTRL_CHEN;
 
     // calculate baud rate prescaler based on CPU frequency
-    constexpr static const uint32_t kBaudRate{100000};
+    constexpr static const uint32_t kBaudRate{30'000'000};
     const uint32_t prescale = (cpuFreq / kBaudRate) - 1;
 
-    // enable trace functionality
-    CoreDebug->DEMCR = CoreDebug_DEMCR_TRCENA_Msk;
-    // use SWO as output and set the prescaler for the desired baud rate
-    TPI->SPPR = (0x2 << TPI_SPPR_TXMODE_Pos);
-    TPI->ACPR = prescale;
-    // enable write access to ITM control register
-    ITM->LAR = 0xC5ACCE55u;
-
-    // enable ATBID, ITM enable, SYNC enable, DWT enable
-    ITM->TCR	= 0x0001000Du;
-    // enable all stimulus ports
-    ITM->TPR = ITM_TPR_PRIVMASK_Msk;
-    // enable tracing on port 1
-    ITM->TER = 0b1;
-    // data watchpoint and trace config
-    DWT->CTRL = 0x400003FEu;
-    TPI->FFCR = 0x00000100u;*/
-
-#define CPU_FREQUENCY 120000000UL
-#define SWO_FREQUENCY 6000000UL
-#define SWOPRESCALE (((cpuFreq)/(SWO_FREQUENCY)) - 1)
-
-
+    // configure the trace unit
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // enable access to the trace component registers.
     TPI->SPPR = 0x2UL; // Selected Pin Protocol Register -> Serial Wire Viewer, UART NRZ 
-    TPI->ACPR = 4;
+    //TPI->ACPR = 3; // 30 MHz
+    TPI->ACPR = prescale;
     ITM->LAR = 0xC5ACCE55UL; // unlock the ITM
     ITM->TCR = ITM_TCR_ITMENA_Msk | ITM_TCR_TSENA_Msk | (1UL << ITM_TCR_TraceBusID_Pos)	| ITM_TCR_DWTENA_Msk | ITM_TCR_SYNCENA_Msk | ITM_TCR_SWOENA_Msk; // Enable ITM
     ITM->TER = 0xFFFFFFFF; // ITM Trace Enable Register 
