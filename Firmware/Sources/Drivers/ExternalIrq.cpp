@@ -1,4 +1,5 @@
 #include "ExternalIrq.h"
+#include "ClockMgmt.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -15,6 +16,9 @@ uint16_t ExternalIrq::gLinesEnabled{0};
  * controller is enabled.
  */
 void ExternalIrq::Init() {
+    // enable clock
+    ClockMgmt::EnableClock(ClockMgmt::Peripheral::ExtIrq, ClockMgmt::Clock::ExternalClock);
+
     // reset to defaults
     ExternalIrq::Reset();
 

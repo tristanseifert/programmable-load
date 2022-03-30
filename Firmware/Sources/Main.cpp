@@ -33,8 +33,8 @@ extern "C" int main() {
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 4}, 0); // G
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, 1); // R
 
-    Logger::Warning("Hello world!");
 
+    Logger::Warning("Hello world!");
 
     /*
      * Do early hardware initialization

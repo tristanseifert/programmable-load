@@ -23,6 +23,8 @@ void App::Main::Start() {
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
     Task::gShared = new (ptr) Task();
+
+    Logger::Debug("App main task = %p", Task::gShared);
 }
 
 /**
@@ -30,6 +32,7 @@ void App::Main::Start() {
  */
 Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
+        Logger::Debug("main task %p", ctx);
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
     }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
@@ -42,6 +45,8 @@ void Task::main() {
     int err;
     BaseType_t ok;
     uint32_t note;
+
+    Logger::Debug("MainTask: %s", "start");
 
     // initialize onboard hardware, associated busses, and devices connected thereto
     this->initHardware();

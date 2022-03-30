@@ -8,6 +8,8 @@ using namespace Rtos;
  * @brief Start the RTOS scheduler
  */
 [[noreturn]] void Rtos::StartScheduler() {
+    // start FreeRTOS scheduler
+    Logger::Debug("Starting scheduler (bits = %u)", __NVIC_PRIO_BITS);
     vTaskStartScheduler();
 
     // XXX: should never get here

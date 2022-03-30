@@ -38,6 +38,7 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
         // send to SWO
             TraceSWO::PutChar(c);
     }, nullptr, format.data(), args);
+    TraceSWO::PutChar('\n');
 #pragma clang diagnostic pop
 }
 

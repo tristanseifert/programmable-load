@@ -28,6 +28,7 @@ void TraceSWO::Init(const uint32_t cpuFreq) {
     // enable ETIM clock (register GCLK_CM4_TRACE) (GCLK0, 120MHz)
     GCLK->PCHCTRL[47].reg = GCLK_PCHCTRL_GEN_GCLK0 | GCLK_PCHCTRL_CHEN;
 
+    /*
     // calculate baud rate prescaler based on CPU frequency
     constexpr static const uint32_t kBaudRate{30'000'000};
     const uint32_t prescale = (cpuFreq / kBaudRate) - 1;
@@ -41,6 +42,7 @@ void TraceSWO::Init(const uint32_t cpuFreq) {
     ITM->TCR = ITM_TCR_ITMENA_Msk | ITM_TCR_TSENA_Msk | (1UL << ITM_TCR_TraceBusID_Pos)	| ITM_TCR_DWTENA_Msk | ITM_TCR_SYNCENA_Msk | ITM_TCR_SWOENA_Msk; // Enable ITM
     ITM->TER = 0xFFFFFFFF; // ITM Trace Enable Register 
     ITM->TPR = 0;
+    */
 }
 
 /**
