@@ -118,7 +118,7 @@ class TimerCounter {
         bool disable();
 
         void setFrequency(const uint32_t freq);
-        void setDutyCycle(const uint8_t line, const uint8_t duty);
+        void setDutyCycle(const uint8_t line, const float duty);
 
     private:
         void applyConfiguration(const Config &);
@@ -149,6 +149,8 @@ class TimerCounter {
 
         static bool CalculateFrequency(const Unit unit, const uint32_t freq, uint16_t &outPrescaler,
                 uint8_t &outPeriod);
+
+        static void SetApbClock(const Unit unit, const bool state);
 
     private:
         /**

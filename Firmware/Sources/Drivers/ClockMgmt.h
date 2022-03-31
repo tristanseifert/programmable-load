@@ -87,12 +87,30 @@ class ClockMgmt {
             SERCOM0Core                 = 7,
             /// SERCOM1 primary core clock
             SERCOM1Core                 = 8,
+            /**
+             * @brief Timer/Counter units 0 and 1
+             *
+             * Main clock for units 0 and 1 of the timer counter peripherals.
+             */
+            TC0_1                       = 9,
             /// USB peripheral
             USBController               = 10,
             /// SERCOM2 primary core clock
             SERCOM2Core                 = 23,
             /// SERCOM3 primary core clock
             SERCOM3Core                 = 24,
+            /**
+             * @brief Timer/Counter units 2 and 3
+             *
+             * Main clock for units 2 and 3 of the timer counter peripherals.
+             */
+            TC2_3                       = 26,
+            /**
+             * @brief Timer/Counter units 4 and 5
+             *
+             * Main clock for units 4 and 5 of the timer counter peripherals.
+             */
+            TC4_5                       = 30,
             /// SERCOM4 primary core clock
             SERCOM4Core                 = 34,
             /// SERCOM5 primary core clock

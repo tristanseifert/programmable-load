@@ -1,4 +1,5 @@
 #include "TimerCounter.h"
+#include "ClockMgmt.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -51,6 +52,18 @@ const uint32_t TimerCounter::kTimerClocks[kNumInstances]{
 };
 
 
+
+/**
+ * @brief Mapping of timer/counter unit to peripheral clock port
+ */
+constexpr static const ClockMgmt::Peripheral gClockPeripherals[]{
+    ClockMgmt::Peripheral::TC0_1, ClockMgmt::Peripheral::TC0_1,
+    ClockMgmt::Peripheral::TC2_3, ClockMgmt::Peripheral::TC2_3,
+    ClockMgmt::Peripheral::TC4_5, ClockMgmt::Peripheral::TC4_5,
+};
+
+
+
 /**
  * @brief Initialize the timer/counter
  *
@@ -59,6 +72,11 @@ const uint32_t TimerCounter::kTimerClocks[kNumInstances]{
  */
 TimerCounter::TimerCounter(const Unit unit, const Config &conf) : unit(unit),
     regs(MmioFor(unit)) {
+    // enable clocks
+    SetApbClock(unit, true);
+    ClockMgmt::EnableClock(gClockPeripherals[static_cast<size_t>(unit)],
+            ClockMgmt::Clock::ExternalClock);
+
     // reset its registers to default state
     REQUIRE(!(gInitialized & (1U << static_cast<uint8_t>(unit))), "cannot re-initialize TC%u",
             static_cast<unsigned int>(unit));
@@ -76,10 +94,16 @@ TimerCounter::TimerCounter(const Unit unit, const Config &conf) : unit(unit),
  * @brief Deinitialize the timer/counter
  *
  * Its outputs are disabled, and the counter is subsequently reset.
+ *
+ * @remark This does _not_ disable the GCLK, since it may be shared with another timer/counter
+ *         instance. We could implement some sort of reference counting if we really wanted to.
  */
 TimerCounter::~TimerCounter() {
     this->reset();
     gInitialized &= ~(1U << static_cast<uint8_t>(this->unit));
+
+    // disable clocks
+    SetApbClock(this->unit, false);
 }
 
 /**
@@ -177,13 +201,15 @@ void TimerCounter::setFrequency(const uint32_t freq) {
  * @brief Update duty cycle
  *
  * @param line Which of the two lines ([0,1]) to change
- * @param duty Duty cycle, where 0xFF is 100%, and 0x00 is 0%.
+ * @param duty Duty cycle, [0, 1].
  */
-void TimerCounter::setDutyCycle(const uint8_t line, const uint8_t duty) {
+void TimerCounter::setDutyCycle(const uint8_t line, const float duty) {
     REQUIRE(line <= 1, "TC%d: invalid line %u", static_cast<unsigned int>(this->unit), line);
 
-    // XXX: this is not right, it should be proportional to the value in period
-    this->regs->COUNT8.CC[line].reg = duty;
+    const float t = duty < 0.f ? 0.f : duty;
+    const float proportion = t > 1.f ? 1.f : t;
+
+    this->regs->COUNT8.CC[line].reg = static_cast<uint8_t>(static_cast<float>(this->period) * proportion);
 }
 
 /**
@@ -349,5 +375,36 @@ static uint32_t ConvertPrescaler(const uint16_t prescaler) {
             return TC_CTRLA_PRESCALER_DIV1024;
         default:
             Logger::Panic("invalid prescaler %u", prescaler);
+    }
+}
+
+/**
+ * @brief Enable the TC APB clock
+ *
+ * Enable the APB clock for the specified TCunit. This may be on any one of APBA - APBD.
+ *
+ * @param unit The TC unit whose APB clock to configure
+ * @param state Whether the clock is enabled (`true`) or not (`false`)
+ */
+void TimerCounter::SetApbClock(const Unit unit, const bool state) {
+    switch(unit) {
+        case Unit::Tc0:
+            MCLK->APBAMASK.bit.TC0_ = state ? 1 : 0;
+            break;
+        case Unit::Tc1:
+            MCLK->APBAMASK.bit.TC1_ = state ? 1 : 0;
+            break;
+        case Unit::Tc2:
+            MCLK->APBBMASK.bit.TC2_ = state ? 1 : 0;
+            break;
+        case Unit::Tc3:
+            MCLK->APBBMASK.bit.TC3_ = state ? 1 : 0;
+            break;
+        case Unit::Tc4:
+            MCLK->APBCMASK.bit.TC4_ = state ? 1 : 0;
+            break;
+        case Unit::Tc5:
+            MCLK->APBCMASK.bit.TC5_ = state ? 1 : 0;
+            break;
     }
 }
