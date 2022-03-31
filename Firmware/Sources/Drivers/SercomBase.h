@@ -237,6 +237,11 @@ class SercomBase {
          * @brief Bitfield indicating which SERCOM units are used
          */
         static uint32_t gUsed;
+
+        /**
+         * @brief Whether the slow clock for the SERCOM block has been enabled
+         */
+        static bool gSlowClockEnabled;
 };
 }
 

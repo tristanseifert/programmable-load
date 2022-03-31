@@ -1,4 +1,5 @@
 #include "SercomBase.h"
+#include "ClockMgmt.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -10,6 +11,7 @@ using namespace Drivers;
 
 SercomBase::Handler SercomBase::gHandlers[kNumHandlers]{};
 uint32_t SercomBase::gUsed{0};
+bool SercomBase::gSlowClockEnabled{false};
 
 /*
  * SERCOM fast/core clocks, from peripheral_clk_config
@@ -37,6 +39,11 @@ const uint32_t SercomBase::kFastClocks[kNumUnits]{
 #endif
 #ifdef CONF_GCLK_SERCOM4_CORE_FREQUENCY
     CONF_GCLK_SERCOM4_CORE_FREQUENCY,
+#else
+    0,
+#endif
+#ifdef CONF_GCLK_SERCOM5_CORE_FREQUENCY
+    CONF_GCLK_SERCOM5_CORE_FREQUENCY,
 #else
     0,
 #endif
@@ -71,6 +78,20 @@ const uint32_t SercomBase::kSlowClocks[kNumUnits]{
 #else
     0,
 #endif
+#ifdef CONF_GCLK_SERCOM5_SLOW_FREQUENCY
+    CONF_GCLK_SERCOM5_SLOW_FREQUENCY,
+#else
+    0,
+#endif
+};
+
+/**
+ * @brief Mapping of SERCOM unit to peripheral clock port
+ */
+constexpr static const ClockMgmt::Peripheral gClockPeripherals[]{
+    ClockMgmt::Peripheral::SERCOM0Core, ClockMgmt::Peripheral::SERCOM1Core,
+    ClockMgmt::Peripheral::SERCOM2Core, ClockMgmt::Peripheral::SERCOM3Core,
+    ClockMgmt::Peripheral::SERCOM4Core, ClockMgmt::Peripheral::SERCOM5Core,
 };
 
 
@@ -83,8 +104,20 @@ void SercomBase::MarkAsUsed(const Unit unit) {
     const uint32_t bit{1UL << static_cast<uint8_t>(unit)};
 
     taskENTER_CRITICAL();
+
+    // enable SERCOM slow clocks, if not yet done
+    if(!gSlowClockEnabled) {
+        ClockMgmt::EnableClock(ClockMgmt::Peripheral::SharedSlow, ClockMgmt::Clock::LowSpeed);
+        gSlowClockEnabled = true;
+    }
+
+    // mark it as used and enable its clock
     REQUIRE(!(gUsed & bit), "SERCOM %u already in use!", static_cast<unsigned int>(unit));
     gUsed |= bit;
+
+    ClockMgmt::EnableClock(gClockPeripherals[static_cast<size_t>(unit)],
+            ClockMgmt::Clock::HighSpeed);
+
     taskEXIT_CRITICAL();
 }
 
@@ -104,6 +137,8 @@ void SercomBase::MarkAsAvailable(const Unit unit) {
     for(size_t i = 0; i < 3; i++) {
         gHandlers[HandlerOffset(static_cast<uint8_t>(unit), i)].reset();
     }
+
+    ClockMgmt::DisableClock(gClockPeripherals[static_cast<size_t>(unit)]);
 
     taskEXIT_CRITICAL();
 }
