@@ -20,3 +20,13 @@ void ClockMgmt::EnableClock(const Peripheral periph, const Clock source) {
         GCLK_PCHCTRL_GEN(static_cast<uint32_t>(source));
 }
 
+/**
+ * @brief Disable a peripheral clock
+ *
+ * @param periph Peripheral channel whose clock is to be disabled
+ */
+void ClockMgmt::DisableClock(const Peripheral periph) {
+    auto temp = GCLK->PCHCTRL[static_cast<size_t>(periph)].reg;
+    temp &= ~GCLK_PCHCTRL_CHEN;
+    GCLK->PCHCTRL[static_cast<size_t>(periph)].reg = temp;
+}
