@@ -94,7 +94,7 @@ class ClockMgmt {
              */
             TC0_1                       = 9,
             /// USB peripheral
-            USBController               = 10,
+            Usb                         = 10,
             /// SERCOM2 primary core clock
             SERCOM2Core                 = 23,
             /// SERCOM3 primary core clock

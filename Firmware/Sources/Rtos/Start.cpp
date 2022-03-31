@@ -9,7 +9,7 @@ using namespace Rtos;
  */
 [[noreturn]] void Rtos::StartScheduler() {
     // start FreeRTOS scheduler
-    Logger::Debug("Starting scheduler (bits = %u)", __NVIC_PRIO_BITS);
+    Logger::Debug("Starting scheduler");
     vTaskStartScheduler();
 
     // XXX: should never get here

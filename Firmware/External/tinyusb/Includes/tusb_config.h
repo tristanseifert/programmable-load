@@ -10,7 +10,7 @@
 #define TUSB_CONFIG_H
 
 /// We're on an Atmel SAMD5x chip
-#define CFG_TUSB_MCU                    OPT_MCU_SAMD51
+#define CFG_TUSB_MCU                    OPT_MCU_SAME5X
 
 /// Put the controller into USB Full Speed device operation
 #define CFG_TUSB_RHPORT0_MODE           (OPT_MODE_DEVICE | OPT_MODE_FULL_SPEED)

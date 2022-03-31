@@ -1,10 +1,12 @@
 #include "Usb.h"
 #include "Task.h"
 
+#include "Drivers/ClockMgmt.h"
 #include "Drivers/Gpio.h"
 #include "Log/Logger.h"
 
 #include <tusb.h>
+#include <vendor/sam.h>
 
 using namespace UsbStack;
 
@@ -20,6 +22,11 @@ constexpr static const Drivers::Gpio::Pin kUsbDm{
 static void InitHardware();
 
 void UsbStack::Init() {
+    // enable the AHB and peripheral clocks
+    MCLK->AHBMASK.bit.USB_ = 1;
+    Drivers::ClockMgmt::EnableClock(Drivers::ClockMgmt::Peripheral::Usb,
+            Drivers::ClockMgmt::Clock::Usb);
+
     // set up hardware first
     Logger::Trace("USB init %s", "hardware");
     InitHardware();

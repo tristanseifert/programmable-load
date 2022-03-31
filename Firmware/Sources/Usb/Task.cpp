@@ -44,6 +44,7 @@ Task::Task() {
  */
 void Task::main() {
     // TODO: get serial number for serial number descriptor
+    Logger::Trace("%s: start", "USB");
 
     // init USB stack
     tusb_init();

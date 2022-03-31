@@ -61,8 +61,8 @@ extern "C" int main() {
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 4}, 0); // G
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, 1); // R
 
-    Logger::Warning("\n\n**********\nProgrammable load fw (%s)\n%s@%s, on %s)",
-            gBuildInfo.buildType,
+    Logger::Warning("\n\n**********\nProgrammable load fw (%s/%s-%s)\n%s@%s, on %s)",
+            gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
             gBuildInfo.buildUser, gBuildInfo.buildHost, gBuildInfo.buildDate);
 
     /*
