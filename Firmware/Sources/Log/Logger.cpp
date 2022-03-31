@@ -58,6 +58,25 @@ void Logger::Panic() {
 }
 
 /**
+ * @brief C panic function
+ *
+ * Mimics a real panic from a C only source file (such as FreeRTOS)
+ *
+ * @param fmt Format string
+ * @param ... Arguments to format (in format string)
+ */
+extern "C" void log_panic(const char *fmt, ...) {
+    using Level = Log::Logger::Level;
+
+    va_list va;
+    va_start(va, fmt);
+    Log::Logger::Log(Level::Error, fmt, va);
+    va_end(va);
+
+    Logger::Panic();
+}
+
+/**
  * @brief C logging thunk
  *
  * Calls through to the actual logging implementation from C.

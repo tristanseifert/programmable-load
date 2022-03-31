@@ -1,5 +1,6 @@
 #include "TraceSWO.h"
 
+#include "Drivers/ClockMgmt.h"
 #include "Drivers/Gpio.h"
 
 #include <vendor/sam.h>
@@ -27,22 +28,23 @@ void TraceSWO::Init(const uint32_t cpuFreq) {
 
     // enable ETIM clock (register GCLK_CM4_TRACE) (GCLK0, 120MHz)
     GCLK->PCHCTRL[47].reg = GCLK_PCHCTRL_GEN_GCLK0 | GCLK_PCHCTRL_CHEN;
+    Drivers::ClockMgmt::EnableClock(Drivers::ClockMgmt::Peripheral::Itm,
+            Drivers::ClockMgmt::Clock::HighSpeed);
 
-    /*
     // calculate baud rate prescaler based on CPU frequency
-    constexpr static const uint32_t kBaudRate{30'000'000};
-    const uint32_t prescale = (cpuFreq / kBaudRate) - 1;
+    //constexpr static const uint32_t kBaudRate{3'000'000};
+    //constexpr static const uint32_t kBaudRate{64'000};
+    //const uint32_t prescale = (cpuFreq / kBaudRate) - 1;
 
     // configure the trace unit
     CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk; // enable access to the trace component registers.
     TPI->SPPR = 0x2UL; // Selected Pin Protocol Register -> Serial Wire Viewer, UART NRZ 
-    //TPI->ACPR = 3; // 30 MHz
-    TPI->ACPR = prescale;
+    //TPI->ACPR = prescale;
+    TPI->ACPR = 4; // 30 MHz
     ITM->LAR = 0xC5ACCE55UL; // unlock the ITM
     ITM->TCR = ITM_TCR_ITMENA_Msk | ITM_TCR_TSENA_Msk | (1UL << ITM_TCR_TraceBusID_Pos)	| ITM_TCR_DWTENA_Msk | ITM_TCR_SYNCENA_Msk | ITM_TCR_SWOENA_Msk; // Enable ITM
     ITM->TER = 0xFFFFFFFF; // ITM Trace Enable Register 
     ITM->TPR = 0;
-    */
 }
 
 /**

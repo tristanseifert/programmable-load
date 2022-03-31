@@ -23,8 +23,6 @@ void App::Main::Start() {
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
     Task::gShared = new (ptr) Task();
-
-    Logger::Debug("App main task = %p", Task::gShared);
 }
 
 /**
@@ -32,7 +30,6 @@ void App::Main::Start() {
  */
 Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
-        Logger::Debug("main task %p", ctx);
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
     }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
@@ -127,6 +124,8 @@ void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init io i2c");
 
     Hw::InitIoBus();
+
+    Logger::Debug("MainTask: %s", "init io i2c bus mux");
     Hw::InitIoBusMux(ioBusses);
 
     Logger::Trace("IO busses: %p %p", ioBusses[0], ioBusses[1]);

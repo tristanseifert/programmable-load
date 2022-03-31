@@ -44,9 +44,10 @@ MEMORY
 /*
  * Size of the stack
  *
- * This is only used at initialization, before the FreeRTOS scheduler is started.
+ * This is only used at initialization, before the FreeRTOS scheduler is started; as well as for
+ * interrupt handlers.
  */
-STACK_SIZE = DEFINED(STACK_SIZE) ? STACK_SIZE : DEFINED(__stack_size__) ? __stack_size__ : 0x1000;
+STACK_SIZE = 0x800;
 
 /* Section Definitions */
 SECTIONS

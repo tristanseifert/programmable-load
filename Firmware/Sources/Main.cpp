@@ -7,6 +7,34 @@
 
 #include "Drivers/Gpio.h"
 
+#include "BuildInfo.h"
+
+#include <timers.h>
+
+static TimerHandle_t gBlinkyTimer;
+
+/**
+ * Blinky timer callback
+ */
+static void BlinkyTimerCallback(TimerHandle_t timer) {
+    static uint8_t temp{0};
+
+    Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortA, 3}, !!(temp & 0b10)); // B
+    Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, !!(temp & 0b001)); // R
+
+    temp++;
+}
+
+/**
+ * Create a blinky timer (for testing)
+ */
+static void CreateBlinkyTimer() {
+    static StaticTimer_t gStaticTimer;
+
+    gBlinkyTimer = xTimerCreateStatic("blinky", pdMS_TO_TICKS(250), pdTRUE, nullptr, BlinkyTimerCallback, &gStaticTimer);
+    xTimerStart(gBlinkyTimer, 0);
+}
+
 /**
  * @brief Application entry point
  *
@@ -33,8 +61,9 @@ extern "C" int main() {
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 4}, 0); // G
     Drivers::Gpio::SetOutputState({Drivers::Gpio::Port::PortB, 5}, 1); // R
 
-
-    Logger::Warning("Hello world!");
+    Logger::Warning("\n\n**********\nProgrammable load fw (%s)\n%s@%s, on %s)",
+            gBuildInfo.buildType,
+            gBuildInfo.buildUser, gBuildInfo.buildHost, gBuildInfo.buildDate);
 
     /*
      * Do early hardware initialization
@@ -51,6 +80,8 @@ extern "C" int main() {
      * initialization stage is over, the task handles the user interface.
      */
     App::Main::Start();
+
+    CreateBlinkyTimer();
 
     // then, start the scheduler
     Rtos::StartScheduler();

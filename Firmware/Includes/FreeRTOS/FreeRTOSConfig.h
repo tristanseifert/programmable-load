@@ -11,6 +11,8 @@
 
 #include <vendor/sam.h>
 
+extern void log_panic(const char *fmt, ...);
+
 /// enable preemptive multithreading
 #define configUSE_PREEMPTION                                    1
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION                 1
@@ -134,7 +136,11 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
  *
  * Same semantics as assert() from the C library; we should make this actually do stuff.
  */
-#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+#define configASSERT( x ) if( ( x ) == 0 ) { \
+    taskDISABLE_INTERRUPTS();\
+    log_panic("FreeRTOS assertion failure: %s (at %s:%u)", "##x", __FILE__, __LINE__);\
+    for( ;; );\
+}\
 
 /*
  * Map the FreeRTOS interrupt handler names to the CMSIS equivalents.

@@ -68,6 +68,7 @@ add_executable(firmware
     Sources/Init/Startup.cpp
     Sources/Init/StackGuard.cpp
     Sources/Init/CppHeap.cpp
+    Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
     Sources/Log/Logger.cpp
     Sources/Log/TraceSWO.cpp

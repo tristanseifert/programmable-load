@@ -6,6 +6,8 @@
 
 #include <etl/string_view.h>
 
+extern "C" void log_panic(const char *, ...);
+
 /// Log message handling
 namespace Log {
 /**
@@ -16,6 +18,8 @@ namespace Log {
  * persistent storage for later retrieval.
  */
 class Logger {
+    friend void ::log_panic(const char *, ...);
+
     public:
         /**
          * @brief Log level

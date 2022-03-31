@@ -61,6 +61,11 @@ class ClockMgmt {
              * @brief External interrupt controller
              */
             ExtIrq                      = 4,
+
+            /**
+             * @brief ITM (trace unit)
+             */
+            Itm                         = 47,
         };
 
     public:
