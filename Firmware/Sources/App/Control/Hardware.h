@@ -66,6 +66,9 @@ class Hw {
     public:
         static void Init();
 
+        static void PulseReset();
+        static void SetResetState(const bool asserted);
+
     private:
         /**
          * @brief Driver control bus

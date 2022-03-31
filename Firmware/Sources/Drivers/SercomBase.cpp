@@ -115,6 +115,7 @@ void SercomBase::MarkAsUsed(const Unit unit) {
     REQUIRE(!(gUsed & bit), "SERCOM %u already in use!", static_cast<unsigned int>(unit));
     gUsed |= bit;
 
+    SetApbClock(unit, true);
     ClockMgmt::EnableClock(gClockPeripherals[static_cast<size_t>(unit)],
             ClockMgmt::Clock::HighSpeed);
 
@@ -139,6 +140,7 @@ void SercomBase::MarkAsAvailable(const Unit unit) {
     }
 
     ClockMgmt::DisableClock(gClockPeripherals[static_cast<size_t>(unit)]);
+    SetApbClock(unit, false);
 
     taskEXIT_CRITICAL();
 }
@@ -178,9 +180,47 @@ void SercomBase::RegisterHandler(const Unit unit, const uint8_t irq, void (*fn)(
     taskEXIT_CRITICAL();
 }
 
+
+
+/**
+ * @brief Enable the SERCOM APB clock
+ *
+ * Enable the APB clock for the specified SERCOM unit. This may be on any one of APBA - APBD.
+ *
+ * @param unit The SERCOM unit whose APB clock to configure
+ * @param state Whether the clock is enabled (`true`) or not (`false`)
+ */
+void SercomBase::SetApbClock(const Unit unit, const bool state) {
+    switch(unit) {
+        case Unit::Unit0:
+            MCLK->APBAMASK.bit.SERCOM0_ = state ? 1 : 0;
+            break;
+        case Unit::Unit1:
+            MCLK->APBAMASK.bit.SERCOM1_ = state ? 1 : 0;
+            break;
+        case Unit::Unit2:
+            MCLK->APBBMASK.bit.SERCOM2_ = state ? 1 : 0;
+            break;
+        case Unit::Unit3:
+            MCLK->APBBMASK.bit.SERCOM3_ = state ? 1 : 0;
+            break;
+        case Unit::Unit4:
+            MCLK->APBDMASK.bit.SERCOM4_ = state ? 1 : 0;
+            break;
+        case Unit::Unit5:
+            MCLK->APBDMASK.bit.SERCOM5_ = state ? 1 : 0;
+            break;
+    }
+}
+
+
+
 #define CallHandler(unit,irq) { \
     using S = Drivers::SercomBase;\
     const auto &h = S::gHandlers[S::HandlerOffset(unit, irq)];\
+    if(!h.fn) {\
+        Logger::Panic("unhandled SERCOM%u irq %u", unit, irq);\
+    }\
     h.fn(h.ctx);\
 }
 

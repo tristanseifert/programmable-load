@@ -120,7 +120,6 @@ void Task::initHardware() {
      * bus is shared with some peripherals on the processor board.
      */
     etl::array<Drivers::I2CBus *, 2> ioBusses{};
-
     Logger::Debug("MainTask: %s", "init io i2c");
 
     Hw::InitIoBus();

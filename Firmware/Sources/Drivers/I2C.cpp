@@ -20,7 +20,7 @@ using namespace Drivers;
  */
 I2C::I2C(const SercomBase::Unit unit, const Config &conf) : unit(unit),
     regs(&(SercomBase::MmioFor(unit)->I2CM)) {
-    // mark the underlying SERCOM as used
+    // mark the underlying SERCOM as used and enable clocking resources
     SercomBase::MarkAsUsed(unit);
 
     // allocate locks
@@ -43,9 +43,27 @@ I2C::I2C(const SercomBase::Unit unit, const Config &conf) : unit(unit),
      */
     NVIC_SetPriority(SercomBase::GetIrqVector(unit, 0),
             configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+    NVIC_SetPriority(SercomBase::GetIrqVector(unit, 1),
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+    NVIC_SetPriority(SercomBase::GetIrqVector(unit, 2),
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+    NVIC_SetPriority(SercomBase::GetIrqVector(unit, 3),
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
 
     SercomBase::RegisterHandler(unit, 0, [](void *ctx) {
-        reinterpret_cast<I2C *>(ctx)->irqHandler();
+        reinterpret_cast<I2C *>(ctx)->irqMasterOnBus();
+    }, this);
+    SercomBase::RegisterHandler(unit, 1, [](void *ctx) {
+        /*
+         * XXX: is this the right thing to do?
+         *
+         * the "master on bus" handler correctly deals with receiving data, based on the status
+         * flags, so it should be fine to call here instead of building a separate handler.
+         */
+        reinterpret_cast<I2C *>(ctx)->irqMasterOnBus();
+    }, this);
+    SercomBase::RegisterHandler(unit, 3, [](void *ctx) {
+        reinterpret_cast<I2C *>(ctx)->irqError();
     }, this);
 
     this->regs->INTENSET.reg = SERCOM_I2CM_INTENSET_MB | SERCOM_I2CM_INTENSET_SB |
@@ -85,6 +103,9 @@ void I2C::reset() {
 
     // disable IRQs in NVIC
     NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 0));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 1));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 2));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 3));
 
     // reset the peripheral and wait
     taskENTER_CRITICAL();
@@ -124,6 +145,9 @@ void I2C::enable() {
 
     // enable interrupts
     NVIC_EnableIRQ(SercomBase::GetIrqVector(this->unit, 0));
+    NVIC_EnableIRQ(SercomBase::GetIrqVector(this->unit, 1));
+    NVIC_EnableIRQ(SercomBase::GetIrqVector(this->unit, 2));
+    NVIC_EnableIRQ(SercomBase::GetIrqVector(this->unit, 3));
     taskEXIT_CRITICAL();
 }
 
@@ -140,6 +164,9 @@ void I2C::disable() {
     // disable interrupts
     taskENTER_CRITICAL();
     NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 0));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 1));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 2));
+    NVIC_DisableIRQ(SercomBase::GetIrqVector(this->unit, 3));
 
     // set the bit
     this->regs->CTRLA.reg &= ~SERCOM_I2CM_CTRLA_ENABLE;
@@ -246,14 +273,15 @@ beach:;
 
 
 /**
- * @brief Interrupt handler
+ * @brief Master on bus interrupt handler
  *
- * Invoked when the SERCOM irq 0 / "Master on Bus" fires.
+ * Invoked when the SERCOM irq 0 / "Master on Bus" fires. It drives the bus state machine in
+ * master mode.
  */
-void I2C::irqHandler() {
+void I2C::irqMasterOnBus() {
     BaseType_t woken{0};
     const uint8_t irqs{this->regs->INTFLAG.reg};
-    const uint32_t status{this->regs->STATUS.reg};
+    const uint16_t status{this->regs->STATUS.reg};
     bool prepareForNext{false}, needsStop{true};
 
     const auto &txn = this->currentTxns[this->currentTxn];
@@ -418,7 +446,8 @@ void I2C::irqHandler() {
 
                 needsStop = false;
 
-                Logger::Panic("SERCOM I2C irq error: state %u (irq %02x status %08x)",
+                Logger::Panic("SERCOM%u I2C irq error: state %u (irq %02x status %08x)",
+                        static_cast<unsigned int>(this->unit),
                         static_cast<unsigned int>(this->state), irqs, status);
             }
 
@@ -457,7 +486,8 @@ void I2C::irqHandler() {
                 this->issueStop();
                 this->irqCompleteTxn(Errors::ReceptionError, &woken);
 
-                Logger::Panic("SERCOM I2C irq error: state %u (irq %02x status %08x)",
+                Logger::Panic("SERCOM%u I2C irq error: state %u (irq %02x status %08x)",
+                        static_cast<unsigned int>(this->unit),
                         static_cast<unsigned int>(this->state), irqs, status);
             }
             break;
@@ -468,7 +498,8 @@ void I2C::irqHandler() {
          * This should really never happen
          */
         case State::Idle:
-            Logger::Panic("Invalid SERCOM I2C state: %u (irq %02x status %08x)",
+            Logger::Panic("Invalid SERCOM%u I2C state: %u (irq %02x status %04x)",
+                    static_cast<unsigned int>(this->unit),
                     static_cast<unsigned int>(this->state), irqs, status);
             break;
     }
@@ -490,7 +521,7 @@ void I2C::irqHandler() {
          * notify the task.
          */
         if(this->currentTxn == (this->currentTxns.size() - 1)) {
-            if(!needsStop) this->issueStop();
+            if(needsStop) this->issueStop();
             this->irqCompleteTxn(0, &woken);
 
             this->state = State::Idle;
@@ -507,6 +538,42 @@ void I2C::irqHandler() {
             this->beginTransaction(this->currentTxns[++this->currentTxn], needsStop);
         }
     }
+
+    portYIELD_FROM_ISR(woken);
+}
+
+/**
+ * @brief I2C error interrupt
+ *
+ * Handles a bus error; the current transsaction is aborted.
+ */
+void I2C::irqError() {
+    BaseType_t woken{0};
+    const uint16_t status{this->regs->STATUS.reg};
+
+    /*
+     * Handle a bus error - this likely means one of the IO lines is stuck low. We'll want to
+     * go bus off at this point.
+     */
+    if(status & SERCOM_I2CM_STATUS_BUSERR) {
+        this->regs->STATUS.reg = SERCOM_I2CM_STATUS_BUSSTATE(0b00) | SERCOM_I2CM_STATUS_BUSERR;
+        this->irqCompleteTxn(Errors::BusError, &woken);
+    }
+    /**
+     * Arbitration was lost to another master. If there is not a multimaster, this may indicate
+     * the pull-ups are not working right.
+     */
+    else if(status & SERCOM_I2CM_STATUS_ARBLOST) {
+        this->regs->STATUS.reg = SERCOM_I2CM_STATUS_BUSSTATE(0b00) | SERCOM_I2CM_STATUS_ARBLOST;
+        this->irqCompleteTxn(Errors::ArbitrationLost, &woken);
+    }
+    // unknown error
+    else {
+        Logger::Panic("Unhandled SERCOM%u I2C error: status = %04x", (unsigned) this->unit, status);
+    }
+
+    // clear errors
+    this->regs->INTFLAG.reg = SERCOM_I2CM_INTFLAG_ERROR;
 
     portYIELD_FROM_ISR(woken);
 }

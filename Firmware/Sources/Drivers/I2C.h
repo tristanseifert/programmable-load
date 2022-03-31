@@ -80,6 +80,13 @@ class I2C: public I2CBus {
              * Something went wrong while sending data to the slave.
              */
             TransmissionError           = -107,
+            /**
+             * @brief Arbitration lost
+             *
+             * Arbitration on the bus was lost while trying to transmit a high data bit or NACK; or
+             * while issuing a start or restart.
+             */
+            ArbitrationLost             = -108,
 
             /**
              * @brief Unspecified error
@@ -146,7 +153,9 @@ class I2C: public I2CBus {
     private:
         void waitSysOpSync();
 
-        void irqHandler();
+        void irqMasterOnBus();
+        void irqError();
+
         void irqCompleteTxn(const int status, BaseType_t *woken);
         void beginTransaction(const Transaction &txn, const bool needsStop = true);
 
@@ -179,10 +188,10 @@ class I2C: public I2CBus {
 
     private:
         enum class State: uint8_t {
-            Idle,
-            SendAddress,
-            ReadData,
-            WriteData,
+            Idle                        = 0,
+            SendAddress                 = 1,
+            ReadData                    = 2,
+            WriteData                   = 3,
         };
 
     private:

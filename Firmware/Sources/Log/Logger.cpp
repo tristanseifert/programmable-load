@@ -49,7 +49,7 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
  */
 void Logger::Panic() {
     // print a message
-    Error("Panic! halting system");
+    Error("Panic! at the system, halting");
 
     __disable_irq();
     __BKPT(0xf3);

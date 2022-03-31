@@ -23,12 +23,17 @@ PCA9543A::PCA9543A(const uint8_t address, Drivers::I2CBus *parent) : bus(parent)
     uint8_t status{0};
 
     err = this->readStatus(status);
-    REQUIRE(!err, "%s: failed to read status: %d", "PCA9543A", err);
+    REQUIRE(!err, "%s: failed to %s: %d", "PCA9543A", "read status", err);
 
     if(status & (1 << 0)) {
         this->activeBus = 0;
     } else if(status & (1 << 1)) {
         this->activeBus = 1;
+    }
+    // if both busses are active, disable them
+    else if((status & 0b11) == 0b11) {
+        err = this->sendPacket(0);
+        REQUIRE(!err, "%s: failed to %s: %d", "PCA9543A", "reset port", err);
     }
 }
 

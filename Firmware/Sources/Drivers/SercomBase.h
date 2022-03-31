@@ -86,6 +86,8 @@ class SercomBase {
         static void MarkAsUsed(const Unit unit);
         static void MarkAsAvailable(const Unit unit);
 
+        static void SetApbClock(const Unit unit, const bool state);
+
         /**
          * @brief Get offset into IRQ handler array
          *
