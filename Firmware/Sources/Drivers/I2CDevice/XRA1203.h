@@ -1,6 +1,8 @@
 #ifndef DRIVERS_I2CDEVICE_XRA1203_H
 #define DRIVERS_I2CDEVICE_XRA1203_H
 
+#include "Common.h"
+
 #include <stdint.h>
 
 #include <etl/span.h>
@@ -169,10 +171,28 @@ class XRA1203 {
             IFR2                        = 0x15,
         };
 
-        int writeRegister(const Register reg, const uint8_t value);
-        int writeRegister(const Register reg, const uint16_t value);
+        /**
+         * @brief Write a device register
+         *
+         * @param reg Device register to write
+         * @param value Data to write into the register
+         */
+        int writeRegister(const Register reg, const uint8_t value) {
+            return Common::WriteRegister(this->bus, this->deviceAddress, static_cast<uint8_t>(reg),
+                    value);
+        }
+        /**
+         * @brief Read a device register
+         *
+         * @param reg Device register to read
+         * @param value Variable to receive register data
+         */
+        int readRegister(const Register reg, uint8_t &outValue) {
+            return Common::ReadRegister(this->bus, this->deviceAddress, static_cast<uint8_t>(reg),
+                    outValue);
+        }
 
-        int readRegister(const Register reg, uint8_t &outValue);
+        int writeRegister(const Register reg, const uint16_t value);
         int readRegister(const Register reg, uint16_t &outValue);
 
     private:

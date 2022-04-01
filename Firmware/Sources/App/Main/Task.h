@@ -81,7 +81,6 @@ class Task {
         void main();
 
         void initHardware();
-        void initOnboardPeripherals();
         void initNorFs();
         void discoverIoHardware();
         void discoverDriverHardware();

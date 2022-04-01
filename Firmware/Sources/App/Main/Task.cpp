@@ -47,7 +47,6 @@ void Task::main() {
 
     // initialize onboard hardware, associated busses, and devices connected thereto
     this->initHardware();
-    this->initOnboardPeripherals();
     this->initNorFs();
 
     this->discoverIoHardware();
@@ -144,25 +143,6 @@ void Task::initHardware() {
      * - EMC2101-R: Fan controller (rear IO bus; address 0b100'1100)
      */
     Thermal::Hw::InitFanController(ioBusses[1]);
-}
-
-/**
- * @brief Initialize onboard peripherals
- *
- * Using the previously initialized busses, initialize some on-board peripherals. This consists of
- * the following:
- *
- * - Front/rear IO bus multiplexer (PCA9543A)
- *   - On rear IO bus: Fan controller (EMC2101-R)
- */
-void Task::initOnboardPeripherals() {
-    Logger::Debug("MainTask: %s", "init onboard periph");
-
-    // initialize bus multiplexer
-
-    // set up the busses into the user interface handler
-
-    // TODO: initialize the fan controller
 }
 
 /**

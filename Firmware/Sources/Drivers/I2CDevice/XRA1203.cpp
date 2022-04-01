@@ -190,33 +190,6 @@ int XRA1203::writeRegister(const Register reg, const uint16_t value) {
 }
 
 /**
- * @brief Write a single register
- *
- * Write a byte to a single register
- *
- * @param reg Register to write
- * @param value 8-bit value to write to register
- *
- * @return 0 on success, or an error code
- */
-int XRA1203::writeRegister(const Register reg, const uint8_t value) {
-    etl::array<uint8_t, 2> request{
-        static_cast<uint8_t>(reg), value,
-    };
-
-    etl::array<I2CBus::Transaction, 1> txns{{
-        {
-            .address = this->deviceAddress,
-            .read = 0,
-            .length = 2,
-            .data = request
-        },
-    }};
-
-    return this->bus->perform(txns);
-}
-
-/**
  * @brief Read the upper and lower part of a register
  *
  * @param reg First (high) register to read
@@ -237,7 +210,7 @@ int XRA1203::readRegister(const Register reg, uint16_t &outValue) {
         {
             .address = this->deviceAddress,
             .read = 0,
-            .length = 1,
+            .length = request.size(),
             .data = request
         },
         // read two bytes of register data
@@ -245,7 +218,7 @@ int XRA1203::readRegister(const Register reg, uint16_t &outValue) {
             .address = this->deviceAddress,
             .read = 1,
             .continuation = 1,
-            .length = 2,
+            .length = reply.size(),
             .data = reply
         },
     }};
