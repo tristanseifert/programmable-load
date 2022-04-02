@@ -6,8 +6,8 @@
 
   (title_block
     (title "Dual Programmable Load Driver")
-    (date "2022-03-10")
-    (rev "1")
+    (date "2022-04-01")
+    (rev "2")
     (comment 1 "Input/feedback resistors on U602 must be .1%, low tempco")
     (comment 2 "RV601 adjusts VSense null offset")
   )
@@ -2017,6 +2017,8 @@
     (pin "5" (uuid 57720bc8-0801-4e96-bfa2-8a79d938dc8d))
     (pin "6" (uuid ad4f63cc-e59e-4e0b-a27c-968393a0cfb1))
     (pin "8" (uuid 90b439cb-9e5c-460e-94f3-2c3e70ed015d))
+    (pin "4" (uuid 5ac3b4ac-c1f2-49dd-a705-0aeaa9bf311a))
+    (pin "7" (uuid ca5a467b-0e68-4768-9f42-38cf25e17e48))
   )
 
   (symbol (lib_id "power:VBUS") (at 254 56.515 270) (unit 1)
@@ -2369,6 +2371,12 @@
     (property "Datasheet" "https://www.analog.com/media/en/technical-documentation/data-sheets/OP179_279.pdf" (id 3) (at 50.165 149.225 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+    (pin "1" (uuid 97258442-9bd5-4695-a117-7232ccdc9040))
+    (pin "2" (uuid ad047d69-d9b9-4962-8720-06c7bfaa376b))
+    (pin "3" (uuid 18ea2b2d-140e-4b14-971d-ba1a9d5c5edb))
+    (pin "5" (uuid bfaa51d1-b0a2-4e02-81cf-c113a76b4725))
+    (pin "6" (uuid ee3bf617-56c3-4dd7-8170-ff1e7ef786ae))
+    (pin "8" (uuid e9e3253e-5eb3-4b7b-8499-f2b6d21c1201))
     (pin "4" (uuid 4de9279a-b07f-4f7e-aab0-f327e33ef73f))
     (pin "7" (uuid 3a596cba-66e4-429b-934a-013945fa196e))
   )

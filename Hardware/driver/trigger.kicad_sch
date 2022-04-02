@@ -6,8 +6,8 @@
 
   (title_block
     (title "Dual Programmable Load Driver")
-    (date "2022-03-10")
-    (rev "1")
+    (date "2022-04-01")
+    (rev "2")
     (comment 1 "External trigger circuit (for transient mode)")
     (comment 2 "RV501 adjusts pulse width")
   )
