@@ -38,6 +38,12 @@ void Hw::Init() {
         .function = MUX_PB09A_EIC_EXTINT9,
         .pinMuxEnable = 1,
     });
+    Drivers::Gpio::ConfigurePin(kExternalTrigger, {
+        .mode = Drivers::Gpio::Mode::DigitalIn,
+        .pull = Drivers::Gpio::Pull::Up,
+        .function = MUX_PB11A_EIC_EXTINT11,
+        .pinMuxEnable = 1,
+    });
 
     /*
      * Configure external interrupts for the driver IRQ line, and the trigger input.

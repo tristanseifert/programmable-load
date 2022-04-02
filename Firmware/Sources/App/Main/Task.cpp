@@ -1,6 +1,7 @@
 #include "Task.h"
 #include "Hardware.h"
 #include "../Control/Hardware.h"
+#include "../Control/Task.h"
 #include "../Pinball/Hardware.h"
 #include "../Pinball/Task.h"
 #include "../Thermal/Hardware.h"
@@ -201,4 +202,5 @@ void Task::startApp() {
 
     Thermal::Start();
     Pinball::Start();
+    Control::Start();
 }

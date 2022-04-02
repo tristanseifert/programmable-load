@@ -16,6 +16,8 @@ namespace App::Control {
  * control I²C bus, and a few related GPIOs.
  */
 class Hw {
+    friend class Task;
+
     /**
      * @brief External trigger input
      *

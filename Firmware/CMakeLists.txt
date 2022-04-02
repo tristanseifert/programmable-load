@@ -99,6 +99,7 @@ add_executable(firmware
     Sources/App/Thermal/Hardware.cpp
     Sources/App/Thermal/Task.cpp
     Sources/App/Control/Hardware.cpp
+    Sources/App/Control/Task.cpp
     ${BuildInfoFile}
 )
 
