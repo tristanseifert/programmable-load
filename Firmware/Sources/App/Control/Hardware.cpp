@@ -1,4 +1,5 @@
 #include "Hardware.h"
+#include "Task.h"
 
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
@@ -145,9 +146,13 @@ void Hw::SetResetState(const bool asserted) {
  * Driver board asserted its interrupt line.
  */
 void EIC_9_Handler() {
+    BaseType_t woken{0};
+
     if(Drivers::ExternalIrq::HandleIrq(9)) {
-        // TODO: implement
+        Task::NotifyFromIsr(Task::TaskNotifyBits::IrqAsserted, &woken);
     }
+
+    portYIELD_FROM_ISR(woken);
 }
 
 /**
@@ -156,7 +161,11 @@ void EIC_9_Handler() {
  * Indicates a falling edge was detected on the trigger input.
  */
 void EIC_11_Handler() {
+    BaseType_t woken{0};
+
     if(Drivers::ExternalIrq::HandleIrq(11)) {
-        // TODO: implement
+        Task::NotifyFromIsr(Task::TaskNotifyBits::ExternalTrigger, &woken);
     }
+
+    portYIELD_FROM_ISR(woken);
 }
