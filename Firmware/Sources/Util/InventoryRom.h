@@ -31,7 +31,58 @@ class InventoryRom {
              * @brief An invalid header was read
              */
             InvalidType                 = -50001,
+
+            /**
+             * @brief Invalid IDPROM header
+             *
+             * The header in the IDPROM was invalid. This could mean the magic value did not
+             * match, the version is incorrect, or the size/atom start values are nonsensical.
+             */
+            InvalidHeader               = -50002,
         };
+
+        /**
+         * @brief Inventory ROM header
+         *
+         * This header is found at the start of the IDPROM.
+         */
+        struct IdpromHeader {
+            /**
+             * @brief Magic value
+             *
+             * This should be set to kMagicValue.
+             */
+            uint32_t magic;
+
+            /**
+             * @brief Header length
+             *
+             * Size of the header, in bytes, including the magic value.
+             */
+            uint8_t size;
+
+            /**
+             * @brief Header version
+             *
+             * Defines the version of both the header itself and the data contained within, used
+             * to parse the header correctly. It is divided into major and minor versions in the
+             * high and low nybbles, respectively.
+             *
+             * Currently, the only supported version is 0x10.
+             */
+            uint8_t version;
+
+            /**
+             * @brief Offset to atom list
+             *
+             * Byte offset from the start of the header to the atom list.
+             */
+            uint16_t firstAtom;
+
+            /// Expected magic value
+            constexpr static const uint32_t kMagicValue{'INVi'};
+        } __attribute__((packed));
+        static_assert(sizeof(IdpromHeader) < 16, "IDPROM header too large!");
 
         /**
          * @brief Types of atoms
@@ -82,6 +133,14 @@ class InventoryRom {
              * All atom values above this are reserved for the application's interpretation.
              */
             AppSpecific                 = 0x40,
+
+            /**
+             * @brief Driver board ratings
+             *
+             * A list of two 32-bit integers; the first indicates the maximum supported input
+             * voltage (in mV) and the second the maximum load current, in mA.
+             */
+            DriverRating                = AppSpecific + 0,
 
             /**
              * @brief Invalid header type
@@ -162,7 +221,7 @@ class InventoryRom {
         using AtomDataCallback = void(*)(const AtomHeader &header,
                 etl::span<const uint8_t> buffer, void *ctx);
 
-        static int GetAtoms(const uintptr_t startAddress, ReaderCallback reader, void *readerCtx,
+        static int GetAtoms(ReaderCallback reader, void *readerCtx,
                 AtomCallback atomCallback, void *atomCallbackCtx,
                 AtomDataCallback atomDataCallback, void *atomDataCallbackCtx);
 };

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Rtos/Rtos.h"
+#include "Util/Uuid.h"
 
 #include <etl/string_view.h>
 
@@ -111,6 +112,11 @@ class Task {
     private:
         /// Task handle
         TaskHandle_t task;
+
+        /// Hardware revision of front panel board
+        uint16_t frontRev{0};
+        /// Front panel driver id
+        Util::Uuid frontDriverId;
 
     private:
         /// Runtime priority level

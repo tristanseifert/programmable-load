@@ -7,6 +7,8 @@
 #include "Drivers/I2CDevice/AT24CS32.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
+#include "Util/Base32.h"
+#include "Util/InventoryRom.h"
 
 #include <etl/array.h>
 
@@ -98,6 +100,7 @@ void Task::main() {
 void Task::detectFrontPanel() {
     int err;
     etl::array<uint8_t, 16> serial;
+    etl::array<char, 28> serialBase32;
 
     // try to read the serial number EEPROM
     Drivers::I2CDevice::AT24CS32 eeprom(Hw::gFrontI2C);
@@ -109,10 +112,69 @@ void Task::detectFrontPanel() {
     }
 
     // TODO: run it through base32 or something else to make it less crappy to look at
+    Util::Base32::Encode(serial, serialBase32);
     Logger::Notice("front panel serial: %02x%02x%02x%02x%02x%02x%02x%02x"
             "%02x%02x%02x%02x%02x%02x%02x%02x", serial[0], serial[1], serial[2], serial[3],
             serial[4], serial[5], serial[6], serial[7], serial[8], serial[9], serial[10],
             serial[11], serial[12], serial[13], serial[14], serial[15]);
+    Logger::Notice("front panel serial: %s", serialBase32.data());
 
-    // TODO: further identification
+    // parse hw rev, driver id off the ROM
+    err = Util::InventoryRom::GetAtoms(
+            // TODO: take length into account
+            [](auto addr, auto len, auto buf, auto ctx) -> int {
+        return reinterpret_cast<Drivers::I2CDevice::AT24CS32 *>(ctx)->readData(addr, buf);
+    }, &eeprom,
+    /*
+     * We only want to read the driver UUID and hardware revision atoms.
+     */
+    [](auto header, auto ctx, auto readBuf) -> bool {
+        static etl::array<uint8_t, 16> gUuidBuf;
+        static etl::array<uint8_t, 2> gRevBuf;
+
+        switch(header.type) {
+            case Util::InventoryRom::AtomType::HwRevision:
+                readBuf = gRevBuf;
+                break;
+            case Util::InventoryRom::AtomType::DriverId:
+                readBuf = gUuidBuf;
+                break;
+
+            default:
+                break;
+        }
+        return true;
+    }, this,
+    /*
+     * Deal with the driver uuid or hw revision values.
+     */
+    [](auto header, auto buffer, auto ctx) {
+        auto inst = reinterpret_cast<Task *>(ctx);
+
+        switch(header.type) {
+            /*
+             * Hardware revision is represented as a big endian 16-bit integer.
+             */
+            case Util::InventoryRom::AtomType::HwRevision:
+                memcpy(&inst->frontRev, buffer.data(), 2);
+                break;
+            /*
+             * Driver ID is encoded as a 16 byte binary representation of an UUID.
+             */
+            case Util::InventoryRom::AtomType::DriverId:
+                inst->frontDriverId = Util::Uuid(buffer);
+                break;
+
+            default:
+                break;
+        }
+    }, this);
+
+    REQUIRE(err >= 0, "failed to ID front panel: %d", err);
+
+    // log info about it
+    etl::array<char, 0x26> uuidStr;
+    this->frontDriverId.format(uuidStr);
+
+    Logger::Notice("Front pcb: rev %u (driver %s)", this->frontRev, uuidStr);
 }

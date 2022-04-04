@@ -36,6 +36,10 @@ class Uuid {
             memcpy(this->data.data(), buf.data(), kByteSize);
         }
 
+        auto operator==(const Uuid &second) const {
+            return !memcmp(second.data.data(), this->data.data(), kByteSize);
+        }
+
         /**
          * @brief Format UUID as string
          *
@@ -52,7 +56,7 @@ class Uuid {
         /**
          * @brief UUID data storage
          */
-        etl::array<uint8_t, 16> data;
+        etl::array<uint8_t, kByteSize> data;
 };
 }
 

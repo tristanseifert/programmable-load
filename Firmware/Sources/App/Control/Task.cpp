@@ -6,6 +6,7 @@
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
+#include "Util/Base32.h"
 #include "Util/InventoryRom.h"
 
 #include <string.h>
@@ -84,7 +85,7 @@ void Task::main() {
 void Task::identifyDriver() {
     int err;
     etl::array<uint8_t, 16> serial;
-    etl::array<uint8_t, 16> header;
+    etl::array<char, 28> serialBase32;
 
     /*
      * Read the serial first. If this fails, we know that there's no device connected, since the
@@ -95,10 +96,13 @@ void Task::identifyDriver() {
     err = idprom.readSerial(serial);
     REQUIRE(!err, "failed to read controller %s: %d", "serial", err);
 
+    Util::Base32::Encode(serial, serialBase32);
+
     Logger::Notice("controller serial: %02x%02x%02x%02x%02x%02x%02x%02x"
             "%02x%02x%02x%02x%02x%02x%02x%02x", serial[0], serial[1], serial[2], serial[3],
             serial[4], serial[5], serial[6], serial[7], serial[8], serial[9], serial[10],
             serial[11], serial[12], serial[13], serial[14], serial[15]);
+    Logger::Notice("controller serial: %s", serialBase32.data());
 
     /*
      * Now read the identification data out of the ROM. This consists first of a fixed 16-byte
@@ -108,11 +112,7 @@ void Task::identifyDriver() {
      * For this application, we really just care about the "driver identifier" which is an UUID
      * matching to one of the driver classes we have.
      */
-    err = idprom.readData(0x000, header);
-    REQUIRE(!err, "failed to read controller %s: %d", "prom header", err);
-
-    // TODO: get actual start addr from header
-    err = Util::InventoryRom::GetAtoms(0x010,
+    err = Util::InventoryRom::GetAtoms(
             // TODO: take length into account
             [](auto addr, auto len, auto buf, auto ctx) -> int {
         return reinterpret_cast<Drivers::I2CDevice::AT24CS32 *>(ctx)->readData(addr, buf);
