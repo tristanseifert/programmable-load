@@ -50,8 +50,31 @@ class InventoryRom {
             /**
              * @brief Hardware revision
              *
-             * String c
+             * A 16-bit integer that contains the revision number for the hardware.
              */
+            HwRevision                  = 0x01,
+
+            /**
+             * @brief Descriptive name
+             *
+             * String containing a short descriptive name of this hardware.
+             */
+            Name                        = 0x02,
+
+            /**
+             * @brief Manufacturer
+             *
+             * String containing the manufacturer's name
+             */
+            Manufacturer                = 0x03,
+
+            /**
+             * @brief Driver identifier
+             *
+             * A 16-byte blob containing the binary representation of an UUID, which uniquely
+             * matches a software driver to this hardware.
+             */
+            DriverId                    = 0x04,
 
             /**
              * @brief First application defined

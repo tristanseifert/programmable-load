@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #include "Rtos/Rtos.h"
+#include "Util/Uuid.h"
 
 #include <etl/string_view.h>
 
@@ -57,9 +58,16 @@ class Task {
     private:
         void main();
 
+        void identifyDriver();
+
     private:
         /// Task handle
         TaskHandle_t task;
+
+        /// Hardware revision of driver
+        uint16_t driverRev{0};
+        /// Driver identifier
+        Util::Uuid driverId;
 
     private:
         /// Runtime priority level

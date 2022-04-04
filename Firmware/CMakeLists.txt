@@ -188,6 +188,7 @@ FetchContent_MakeAvailable(printf_library)
 
 target_compile_options(printf PRIVATE -Wno-implicit-int-float-conversion)
 target_link_libraries(firmware PRIVATE printf)
+target_compile_definitions(firmware PUBLIC -DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES=1)
 
 ###############
 # FreeRTOS
