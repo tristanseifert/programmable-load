@@ -72,7 +72,7 @@ int AT24CS32::Read(Drivers::I2CBus *bus, const uint8_t deviceAddress, const uint
  *         as wraparound in page writes is probably unintended.
  */
 int AT24CS32::PageWrite(Drivers::I2CBus *bus, const uint8_t deviceAddress,
-        const uint16_t start, etl::span<uint8_t> buffer, const size_t numBytes) {
+        const uint16_t start, etl::span<const uint8_t> buffer, const size_t numBytes) {
     int err;
 
     // validate buffer
@@ -106,8 +106,9 @@ int AT24CS32::PageWrite(Drivers::I2CBus *bus, const uint8_t deviceAddress,
             .address = deviceAddress,
             .read = 0,
             .continuation = 1,
+            .skipRestart = 1,
             .length = static_cast<uint16_t>(numBytes ? numBytes : buffer.size()),
-            .data = buffer,
+            .data = {const_cast<uint8_t *>(buffer.data()), buffer.size()},
         },
     }};
 

@@ -138,7 +138,7 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
  */
 #define configASSERT( x ) if( ( x ) == 0 ) { \
     taskDISABLE_INTERRUPTS();\
-    log_panic("FreeRTOS assertion failure: %s (at %s:%u)", "##x", __FILE__, __LINE__);\
+    log_panic("FreeRTOS assertion failure: %s (at %s:%u)", #x, __FILE__, __LINE__);\
     for( ;; );\
 }\
 

@@ -468,6 +468,11 @@ void I2C::irqMasterOnBus() {
                 if(txn.length == (this->currentTxnOffset + 2)) {
                     this->regs->CTRLB.reg = SERCOM_I2CM_CTRLB_SMEN | SERCOM_I2CM_CTRLB_ACKACT;
                 }
+                // if this is the last byte, execute a stop condition next
+                else if(txn.length == (this->currentTxnOffset + 1)) {
+                    this->regs->CTRLB.reg = SERCOM_I2CM_CTRLB_SMEN | SERCOM_I2CM_CTRLB_ACKACT |
+                        SERCOM_I2CM_CTRLB_CMD(0x3);
+                }
                 // otherwise, ACK the next byte
                 else {
                     this->regs->CTRLB.reg = SERCOM_I2CM_CTRLB_SMEN;
@@ -620,11 +625,13 @@ void I2C::beginTransaction(const Transaction &txn, const bool needsStop) {
         this->regs->CTRLB.reg = SERCOM_I2CM_CTRLB_SMEN;
     }
 
-    // send the address
-    this->regs->ADDR.reg = ((txn.address & 0x7f) << 1) | (txn.read ? 0b1 : 0b0);
-    __DSB();
+    // send the address (if restart is not to be skipped)
+    if(!txn.continuation || (txn.continuation & !txn.skipRestart)) {
+        this->regs->ADDR.reg = ((txn.address & 0x7f) << 1) | (txn.read ? 0b1 : 0b0);
+        __DSB();
 
-    this->waitSysOpSync();
+        this->waitSysOpSync();
+    }
 }
 
 

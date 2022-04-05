@@ -1,11 +1,15 @@
 #include "Logger.h"
 #include "TraceSWO.h"
 
+#include "Rtos/Rtos.h"
+
 #include <printf/printf.h>
 
 #include <stdarg.h>
 
 #include <vendor/sam.h>
+
+#include <etl/array.h>
 
 using namespace Log;
 
@@ -51,6 +55,53 @@ void Logger::Panic() {
     // print a message
     Error("Panic! at the system, halting");
 
+    // get task info (if scheduler is running)
+    unsigned long totalRuntime{0};
+    constexpr static const size_t kTaskInfoSize{8};
+    static etl::array<TaskStatus_t, kTaskInfoSize> gTaskInfo;
+
+    if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        //const auto ok = uxTaskGetSystemState(gTaskInfo.data(), kTaskInfoSize, &totalRuntime);
+        const auto ok = uxTaskGetSystemState(gTaskInfo.data(), kTaskInfoSize, nullptr);
+
+        if(!ok) {
+            Error("Failed to get RTOS state");
+        } else {
+            Error("========== RTOS state ==========");
+            Error("Total runtime: %10lu", totalRuntime);
+            Error("%8s %-16s S %10s %2s %3s", "Handle", "Name", "Runtime", "PR", "STK");
+
+            for(size_t i = 0; i < ok; i++) {
+                const auto &task = gTaskInfo[i];
+                char stateChar{'?'};
+
+                switch(task.eCurrentState) {
+                    case eReady:
+                        stateChar = 'R';
+                        break;
+                    case eRunning:
+                        stateChar = '*';
+                        break;
+                    case eBlocked:
+                        stateChar = 'B';
+                        break;
+                    case eSuspended:
+                        stateChar = 'S';
+                        break;
+                    case eDeleted:
+                        stateChar = 'x';
+                        break;
+                    default:
+                        break;
+                }
+
+                Error("%08x %-16s %c %10lu %2u %03x", task.xHandle, task.pcTaskName, stateChar,
+                        task.ulRunTimeCounter, task.uxCurrentPriority, task.usStackHighWaterMark);
+            }
+        }
+    }
+
+    // stop machine
     __disable_irq();
     __BKPT(0xf3);
 

@@ -111,12 +111,7 @@ void Task::detectFrontPanel() {
         return;
     }
 
-    // TODO: run it through base32 or something else to make it less crappy to look at
     Util::Base32::Encode(serial, serialBase32);
-    Logger::Notice("front panel serial: %02x%02x%02x%02x%02x%02x%02x%02x"
-            "%02x%02x%02x%02x%02x%02x%02x%02x", serial[0], serial[1], serial[2], serial[3],
-            serial[4], serial[5], serial[6], serial[7], serial[8], serial[9], serial[10],
-            serial[11], serial[12], serial[13], serial[14], serial[15]);
     Logger::Notice("front panel serial: %s", serialBase32.data());
 
     // parse hw rev, driver id off the ROM
@@ -156,7 +151,9 @@ void Task::detectFrontPanel() {
              * Hardware revision is represented as a big endian 16-bit integer.
              */
             case Util::InventoryRom::AtomType::HwRevision:
-                memcpy(&inst->frontRev, buffer.data(), 2);
+                uint16_t temp;
+                memcpy(&temp, buffer.data(), 2);
+                inst->frontRev = __builtin_bswap16(temp);
                 break;
             /*
              * Driver ID is encoded as a 16 byte binary representation of an UUID.
@@ -176,5 +173,5 @@ void Task::detectFrontPanel() {
     etl::array<char, 0x26> uuidStr;
     this->frontDriverId.format(uuidStr);
 
-    Logger::Notice("Front pcb: rev %u (driver %s)", this->frontRev, uuidStr);
+    Logger::Notice("Front pcb: rev %u (driver %s)", this->frontRev, uuidStr.data());
 }

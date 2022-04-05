@@ -103,7 +103,7 @@ class AT24CS32 {
          * @remark There is no way to check whether the device is write protected, other than to
          *         read back the value of the memory array after attempting a write.
          */
-        int writeData(uint16_t address, etl::span<uint8_t> data) {
+        int writeData(uint16_t address, etl::span<const uint8_t> data) {
             int err;
 
             size_t offset{0};
@@ -123,7 +123,7 @@ class AT24CS32 {
             const auto fullPages = (data.size() - offset) / kPageSize;
             if(fullPages) {
                 for(size_t page = 0; page < fullPages; page++) {
-                    etl::span<uint8_t> subspan(data.begin() + offset, kPageSize);
+                    etl::span<const uint8_t> subspan(data.begin() + offset, kPageSize);
 
                     err = PageWrite(this->bus, this->deviceAddress, address + offset, subspan, kPageSize);
                     if(err) {
@@ -135,8 +135,9 @@ class AT24CS32 {
 
             // write any remaining partial page
             if(offset < data.size()) {
-                etl::span<uint8_t> subspan(data.begin() + offset, data.size() - offset);
-                err = PageWrite(this->bus, this->deviceAddress, address + offset, subspan, kPageSize);
+                etl::span<const uint8_t> subspan(data.begin() + offset, data.size() - offset);
+                err = PageWrite(this->bus, this->deviceAddress, address + offset, subspan,
+                        subspan.size());
                 if(err) {
                     return err;
                 }
@@ -163,7 +164,7 @@ class AT24CS32 {
         static int Read(Drivers::I2CBus *bus, const uint8_t deviceAddress, const uint16_t start,
                 etl::span<uint8_t> buffer);
         static int PageWrite(Drivers::I2CBus *bus, const uint8_t deviceAddress,
-                const uint16_t start, etl::span<uint8_t> buffer, const size_t numBytes = 0);
+                const uint16_t start, etl::span<const uint8_t> buffer, const size_t numBytes = 0);
 
     private:
         /// Parent bus

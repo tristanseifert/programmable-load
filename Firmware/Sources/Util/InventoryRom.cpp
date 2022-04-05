@@ -1,5 +1,7 @@
 #include "InventoryRom.h"
 
+#include "Log/Logger.h"
+
 #include <etl/array.h>
 
 using namespace Util;
@@ -35,7 +37,9 @@ int InventoryRom::GetAtoms(ReaderCallback reader, void *readerCtx,
         return err;
     }
 
-    const auto &idpromHdr = *reinterpret_cast<const IdpromHeader *>(idpromHdrBuf.data());
+    auto &idpromHdr = *reinterpret_cast<IdpromHeader *>(idpromHdrBuf.data());
+    idpromHdr.magic = __builtin_bswap32(idpromHdr.magic);
+    idpromHdr.firstAtom = __builtin_bswap16(idpromHdr.firstAtom);
 
     if(idpromHdr.magic != IdpromHeader::kMagicValue || idpromHdr.size < sizeof(idpromHdr) ||
             idpromHdr.version > 0x1F || idpromHdr.firstAtom < idpromHdr.size) {
@@ -70,13 +74,16 @@ int InventoryRom::GetAtoms(ReaderCallback reader, void *readerCtx,
 
         if(!readBuf.empty() && header.length) {
             const auto length = (readBuf.size() > header.length) ? header.length : readBuf.size();
+
             err = reader(addr, length, readBuf, readerCtx);
             if(err) goto beach;
+
+            // invoke the data read callback
+            atomDataCallback(header, readBuf, atomDataCallbackCtx);
         }
-        // otherwise, just increment the address counter to the next header
-        else {
-            addr += header.length;
-        }
+
+        // either way, increment the address counter past the payload
+        addr += header.length;
 
 done:;
         // prepare for next

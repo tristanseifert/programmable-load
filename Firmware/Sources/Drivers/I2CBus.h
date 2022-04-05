@@ -48,6 +48,15 @@ class I2CBus {
             uint8_t continuation:1{0};
 
             /**
+             * @brief Skip restart
+             *
+             * If the transaction is a continuation from the previous, and this bit is set, we do
+             * not generate another start condition. This is useful for splitting data in the
+             * same transaction across multiple buffers.
+             */
+            uint8_t skipRestart:1{0};
+
+            /**
              * @brief Transfer length
              *
              * Total number of bytes to transfer in this transaction
