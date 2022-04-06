@@ -18,8 +18,8 @@ using namespace Drivers::I2CDevice;
  * @param pins A list of 16 pin configuration entries, one for each IO pin
  * @param address I²C address of the device
  */
-XRA1203::XRA1203(Drivers::I2CBus *bus, etl::span<const PinConfig, kIoLines> pins,
-        const uint8_t address) : bus(bus), deviceAddress(address) {
+XRA1203::XRA1203(Drivers::I2CBus *bus, const uint8_t address,
+        etl::span<const PinConfig, kIoLines> pins) : bus(bus), deviceAddress(address) {
     int err;
     uint16_t ocr{0}, pir{0}, gcr{0}, pur{0}, ier{0}, tscr{0}, reir{0}, feir{0}, ifr{0};
 

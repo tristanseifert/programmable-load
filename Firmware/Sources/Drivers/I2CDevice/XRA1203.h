@@ -125,8 +125,8 @@ class XRA1203 {
         };
 
     public:
-        XRA1203(Drivers::I2CBus *bus, etl::span<const PinConfig, kIoLines> pins,
-                const uint8_t address);
+        XRA1203(Drivers::I2CBus *bus, const uint8_t address,
+               etl::span<const PinConfig, kIoLines> pins);
 
         int setOutput(const uint8_t pin, const bool state);
         int setOutputTristate(const uint8_t pin, const bool isTristate);

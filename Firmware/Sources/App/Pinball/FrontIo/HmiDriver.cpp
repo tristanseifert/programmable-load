@@ -4,6 +4,7 @@
 #include "Drivers/I2CDevice/AT24CS32.h"
 #include "Log/Logger.h"
 #include "Util/InventoryRom.h"
+#include "Rtos/Rtos.h"
 
 using namespace App::Pinball;
 
@@ -15,7 +16,10 @@ const Util::Uuid HmiDriver::kDriverId(kUuidBytes);
  * This sets up the IO expander and LED driver at their default addresses.
  */
 HmiDriver::HmiDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : 
-    FrontIoDriver(bus, idprom) {
+    FrontIoDriver(bus, idprom), 
+    //ioExpander(Drivers::I2CDevice::XRA1203(bus, kExpanderAddress, kPinConfigs)),
+    ledDriver(Drivers::I2CDevice::PCA9955B(bus, kLedDriverAddress, kLedDriverRefCurrent,
+                kLedConfig)) {
 
 }
 
