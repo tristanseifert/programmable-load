@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "Hardware.h"
+#include "FrontIo/HmiDriver.h"
 
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
@@ -68,6 +69,7 @@ void Task::main() {
 
     // discover front panel hardware, and initialize itz
     Logger::Trace("pinball: %s", "init front panel");
+    this->initEncoder();
     this->detectFrontPanel();
 
     /*
@@ -84,9 +86,33 @@ void Task::main() {
                 portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
-        // TODO: handle
         Logger::Warning("pinball notify: $%08x", note);
+        if(note & TaskNotifyBits::FrontIrq) {
+            this->frontDriver->handleIrq();
+        }
+        if(note & TaskNotifyBits::EncoderChanged) {
+            this->updateEncoder();
+        }
     }
+}
+
+/**
+ * @brief Initialize encoder state machine
+ *
+ * Sets up the state of the rotary encoder reading state machine. We'll sample the input pins here
+ * to get the baseline value.
+ */
+void Task::initEncoder() {
+
+}
+
+/**
+ * @brief Read the state of the encoder pins and update UI
+ *
+ * Advances the state of the encoder state machine to determine whether we should increment or
+ * decrement the current value.
+ */
+void Task::updateEncoder() {
 }
 
 
@@ -103,23 +129,23 @@ void Task::detectFrontPanel() {
     etl::array<char, 28> serialBase32;
 
     // try to read the serial number EEPROM
-    Drivers::I2CDevice::AT24CS32 eeprom(Hw::gFrontI2C);
+    Drivers::I2CDevice::AT24CS32 idprom(Hw::gFrontI2C);
 
-    err = eeprom.readSerial(serial);
+    err = idprom.readSerial(serial);
     if(err) {
-        Logger::Warning("failed to ID front panel: %d", err);
+        Logger::Warning("failed to ID front I/O: %d", err);
         return;
     }
 
     Util::Base32::Encode(serial, serialBase32);
-    Logger::Notice("front panel serial: %s", serialBase32.data());
+    Logger::Notice("front IO S/N: %s", serialBase32.data());
 
     // parse hw rev, driver id off the ROM
     err = Util::InventoryRom::GetAtoms(
             // TODO: take length into account
             [](auto addr, auto len, auto buf, auto ctx) -> int {
         return reinterpret_cast<Drivers::I2CDevice::AT24CS32 *>(ctx)->readData(addr, buf);
-    }, &eeprom,
+    }, &idprom,
     /*
      * We only want to read the driver UUID and hardware revision atoms.
      */
@@ -169,9 +195,20 @@ void Task::detectFrontPanel() {
 
     REQUIRE(err >= 0, "failed to ID front panel: %d", err);
 
-    // log info about it
     etl::array<char, 0x26> uuidStr;
     this->frontDriverId.format(uuidStr);
 
-    Logger::Notice("Front pcb: rev %u (driver %s)", this->frontRev, uuidStr.data());
+    Logger::Notice("front I/O: rev %u (driver %s)", this->frontRev, uuidStr.data());
+
+    /*
+     * We only support one type of front panel right now, so ensure that the driver ID in the
+     * IDPROM matches that, then instantiate it.
+     */
+    REQUIRE(this->frontDriverId == HmiDriver::kDriverId, "unknown front I/O driver: %s",
+            uuidStr.data());
+
+    static uint8_t gHmiDriverBuf[sizeof(HmiDriver)] __attribute__((aligned(alignof(HmiDriver))));
+    auto ptr = reinterpret_cast<HmiDriver *>(gHmiDriverBuf);
+
+    this->frontDriver = new (ptr) HmiDriver(Hw::gFrontI2C, idprom);
 }

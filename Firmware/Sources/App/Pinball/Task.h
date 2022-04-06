@@ -11,6 +11,8 @@
 
 /// User interface task and related
 namespace App::Pinball {
+class FrontIoDriver;
+
 /**
  * @brief User interface task
  *
@@ -107,12 +109,16 @@ class Task {
         Task();
 
         void main();
+        void initEncoder();
+        void updateEncoder();
         void detectFrontPanel();
 
     private:
         /// Task handle
         TaskHandle_t task;
 
+        /// Front IO board driver instance
+        FrontIoDriver *frontDriver{nullptr};
         /// Hardware revision of front panel board
         uint16_t frontRev{0};
         /// Front panel driver id
