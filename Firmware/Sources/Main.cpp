@@ -1,6 +1,7 @@
 #include <hpl_gpio.h>
 
 #include "App/Main/Task.h"
+#include "Drivers/Dma.h"
 #include "Drivers/ExternalIrq.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
@@ -71,6 +72,7 @@ extern "C" int main() {
      * These are peripherals that are embedded in the processor and will always be present and
      * used for something.
      */
+    Drivers::Dma::Init();
     Drivers::ExternalIrq::Init();
 
     /*

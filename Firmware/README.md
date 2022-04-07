@@ -19,3 +19,6 @@ cmake --build build
 
 ## Hardware Support
 Currently, only the rev 1 controller board, and associated IO boards (rear panel + front panel) are supported. When other boards are added, these are identified by their configuration EEPROMs. For the processor board itself, we have an SPI flash that can be read out to determine board revision/type.
+
+### Inventory ROMs
+Most of these boards are connected via I²C, and feature an AT24CS32-family EEPROM. This memory is used to both provide an unique serial number for the part, but also to carry additional identifying information used by the firmware. This is accomplished by means of a fixed header, and a list of tag-length-value blobs. This blob can define information such as hardware revision and driver id.
