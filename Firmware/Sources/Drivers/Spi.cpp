@@ -18,7 +18,7 @@ using namespace Drivers;
  * @remark It's assumed the clock to this device has been configured when this constructor is
  *         invoked. All other resources (DMA, interrupts, etc.) are initialized here.
  */
-Spi::Spi(const SercomBase::Unit unit, const Config &conf) : unit(unit),
+Spi::Spi(const SercomBase::Unit unit, const Config &conf) : unit(unit), rxEnabled(conf.rxEnable),
     regs(&(SercomBase::MmioFor(unit)->SPI)) {
     // mark as used and reset the unit
     SercomBase::MarkAsUsed(unit);
@@ -82,6 +82,90 @@ void Spi::enable() {
 
     this->enabled = true;
     taskEXIT_CRITICAL();
+}
+
+/**
+ * @brief Perform one or more SPI transactions
+ *
+ * Iterates over the provided list of transfer descriptors, and executes them sequentially. For
+ * each descriptor, the driver selects whether to use polled or DMA mode, if configured.
+ *
+ * @param transactions Transfer descriptors for the peripheral
+ *
+ * @return 0 on success, negative error code otherwise
+ */
+int Spi::perform(etl::span<const Transaction> transactions) {
+    int err;
+
+    // validate inputs
+    if(transactions.empty()) {
+        return Errors::InvalidTransaction;
+    }
+
+    // perform each transaction
+    for(const auto &txn : transactions) {
+        // TODO: add DMA support
+        err = this->doPolledTransfer(txn);
+        if(err) {
+            goto beach;
+        }
+    }
+
+    // clean up and return last error code
+beach:;
+    return err;
+}
+
+/**
+ * @brief Perform a SPI transfer in polled mode
+ *
+ * @param txn Transaction to perform
+ *
+ * @return 0 on success, negative error code otherwise
+ *
+ * @remark Either of the buffers may be `nullptr`, and we'll transmit either 0's or discard the
+ *         received data.
+ *
+ * @remark Chip select should be handled by higher level functions, unless hardware chip select is
+ *         used.
+ */
+int Spi::doPolledTransfer(const Transaction &txn) {
+    // validate arguments
+    if(!txn.length || (!txn.rxBuf && !txn.txBuf)) {
+        return Errors::InvalidBuffer;
+    }
+
+    auto rxPtr = reinterpret_cast<uint8_t *>(txn.rxBuf);
+    auto txPtr = reinterpret_cast<const uint8_t *>(txn.txBuf);
+
+    // disable 32-bit mode
+    this->regs->CTRLC.bit.DATA32B = 0;
+
+    // process as many bytes as provided
+    taskENTER_CRITICAL();
+
+    for(size_t i = 0; i < txn.length; i++) {
+        // wait for TXRDY and write out
+        while(!this->regs->INTFLAG.bit.DRE){}
+        this->regs->DATA.reg = txPtr ? *txPtr++ : 0;
+
+        // if receiver is enabled, wait for data and read it
+        if(this->rxEnabled) {
+            while(!this->regs->INTFLAG.bit.RXC){}
+
+            const auto rxByte = this->regs->DATA.reg;
+            if(rxPtr) {
+                *rxPtr++ = rxByte & 0xFF;
+            }
+        }
+    }
+
+    // wait for last byte to finish transmitting
+    while(!this->regs->INTFLAG.bit.TXC){}
+
+    taskEXIT_CRITICAL();
+
+    return 0;
 }
 
 /**

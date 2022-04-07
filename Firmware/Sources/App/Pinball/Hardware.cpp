@@ -77,15 +77,16 @@ void Hw::InitDisplaySpi() {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB13C_SERCOM4_PAD1,
     });
-    // PAD2:  Chip select
-    Drivers::Gpio::ConfigurePin(kDisplayCs, {
-        .mode = Drivers::Gpio::Mode::Peripheral,
-        .function = MUX_PB14C_SERCOM4_PAD2,
-    });
     // PAD3: SPI master out, slave in (MOSI)
     Drivers::Gpio::ConfigurePin(kDisplayMosi, {
         .mode = Drivers::Gpio::Mode::Peripheral,
         .function = MUX_PB15C_SERCOM4_PAD3,
+    });
+
+    // chip select is under manual control
+    Drivers::Gpio::ConfigurePin(kDisplayCs, {
+        .mode = Drivers::Gpio::Mode::DigitalOut,
+        .initialOutput = 1,
     });
 
     /*
@@ -93,6 +94,7 @@ void Hw::InitDisplaySpi() {
      */
     static const Drivers::Spi::Config cfg{
         .rxEnable = 0,
+        .hwChipSelect = 0,
         .inputPin = 0,
         .alternateOutput = 1,
         .sckFrequency = 10'000'000,
@@ -133,7 +135,7 @@ void Hw::InitPowerButton() {
         .mode = Drivers::ExternalIrq::SenseMode::EdgeFalling
     });
 
-    NVIC_SetPriority(EIC_15_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 3);
+    NVIC_SetPriority(EIC_15_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 4);
     NVIC_EnableIRQ(EIC_15_IRQn);
 
     // illuminate with the primary mode
@@ -183,8 +185,8 @@ void Hw::InitEncoder() {
     });
 
     // enable interrupt vectors
-    NVIC_SetPriority(EIC_7_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
-    NVIC_SetPriority(EIC_8_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+    NVIC_SetPriority(EIC_7_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 4);
+    NVIC_SetPriority(EIC_8_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 4);
 
     NVIC_EnableIRQ(EIC_7_IRQn);
     NVIC_EnableIRQ(EIC_8_IRQn);
@@ -250,15 +252,6 @@ void Hw::ResetFrontPanel() {
     Drivers::Gpio::SetOutputState(kFrontIoReset, false);
     vTaskDelay(pdMS_TO_TICKS(100));
     Drivers::Gpio::SetOutputState(kFrontIoReset, true);
-}
-
-/**
- * @brief Set the state of the display `D/C` line
- *
- * @param isData Whether the next transaction contains data or commands
- */
-void Hw::SetDisplayDataCommandFlag(const bool isData) {
-    Drivers::Gpio::SetOutputState(kDisplayCmdData, isData);
 }
 
 /**

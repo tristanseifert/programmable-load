@@ -34,6 +34,7 @@ enum class PowerLightMode {
  */
 class Hw {
     friend class Task;
+    friend class Display;
 
     /**
      * @brief Front panel reset
@@ -96,18 +97,33 @@ class Hw {
     public:
         static void Init(const etl::span<Drivers::I2CBus *, 2> &busses);
 
+        static void ResetFrontPanel();
+
+        /**
+         * @brief Set the state of the display chip select line
+         */
+        inline static void SetDisplaySelect(const bool isSelected) {
+            Drivers::Gpio::SetOutputState(kDisplayCs, !isSelected);
+        }
+
+        /**
+         * @brief Set the state of the display `D/C` line
+         *
+         * @param isData Whether the next byte contains data or commands
+         */
+        inline static void SetDisplayDataCommandFlag(const bool isData) {
+            Drivers::Gpio::SetOutputState(kDisplayCmdData, isData);
+        }
+
+        static void SetPowerLight(const PowerLightMode mode);
+        static uint8_t ReadEncoder();
+
     private:
         static void InitDisplaySpi();
         static void InitPowerButton();
         static void InitEncoder();
         static void InitBeeper();
         static void InitMisc();
-
-        static void ResetFrontPanel();
-
-        static void SetDisplayDataCommandFlag(const bool isData);
-        static void SetPowerLight(const PowerLightMode mode);
-        static uint8_t ReadEncoder();
 
         /// Display SPI bus
         static Drivers::Spi *gDisplaySpi;

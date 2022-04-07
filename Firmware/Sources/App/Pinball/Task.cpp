@@ -1,5 +1,6 @@
 #include "Task.h"
 #include "Hardware.h"
+#include "FrontIo/Display.h"
 #include "FrontIo/HmiDriver.h"
 
 #include "Drivers/ExternalIrq.h"
@@ -64,8 +65,9 @@ void Task::main() {
     Logger::Trace("pinball: %s", "reset hw");
     Hw::ResetFrontPanel();
 
-    // TODO: initialize display
+    // initialize display
     Logger::Trace("pinball: %s", "init display");
+    Display::Init();
 
     // discover front panel hardware, and initialize itz
     Logger::Trace("pinball: %s", "init front panel");

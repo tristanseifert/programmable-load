@@ -99,6 +99,7 @@ add_executable(firmware
     Sources/App/Main/Task.cpp
     Sources/App/Pinball/Hardware.cpp
     Sources/App/Pinball/Task.cpp
+    Sources/App/Pinball/FrontIo/Display.cpp
     Sources/App/Pinball/FrontIo/HmiDriver.cpp
     Sources/App/Thermal/Hardware.cpp
     Sources/App/Thermal/Task.cpp

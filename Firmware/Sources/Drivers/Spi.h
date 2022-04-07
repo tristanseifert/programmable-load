@@ -6,6 +6,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <etl/array.h>
+#include <etl/span.h>
+
 namespace Drivers {
 /**
  * @brief SERCOM SPI driver
@@ -18,6 +21,25 @@ namespace Drivers {
  */
 class Spi {
     public:
+        /// Error codes
+        enum Errors: int {
+            /**
+             * @brief Provided buffer was invalid
+             *
+             * A buffer for a read/write transaction was invalid. It may have an incorrect length,
+             * or is missing both the rx and tx chunks.
+             */
+            InvalidBuffer               = -200,
+
+            /**
+             * @brief Invalid transaction specified
+             *
+             * One or more of the provided transactions could not be processed; the transaction
+             * list may also be empty.
+             */
+            InvalidTransaction          = -201,
+        };
+
         /**
          * @brief SPI peripheral configuration
          *
@@ -68,7 +90,7 @@ class Spi {
              * @remark When enabled, only a single SPI device is supported on the bus. You can
              *         disable this, and manually handle SPI chip selects if needed for more.
              */
-            uint8_t hwChipSelect:1{1};
+            uint8_t hwChipSelect:1{0};
 
             /**
              * @brief Enable DMA operation
@@ -107,13 +129,50 @@ class Spi {
             uint32_t sckFrequency;
         };
 
+        /**
+         * @brief A SPI transaction
+         *
+         * This is a small encapsulation of a transaction length, and the associated read/write
+         * buffers.
+         *
+         * @note If both transmit and receive buffers are specified, they must both be sufficiently
+         *       large to fit the desired number of bytes.
+         */
+        struct Transaction {
+            /// Pointer to buffer to hold receive data
+            void *rxBuf{nullptr};
+            /// Pointer to buffer holding data to be transmitted
+            const void *txBuf{nullptr};
+            /// Number of bytes to transfer
+            size_t length;
+        };
+
     public:
         Spi(const SercomBase::Unit unit, const Config &conf);
 
         void reset();
         void enable();
 
+        int perform(etl::span<const Transaction> transactions);
+
+        /**
+         * @brief Perform a write to the SPI device
+         *
+         * Writes the provided data buffer out the SPI peripheral. All received data will be
+         * discarded.
+         */
+        inline int write(etl::span<const uint8_t> buffer) {
+            return this->perform({{
+                {
+                    .txBuf = buffer.data(),
+                    .length = buffer.size()
+                },
+            }});
+        }
+
     private:
+        int doPolledTransfer(const Transaction &txn);
+
         static void ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs,
                 const Config &conf);
         static void UpdateSckFreq(const SercomBase::Unit unit,
@@ -124,6 +183,8 @@ class Spi {
         SercomBase::Unit unit;
         /// is the device enabled?
         bool enabled{false};
+        /// is the receiver enabled?
+        bool rxEnabled{false};
         /// is DMA enabled?
         bool dmaCapable{false};
 
