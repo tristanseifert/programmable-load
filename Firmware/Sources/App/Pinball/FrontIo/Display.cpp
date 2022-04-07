@@ -27,7 +27,7 @@ void Display::Init() {
     Configure();
 
     // clear framebuffer and transfer
-    etl::fill(gFramebuffer.begin(), gFramebuffer.end(), 0x0F); // XXX: make it 0
+    etl::fill(gFramebuffer.begin(), gFramebuffer.end(), 0);
     Transfer();
 
     // turn the display on (exit sleep mode)
@@ -45,9 +45,6 @@ void Display::Init() {
  */
 void Display::Configure() {
     int err;
-
-    // assert chip select for this entire time
-    Hw::SetDisplaySelect(true);
 
     /*
      * Configure the display controller.
@@ -122,10 +119,6 @@ void Display::Configure() {
 
     err = WriteCommand(Command::ExitPartialDisplay);
     REQUIRE(!err, "%s: failed to set %s (%d)", "SSD1322", "exit partial display", err);
-
-    // XXX: can we just keep it asserted always?
-    // we can deassert chip select
-    // Hw::SetDisplaySelect(false);
 }
 
 /**
@@ -199,19 +192,23 @@ int Display::WriteCommand(const Command cmd, etl::span<const uint8_t> payload) {
 
     // send the command byte (with asserted command strobe)
     Hw::SetDisplayDataCommandFlag(false);
+    Hw::SetDisplaySelect(true);
 
     etl::array<uint8_t, 1> cmdBuf{{static_cast<uint8_t>(cmd)}};
     err = Hw::gDisplaySpi->write(cmdBuf);
     if(err) {
-        return err;
+        goto beach;
     }
 
     // send payload (with deasserted command strobe)
     if(!payload.empty()) {
         Hw::SetDisplayDataCommandFlag(true);
-        return Hw::gDisplaySpi->write(payload);
+        err = Hw::gDisplaySpi->write(payload);
     }
 
+    // deassert /CS
+beach:;
+    Hw::SetDisplaySelect(false);
     return err;
 }
 

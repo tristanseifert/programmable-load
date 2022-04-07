@@ -93,6 +93,8 @@ void Hw::InitDisplaySpi() {
      * Configure the SPI with mode = 3, and a 10MHz frequency.
      */
     static const Drivers::Spi::Config cfg{
+        .cpol = 1,
+        .cpha = 1,
         .rxEnable = 0,
         .hwChipSelect = 0,
         .inputPin = 0,

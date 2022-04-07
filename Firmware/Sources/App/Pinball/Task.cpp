@@ -115,6 +115,8 @@ void Task::initEncoder() {
  * decrement the current value.
  */
 void Task::updateEncoder() {
+    const auto state = Hw::ReadEncoder();
+    Logger::Trace("Encoder state: %02x", state);
 }
 
 

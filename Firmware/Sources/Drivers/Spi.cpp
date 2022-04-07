@@ -128,6 +128,9 @@ beach:;
  *
  * @remark Chip select should be handled by higher level functions, unless hardware chip select is
  *         used.
+ *
+ * @TODO make this work with 32-bit mode (by writing a 32-bit value at a time, then a partial
+ *       write for whatever remains)
  */
 int Spi::doPolledTransfer(const Transaction &txn) {
     // validate arguments
@@ -137,9 +140,6 @@ int Spi::doPolledTransfer(const Transaction &txn) {
 
     auto rxPtr = reinterpret_cast<uint8_t *>(txn.rxBuf);
     auto txPtr = reinterpret_cast<const uint8_t *>(txn.txBuf);
-
-    // disable 32-bit mode
-    this->regs->CTRLC.bit.DATA32B = 0;
 
     // process as many bytes as provided
     taskENTER_CRITICAL();
@@ -235,7 +235,8 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
      * Use 32-bit data register transfers (meaning we must also load LENGTH each time) and disable
      * all inter-character spacing.
      */
-    temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
+    //temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
+    temp = SERCOM_SPI_CTRLC_ICSPACE(0);
 
     Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLC", temp);
     regs->CTRLC.reg = temp & SERCOM_SPI_CTRLC_MASK;

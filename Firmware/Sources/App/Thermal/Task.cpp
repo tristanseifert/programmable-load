@@ -208,7 +208,7 @@ void Task::main() {
         // XXX: testing
         int speed;
         if(this->readFanSpeed(0, speed)) {
-            Logger::Notice("Mean temp: %d °C, fan 0 %u", static_cast<int>(meanTemp), speed);
+            Logger::Notice("Mean temp: %d C, fan 0 %d", static_cast<int>(meanTemp), speed);
         }
 
         float temp;

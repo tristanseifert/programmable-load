@@ -49,6 +49,8 @@ void Task::main() {
     // init USB stack
     tusb_init();
 
+    Logger::Trace("%s: main loop", "USB");
+
     // service requests
     while(1) {
         tud_task();
