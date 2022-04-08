@@ -92,6 +92,14 @@ add_executable(firmware
     Sources/Drivers/I2CDevice/PCA9955B.cpp
     Sources/Drivers/I2CDevice/PI4IOE5V9536.cpp
     Sources/Drivers/I2CDevice/XRA1203.cpp
+    Sources/Gfx/Font.cpp
+    Sources/Gfx/Framebuffer.cpp
+    Sources/Gfx/Fonts/General_14.cpp
+    Sources/Gfx/Fonts/General_16_Condensed.cpp
+    Sources/Gfx/Fonts/General_16_Bold.cpp
+    Sources/Gfx/Fonts/General_16_BoldCondensed.cpp
+    Sources/Gfx/Fonts/Numbers_L.cpp
+    Sources/Gfx/Fonts/Numbers_XL.cpp
     Sources/Usb/Descriptors.cpp
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp

@@ -121,8 +121,10 @@ class Display {
         /// Height of display (pixels)
         constexpr static const size_t kHeight{64};
 
+        /// Bytes per line
+        constexpr static const size_t kStride{kWidth / 2};
         /// Size of the framebuffer, in bytes
-        constexpr static const size_t kFramebufferSize{kWidth * kHeight / 2};
+        constexpr static const size_t kFramebufferSize{kStride * kHeight};
 
     public:
         static void Init();

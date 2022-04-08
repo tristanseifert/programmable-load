@@ -2,6 +2,7 @@
 #include "../Hardware.h"
 
 #include "Drivers/Spi.h"
+#include "Gfx/Framebuffer.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
@@ -12,6 +13,22 @@
 using namespace App::Pinball;
 
 etl::array<uint8_t, Display::kFramebufferSize> Display::gFramebuffer;
+
+/*
+ * Export the default system framebuffer.
+ *
+ * This belongs to the graphics library, but for convenience, we declare it here where we have the
+ * actual underlying memory of the framebuffer defined as well.
+ */
+Gfx::Framebuffer Gfx::Framebuffer::gMainBuffer{
+    .size = {
+        .width = Display::kWidth,
+        .height = Display::kHeight,
+    },
+    .data = Display::gFramebuffer,
+    .stride = Display::kStride,
+};
+
 
 /**
  * @brief Initialize the display driver
