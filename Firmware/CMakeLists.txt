@@ -89,6 +89,7 @@ add_executable(firmware
     Sources/Drivers/I2CDevice/Common.cpp
     Sources/Drivers/I2CDevice/AT24CS32.cpp
     Sources/Drivers/I2CDevice/EMC2101.cpp
+    Sources/Drivers/I2CDevice/MCP3421.cpp
     Sources/Drivers/I2CDevice/PCA9543A.cpp
     Sources/Drivers/I2CDevice/PCA9955B.cpp
     Sources/Drivers/I2CDevice/PI4IOE5V9536.cpp

@@ -8,6 +8,7 @@
 
 #include "LoadDriver.h"
 
+#include "Drivers/I2CDevice/MCP3421.h"
 #include "Drivers/I2CDevice/PI4IOE5V9536.h"
 #include "Rtos/Rtos.h"
 #include "Util/Uuid.h"
@@ -68,9 +69,6 @@ class DumbLoadDriver: public LoadDriver {
         }
 
     private:
-        /// How long to energize the latching relay coils for, in msec
-        constexpr static const size_t kRelayPulseWidth{50};
-
         /// Bus address of the IO expander
         constexpr static const uint8_t kExpanderAddress{0b1000001};
         /**
@@ -102,10 +100,19 @@ class DumbLoadDriver: public LoadDriver {
             }
         }};
 
+        /// How long to energize the latching relay coils for, in msec
+        constexpr static const size_t kRelayPulseWidth{50};
         /// IO expander pin connected to the set coil
         constexpr static const uint8_t kRelaySetPin{1};
         /// IO expander pin connected to the reset coil
         constexpr static const uint8_t kRelayResetPin{2};
+
+        /// Bus address for the VSense ADC
+        constexpr static const uint8_t kVSenseAdcAddress{0b1101001};
+        /// Set the VSense ADC to 16 bit resolution
+        constexpr static const auto kVSenseAdcBits{Drivers::I2CDevice::MCP3421::SampleDepth::High};
+        /// Gain factor to convert the VSense voltage to input voltage
+        constexpr static const float kVSenseGain{50.f};
 
     private:
         /// When set, the relay de-energization timer fired, and they are turned off next IRQ
@@ -113,6 +120,9 @@ class DumbLoadDriver: public LoadDriver {
 
         /// IO expander on the load board, driving the VSense relay and indicator
         Drivers::I2CDevice::PI4IOE5V9536 ioExpander;
+
+        /// ADC sampling input voltage
+        Drivers::I2CDevice::MCP3421 voltageAdc;
 
         /**
          * @brief Relay de-energization timer

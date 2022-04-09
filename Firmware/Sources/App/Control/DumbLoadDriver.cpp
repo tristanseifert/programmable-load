@@ -3,6 +3,7 @@
 
 #include "Drivers/I2CBus.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
+#include "Drivers/I2CDevice/MCP3421.h"
 #include "Drivers/I2CDevice/PI4IOE5V9536.h"
 #include "Log/Logger.h"
 #include "Util/InventoryRom.h"
@@ -18,7 +19,8 @@ const Util::Uuid DumbLoadDriver::kDriverId(kUuidBytes);
  * Configures all peripherals on the board.
  */
 DumbLoadDriver::DumbLoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : LoadDriver(bus, idprom),
-    ioExpander(bus, kExpanderPinConfig, kExpanderAddress) {
+    ioExpander(bus, kExpanderPinConfig, kExpanderAddress),
+    voltageAdc(bus, kVSenseAdcAddress, kVSenseAdcBits) {
     int err;
 
     /*
@@ -160,8 +162,19 @@ int DumbLoadDriver::setEnabled(const bool isEnabled) {
  * @return 0 on success, error code otherwise
  */
 int DumbLoadDriver::readInputVoltage(uint32_t &outVoltage) {
-    // TODO: implement
-    return -1;
+    int err, scaledVoltage;
+
+    // read ADC as voltage
+    err = this->voltageAdc.readVoltage(scaledVoltage);
+    if(err) {
+        return err;
+    }
+
+    // scale based on frontend amp (it has a 1:50 gain)
+    outVoltage = scaledVoltage;
+
+    // TODO: update PGA/scale/gain as needed
+    return 0;
 }
 
 
