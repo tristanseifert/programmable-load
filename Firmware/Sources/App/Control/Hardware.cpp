@@ -20,8 +20,6 @@ Drivers::I2C *Hw::gBus{nullptr};
  * driver interrupt inputs.
  */
 void Hw::Init() {
-    int err;
-
     /*
      * Configure the digital IOs for the driver:
      *
@@ -91,27 +89,6 @@ void Hw::Init() {
     static uint8_t gI2CBuf[sizeof(Drivers::I2C)] __attribute__((aligned(alignof(Drivers::I2C))));
     auto ptr = reinterpret_cast<Drivers::I2C *>(gI2CBuf);
     gBus = new (ptr) Drivers::I2C(Drivers::SercomBase::Unit::Unit3, cfg);
-
-    /*
-     * Pulse the reset line, then issue a reset to the "general call" address on the bus.
-     */
-    Logger::Trace("control: reset bus");
-
-    PulseReset();
-
-    etl::array<uint8_t, 1> resetData{{0x06}};
-    etl::array<Drivers::I2CBus::Transaction, 1> txns{{
-        {
-            .address = 0x0,
-            .read = 0,
-            .length = 1,
-            .data = resetData
-        },
-    }};
-    err = gBus->perform(txns);
-    if(err) {
-        Logger::Error("control: I2C general call reset failed: %d", err);
-    }
 }
 
 

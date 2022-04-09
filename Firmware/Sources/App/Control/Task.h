@@ -47,15 +47,28 @@ class Task {
         /**
          * @brief Send a notification (from ISR)
          *
-         * Notify the pinball task that some event happened, from within an ISR.
+         * Notify the task that some event happened, from within an ISR.
          *
          * @param bits Notification bits to set
          * @param woken Whether a higher priority task is woken
          */
-        static void NotifyFromIsr(const TaskNotifyBits bits, BaseType_t *woken) {
+        inline static void NotifyFromIsr(const TaskNotifyBits bits, BaseType_t *woken) {
             xTaskNotifyIndexedFromISR(gShared->task, kNotificationIndex,
                     static_cast<BaseType_t>(bits), eSetBits, woken);
         }
+
+        /**
+         * @brief Send a notification
+         *
+         * Notify the control loop task some event happened.
+         *
+         * @param bits Notification bits to set
+         */
+        inline static void NotifyTask(const TaskNotifyBits bits) {
+            xTaskNotifyIndexed(gShared->task, kNotificationIndex, static_cast<BaseType_t>(bits),
+                    eSetBits);
+        }
+
 
     private:
         void main();

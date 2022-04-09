@@ -4,9 +4,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-namespace Drivers {
-class I2CBus;
+#include "Drivers/I2CBus.h"
 
+namespace Drivers {
 namespace I2CDevice {
 class AT24CS32;
 }
@@ -29,8 +29,22 @@ class LoadDriver {
          *
          * Set up all hardware associated with the board, and resets it.ensuring that the load is
          * not drawing current.
+         *
+         * This implementation will issue a general call reset on the I²C bus.
          */
-        LoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : bus(bus) {};
+        LoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : bus(bus) {
+            etl::array<uint8_t, 1> resetData{{0x06}};
+            etl::array<Drivers::I2CBus::Transaction, 1> txns{{
+                {
+                    .address = 0x0,
+                    .read = 0,
+                    .length = 1,
+                    .data = resetData
+                },
+            }};
+            // TODO: do something other than ignore the error?
+            this->bus->perform(txns);
+        }
 
         /**
          * @brief Shut down driver

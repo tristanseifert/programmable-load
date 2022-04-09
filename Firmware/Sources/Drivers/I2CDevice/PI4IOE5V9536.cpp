@@ -44,31 +44,3 @@ PI4IOE5V9536::PI4IOE5V9536(Drivers::I2CBus *bus, etl::span<const PinConfig, kIoL
     err = this->writeRegister(Register::PinConfig, config);
     REQUIRE(!err, "%s: failed to write register %s (%d)", "PI4IOE5V9536", "PinConfig", err);
 }
-
-/**
- * @brief Set the state of an output pin
- *
- * This internally updates the shadow register, then writes back the state of all outputs.
- *
- * @param pin Pin number to set ([0,3])
- * @param state New state of the pin; true = set
- *
- * @return 0 on success, or an error code
- */
-int PI4IOE5V9536::setOutput(const uint8_t pin, const bool state) {
-    if(pin >= kIoLines) {
-        return Errors::InvalidPin;
-    }
-
-    // update shadow register
-    const uint8_t bit = 1U << static_cast<uint8_t>(pin);
-    if(state) {
-        this->output |= bit;
-    } else {
-        this->output &= ~bit;
-    }
-
-    // write the register
-    return this->writeRegister(Register::OutputPort, static_cast<uint8_t>(this->output & 0xFF));
-}
-

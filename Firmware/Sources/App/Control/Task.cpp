@@ -61,6 +61,8 @@ void Task::main() {
      * controller driver instance, which in turn initializes the hardware on the driver.
      */
     Logger::Trace("control: %s", "identify hardware");
+    Hw::PulseReset();
+
     this->identifyDriver();
 
     /*
@@ -172,4 +174,17 @@ void Task::identifyDriver() {
     this->driverId.format(uuidStr);
 
     Logger::Notice("Driver pcb: rev %u (driver %s)", this->pcbRev, uuidStr.data());
+
+    /*
+     * Currently there is only support for the "dumb" load boards, so ensure we instantiate the
+     * right driver for that UUID.
+     */
+    REQUIRE(this->driverId == DumbLoadDriver::kDriverId, "unknown load pcb driver: %s",
+            uuidStr.data());
+
+    static uint8_t gDriverBuf[sizeof(DumbLoadDriver)]
+        __attribute__((aligned(alignof(DumbLoadDriver))));
+    auto ptr = reinterpret_cast<DumbLoadDriver *>(gDriverBuf);
+
+    this->driver = new (ptr) DumbLoadDriver(Hw::gBus, idprom);
 }

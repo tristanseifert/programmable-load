@@ -74,7 +74,59 @@ class PI4IOE5V9536 {
         PI4IOE5V9536(Drivers::I2CBus *bus, etl::span<const PinConfig, kIoLines> pins,
                 const uint8_t address = 0b100'0001);
 
-        int setOutput(const uint8_t pin, const bool state);
+        /**
+         * @brief Set the state of an output pin
+         *
+         * This internally updates the shadow register, then writes back the state of all outputs.
+         *
+         * @param pin Pin number to set ([0,3])
+         * @param state New state of the pin; true = set
+         *
+         * @return 0 on success, or an error code
+         */
+        inline int setOutput(const uint8_t pin, const bool state) {
+            if(state) {
+                return this->setOutputs((1 << pin));
+            } else {
+                return this->clearOutputs((1 << pin));
+            }
+        }
+
+        /**
+         * @brief Set all output bits specified
+         *
+         * This internally updates the shadow register, then writes back the state of all outputs.
+         *
+         * @param bits Bitmask of pins to set
+         *
+         * @return 0 on success, or an error code
+         */
+        int setOutputs(const uint8_t bits) {
+            if(bits >= (1 << kIoLines)) {
+                return Errors::InvalidPin;
+            }
+
+            this->output |= bits;
+            return this->writeRegister(Register::OutputPort, static_cast<uint8_t>(this->output & 0xFF));
+        }
+
+        /**
+         * @brief Clear all output bits specified
+         *
+         * This internally updates the shadow register, then writes back the state of all outputs.
+         *
+         * @param bits Bitmask of pins to clear
+         *
+         * @return 0 on success, or an error code
+         */
+        int clearOutputs(const uint8_t bits) {
+            if(bits >= (1 << kIoLines)) {
+                return Errors::InvalidPin;
+            }
+
+            this->output &= ~bits;
+            return this->writeRegister(Register::OutputPort, static_cast<uint8_t>(this->output & 0xFF));
+        }
 
         /**
          * @brief Read the state of all pins

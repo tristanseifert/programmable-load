@@ -12,6 +12,7 @@
 #include <FreeRTOS.h>
 #include <semphr.h>
 #include <task.h>
+#include <timers.h>
 
 namespace Rtos {
 /**
