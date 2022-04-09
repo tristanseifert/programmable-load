@@ -1679,6 +1679,9 @@
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/be574c36-114c-4fef-92be-f8a94fef6af2"
       (reference "#PWR0132") (unit 1) (value "+12V") (footprint "")
     )
+    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/9985c9ac-c2cb-4bc0-a36c-a2fd435d77ee"
+      (reference "#PWR0133") (unit 1) (value "+12VA") (footprint "")
+    )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/1da88dc4-5345-4e0d-a84c-400631092f11"
       (reference "#PWR0201") (unit 1) (value "+3V3") (footprint "")
     )
@@ -1807,9 +1810,6 @@
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/b881d44c-fd9c-4723-b547-5f312b090c5a"
       (reference "#PWR0243") (unit 1) (value "+3V3A") (footprint "")
-    )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/1feba6fc-86d0-45a9-8174-be7a71dd14ea"
-      (reference "#PWR0244") (unit 1) (value "+3V3A") (footprint "")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/d7c04411-c672-4306-add0-efa1c5bf76c9"
       (reference "#PWR0245") (unit 1) (value "GNDA") (footprint "")
@@ -2153,9 +2153,6 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/3d156535-8e21-4205-a3ea-25f731338692"
       (reference "C218") (unit 1) (value "47µF") (footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
     )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/7d45258f-3e81-4bea-8766-6006e52512fe"
-      (reference "C219") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/c5fa90f7-9e1c-4692-9e27-e96effa80a5b"
       (reference "C220") (unit 1) (value "4.7µF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
@@ -2259,7 +2256,7 @@
       (reference "C606") (unit 1) (value "10µF") (footprint "Capacitor_Tantalum_SMD:CP_EIA-3216-18_Kemet-A_Pad1.58x1.35mm_HandSolder")
     )
     (path "/602636dc-d049-47b5-aa22-9e4cd7a5ce25/bff014a2-ce48-4adb-b5c7-a85882369fac/09c15613-9d97-4d83-878a-b039c2ca8b73"
-      (reference "C607") (unit 1) (value "10µF") (footprint "Capacitor_THT:C_Radial_D5.0mm_H11.0mm_P2.00mm")
+      (reference "C607") (unit 1) (value "10µF") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm")
     )
     (path "/813d5661-d7b3-4fc6-90f8-3d61745fb6cb"
       (reference "D101") (unit 1) (value "Red") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
@@ -2364,7 +2361,7 @@
       (reference "L401") (unit 1) (value "Choke") (footprint "programmable-load:TDK-ACM1513-0-0-MFG")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/e1b46ab0-bf3d-472b-9d15-15471e9bef81"
-      (reference "M201") (unit 1) (value "Fan_4pin") (footprint "Connector_Molex:Molex_KK-254_AE-6410-04A_1x04_P2.54mm_Vertical")
+      (reference "M201") (unit 1) (value "Fan_4pin") (footprint "programmable-load:Molex-47053-1000-MFG")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/1c605427-d680-4f59-8d33-200cdb4aab50"
       (reference "PS201") (unit 1) (value "PCN2-S12-S15-S") (footprint "programmable-load:CONV_PCN2-S12-S15-S")
@@ -2579,8 +2576,8 @@
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/e80e76a0-2b25-48eb-b4eb-3a29138edaeb"
       (reference "U201") (unit 1) (value "AT24CS32-SSHM") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
     )
-    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/2371f4e8-b7aa-43fc-9152-ce15b5aca906"
-      (reference "U202") (unit 1) (value "NCP716BCSN330T1G") (footprint "Package_SO:TSOP-5_1.65x3.05mm_P0.95mm")
+    (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/d0d5fb12-6931-437a-ab5c-43b24acab7d2"
+      (reference "U202") (unit 1) (value "MIC5366-3.3YC5") (footprint "Package_TO_SOT_SMD:SOT-353_SC-70-5")
     )
     (path "/b8df6840-ecc7-4e2f-ad45-8c79faac2b74/dc80ab05-c9d5-4d37-9fc9-161e95063334"
       (reference "U203") (unit 1) (value "ADUM1250") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
