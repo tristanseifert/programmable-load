@@ -95,6 +95,7 @@ add_executable(firmware
     Sources/Drivers/I2CDevice/XRA1203.cpp
     Sources/Gfx/Font.cpp
     Sources/Gfx/Framebuffer.cpp
+    Sources/Gfx/Primitives.cpp
     Sources/Gfx/Fonts/General_14.cpp
     Sources/Gfx/Fonts/General_16_Condensed.cpp
     Sources/Gfx/Fonts/General_16_Bold.cpp

@@ -13,13 +13,13 @@ using namespace Gfx;
  * @param source Bitmap data to copy. Assume the bitmap is tightly packed.
  * @param sourceSize Size of the source bitmap, in pixels
  * @param destPoint Top left of the bitmap in the framebuffer
+ * @param flags Optional flags controlling the blit
  *
  * @TODO increase performance by writing two pixels at a time when possible
  */
 void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSize,
         const Point destPoint, const BlitFlags flags) {
-    uint8_t srcTemp, dstTemp;
-    size_t dstOffset;
+    uint8_t srcTemp;
 
     // bail if the entire bitmap will fall outside the framebuffer
     if(destPoint.x >= this->size.width || destPoint.y >= this->size.height) {
@@ -52,20 +52,22 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
                 continue;
             }
 
-            // read the value of the destination framebuffer
-            dstOffset = this->getPixelOffset({x, y});
-            dstTemp = this->data[dstOffset];
-
-            if(!(x & 1)) { // even pixel
-                dstTemp &= 0x0f;
-                dstTemp |= (srcTemp << 4);
-            } else { // odd pixel
-                dstTemp &= 0xf0;
-                dstTemp |= srcTemp;
-            }
-
-            this->data[dstOffset] = dstTemp;
+            this->setPixel({x, y}, srcTemp);
         }
     }
+}
+
+/**
+ * @brief Blit the contents of a framebuffer to another.
+ *
+ * Copy the entirety of the provided framebuffer to the destination.
+ *
+ * @param source Source framebuffer to copy from
+ * @param destPoint Top left of the destination in this framebuffer
+ * @param flags Optional flags controlling the blit
+ */
+void Framebuffer::blit4Bpp(const Framebuffer &source, const Point destPoint,
+        const BlitFlags flags) {
+    return this->blit4Bpp(source.data, source.size, destPoint, flags);
 }
 

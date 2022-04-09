@@ -73,6 +73,8 @@ class Framebuffer {
     public:
         void blit4Bpp(etl::span<const uint8_t> source, const Size sourceSize,
                 const Point destPoint, const BlitFlags flags = BlitFlags::None);
+        void blit4Bpp(const Framebuffer &source, const Point destPoint,
+                const BlitFlags flags = BlitFlags::None);
 
         /**
          * @brief Calculate pixel offset into framebuffer
@@ -82,6 +84,31 @@ class Framebuffer {
         inline constexpr size_t getPixelOffset(const Point point) {
             // TODO: handle other color formats
             return (point.y * this->stride) + (point.x / 2);
+        }
+
+        /**
+         * @brief Set pixel value
+         *
+         * Sets the value for a particular pixel, taking into account the underlying pixel format.
+         *
+         * @param point Pixel location to set
+         * @param value Value to set for this pixel
+         *
+         * @TODO Handle non-4bpp pixel formats
+         */
+        inline void setPixel(const Point point, const uint32_t value) {
+            const auto offset = this->getPixelOffset(point);
+            auto temp = this->data[offset];
+
+            if(!(point.x & 1)) { // even pixel
+                temp &= 0x0f;
+                temp |= ((value & 0x0f) << 4);
+            } else { // odd pixel
+                temp &= 0xf0;
+                temp |= value & 0x0f;
+            }
+
+            this->data[offset] = temp;
         }
 
     public:
