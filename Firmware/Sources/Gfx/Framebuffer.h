@@ -20,6 +20,23 @@ namespace Gfx {
  */
 class Framebuffer {
     public:
+        /**
+         * @brief Flags for bit blits
+         *
+         * These flags can be combined via bitwise OR, unless otherwise specified.
+         */
+        enum BlitFlags: uint32_t {
+            None                        = 0,
+
+            /**
+             * @brief Source has transparency
+             *
+             * If set, the source bitmap is considered to contain transparency: for bitmaps without
+             * an explicit alpha channel, a pixel value of 0 is considered transparent.
+             */
+            HasTransparency             = (1 << 0),
+        };
+
         /// Framebuffer format
         enum class Format: uint8_t {
             /// Greyscale, 4 bits per pixel
@@ -55,7 +72,7 @@ class Framebuffer {
 
     public:
         void blit4Bpp(etl::span<const uint8_t> source, const Size sourceSize,
-                const Point destPoint);
+                const Point destPoint, const BlitFlags flags = BlitFlags::None);
 
         /**
          * @brief Calculate pixel offset into framebuffer

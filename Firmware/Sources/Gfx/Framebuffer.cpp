@@ -17,7 +17,7 @@ using namespace Gfx;
  * @TODO increase performance by writing two pixels at a time when possible
  */
 void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSize,
-        const Point destPoint) {
+        const Point destPoint, const BlitFlags flags) {
     uint8_t srcTemp, dstTemp;
     size_t dstOffset;
 
@@ -46,6 +46,10 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
                 srcTemp >>= 4;
             } else { // odd pixel
                 srcTemp &= 0x0f;
+            }
+
+            if((flags & BlitFlags::HasTransparency) && !srcTemp) {
+                continue;
             }
 
             // read the value of the destination framebuffer

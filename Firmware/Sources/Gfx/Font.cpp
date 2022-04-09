@@ -17,7 +17,7 @@ using namespace Gfx;
  *
  * @return Number of codepoints drawn
  */
-int Font::draw(const etl::string_view str, Framebuffer &fb, const Point origin) {
+int Font::draw(const etl::string_view str, Framebuffer &fb, const Point origin) const {
     size_t drawn{0};
     uint32_t utfState{Util::Unicode::kStateAccept}, utfCodepoint;
     const Glyph *glyph{nullptr};
@@ -42,7 +42,7 @@ int Font::draw(const etl::string_view str, Framebuffer &fb, const Point origin) 
         }
 
         // draw the glyph, and update current position
-        fb.blit4Bpp(glyph->data, glyph->size, current);
+        fb.blit4Bpp(glyph->data, glyph->size, current, Framebuffer::BlitFlags::HasTransparency);
         drawn++;
 
         current.x += glyph->size.width;

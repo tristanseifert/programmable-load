@@ -72,7 +72,7 @@ struct Font {
         };
 
     public:
-        int draw(const etl::string_view str, Framebuffer &fb, const Point origin);
+        int draw(const etl::string_view str, Framebuffer &fb, const Point origin) const;
 
         /**
          * @brief Search the font for a glyph for the given codepoint
