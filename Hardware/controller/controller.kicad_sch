@@ -1591,6 +1591,9 @@
   (junction (at 186.69 132.715) (diameter 0) (color 0 0 0 0)
     (uuid c46454af-62f8-456d-9a11-7a00ef6a3e80)
   )
+  (junction (at 100.33 177.165) (diameter 0) (color 0 0 0 0)
+    (uuid c571df18-bc3a-4c1c-9ded-189b8253a442)
+  )
   (junction (at 179.705 31.115) (diameter 0) (color 0 0 0 0)
     (uuid c75c9875-a6e5-422c-9ba2-07f015d437ed)
   )
@@ -1710,6 +1713,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 1b5139b4-93fa-4180-a40c-eaea4031de6b)
   )
+  (wire (pts (xy 108.585 185.42) (xy 121.285 185.42))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 1d6b4fdc-e910-468e-8312-adc237e7f1fd)
+  )
   (wire (pts (xy 208.915 46.99) (xy 222.25 46.99))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 1e716104-02ec-411c-b9d4-2cee76b7300b)
@@ -1818,6 +1825,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 3ff09785-c563-47f1-951b-991e387bb14c)
   )
+  (wire (pts (xy 100.33 177.165) (xy 103.505 177.165))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 4123d7ab-3fba-482a-83fd-e1d1c4334e14)
+  )
   (wire (pts (xy 213.36 140.335) (xy 213.36 142.875))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 42c22643-f9a3-4fde-9ba1-15b089f3927e)
@@ -1906,6 +1917,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 66f2e3a1-57b3-419c-9bbe-f1b6e2fea83c)
   )
+  (wire (pts (xy 108.585 177.165) (xy 121.285 177.165))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 6742bab6-7407-4b68-98d8-c68cf9d0d306)
+  )
   (wire (pts (xy 27.94 193.675) (xy 37.465 193.675))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 679cb4f8-4e93-462f-89a8-99035d57db52)
@@ -1934,6 +1949,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 6be8be66-ef90-4a56-bd8a-9d5ed4e60a8b)
   )
+  (wire (pts (xy 100.33 185.42) (xy 103.505 185.42))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 6c3c00dd-b11d-4a28-be4e-3538a427e70f)
+  )
   (wire (pts (xy 246.38 135.255) (xy 247.65 135.255))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 6f6f7511-965d-4386-a5ab-d254c2a9cece)
@@ -1953,6 +1972,10 @@
   (wire (pts (xy 59.055 85.09) (xy 72.39 85.09))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 7662b143-45ac-472d-969f-464e30c29ef5)
+  )
+  (wire (pts (xy 100.33 185.42) (xy 100.33 177.165))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 7746d53a-d2c9-45b8-9b60-326a01eabaf7)
   )
   (wire (pts (xy 256.54 140.335) (xy 267.97 140.335))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -2320,6 +2343,10 @@
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 0021bff5-f1cb-4cf9-8522-7c2be30a9d3d)
   )
+  (label "I2C_SDA" (at 121.285 185.42 180)
+    (effects (font (size 1.27 1.27)) (justify right bottom))
+    (uuid 0874ec41-7f94-4ac8-aed8-5713c5036974)
+  )
   (label "ETH_RX+" (at 208.915 83.185 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 08e3fae1-f059-461b-9dde-fea9326a70e7)
@@ -2548,6 +2575,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 8c8e3e96-c7fc-4108-9713-95fb137babb3)
   )
+  (label "I2C_SCL" (at 121.285 177.165 180)
+    (effects (font (size 1.27 1.27)) (justify right bottom))
+    (uuid 9009aa5f-9a15-426d-a49b-2a0f491a471e)
+  )
   (label "ETH_TX+" (at 208.915 88.265 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 95d7b4e4-d090-4b4b-95d7-0687255342ed)
@@ -2675,6 +2706,24 @@
     )
     (pin "1" (uuid 3bbf871a-1125-4fa6-bfb2-36bba1e4d873))
     (pin "2" (uuid 9873cdd7-a7d9-448c-97ff-9cd0b9927e36))
+  )
+
+  (symbol (lib_id "Device:R_Small") (at 106.045 185.42 270) (mirror x) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 03f887b5-9d39-41a6-9726-df442700dce7)
+    (property "Reference" "R118" (id 0) (at 106.045 180.34 90))
+    (property "Value" "2k2" (id 1) (at 106.045 182.88 90))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" (id 2) (at 106.045 185.42 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 106.045 185.42 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "MPN" "RMC1/10-222JTP" (id 4) (at 106.045 185.42 90)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid be0c2eaa-6737-4195-bd06-2fdba758554d))
+    (pin "2" (uuid ce44ef7a-2044-4ed1-8413-5d70f23622f7))
   )
 
   (symbol (lib_id "Device:R_Small") (at 50.165 168.91 270) (mirror x) (unit 1)
@@ -3218,13 +3267,13 @@
     (pin "1" (uuid 73ce250d-af48-4c53-bcf2-88972b49a9b5))
   )
 
-  (symbol (lib_id "power:+3V3") (at 151.765 146.685 90) (unit 1)
+  (symbol (lib_id "power:+12V") (at 151.765 146.685 90) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid 6474cb7a-e28d-4d38-9813-d71482ae8691)
-    (property "Reference" "#PWR0141" (id 0) (at 155.575 146.685 0)
+    (uuid 66ed4d0f-c88d-4344-b80b-e7168d5fbef9)
+    (property "Reference" "#PWR?" (id 0) (at 155.575 146.685 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "Value" "+3V3" (id 1) (at 147.955 146.6849 90)
+    (property "Value" "" (id 1) (at 148.59 146.6849 90)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "" (id 2) (at 151.765 146.685 0)
@@ -3233,7 +3282,7 @@
     (property "Datasheet" "" (id 3) (at 151.765 146.685 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (pin "1" (uuid d197b443-d08e-45e3-a850-9ccf1d1f1732))
+    (pin "1" (uuid 196695a4-f67d-465e-b028-6ae9876eeffb))
   )
 
   (symbol (lib_id "Connector_Generic:Conn_02x08_Odd_Even") (at 174.625 38.735 180) (unit 1)
@@ -3349,6 +3398,22 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid afda33cf-409f-40f1-9873-49083013ca2e))
+  )
+
+  (symbol (lib_id "power:+3V3") (at 100.33 177.165 0) (unit 1)
+    (in_bom yes) (on_board yes) (fields_autoplaced)
+    (uuid 78b77b4d-70c1-484d-9a68-d7588b904809)
+    (property "Reference" "#PWR0152" (id 0) (at 100.33 180.975 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+3V3" (id 1) (at 100.33 172.085 0))
+    (property "Footprint" "" (id 2) (at 100.33 177.165 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "" (id 3) (at 100.33 177.165 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid fcedf67d-e1a5-4c90-a71d-0dccefa3c246))
   )
 
   (symbol (lib_id "Device:Polyfuse_Small") (at 241.3 135.255 90) (unit 1)
@@ -3765,6 +3830,24 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 328596d6-e440-43ac-9874-8cfe4ccf12c8))
+  )
+
+  (symbol (lib_id "Device:R_Small") (at 106.045 177.165 270) (mirror x) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid bcc18b17-96b9-48cd-932a-677e4d4ba0fe)
+    (property "Reference" "R117" (id 0) (at 106.045 172.085 90))
+    (property "Value" "2k2" (id 1) (at 106.045 174.625 90))
+    (property "Footprint" "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" (id 2) (at 106.045 177.165 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 106.045 177.165 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "MPN" "RMC1/10-222JTP" (id 4) (at 106.045 177.165 90)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (pin "1" (uuid b4b66c49-83c0-48cd-a2f5-bcce0bf40f4e))
+    (pin "2" (uuid 90d03a73-399c-4a40-8b71-78217a324d16))
   )
 
   (symbol (lib_id "power:+3V3") (at 138.43 51.435 90) (unit 1)
@@ -4453,9 +4536,6 @@
     (path "/465814cb-03a5-4e09-ac69-bc7ba843ad49"
       (reference "#PWR0140") (unit 1) (value "+3V3") (footprint "")
     )
-    (path "/6474cb7a-e28d-4d38-9813-d71482ae8691"
-      (reference "#PWR0141") (unit 1) (value "+3V3") (footprint "")
-    )
     (path "/742365e1-5d99-47aa-b8a2-585482d2427a"
       (reference "#PWR0142") (unit 1) (value "GND") (footprint "")
     )
@@ -4485,6 +4565,9 @@
     )
     (path "/252ab6e5-5fe6-4b13-9b36-a44b947e3e03"
       (reference "#PWR0151") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/78b77b4d-70c1-484d-9a68-d7588b904809"
+      (reference "#PWR0152") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
@@ -4524,12 +4607,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/27d04097-dd24-4264-b94c-a228735c1e3c"
       (reference "#PWR0302") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/70885d7c-10f5-42ba-aacc-b662dabb0a25"
-      (reference "#PWR0303") (unit 1) (value "+3V3") (footprint "")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/1a6c0af9-b3cc-4317-be5b-db970dc37caa"
-      (reference "#PWR0304") (unit 1) (value "GND") (footprint "")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/c11212c8-e2b0-4cdf-b531-e9bf532da3fe"
       (reference "#PWR0305") (unit 1) (value "+3V3") (footprint "")
@@ -4612,6 +4689,9 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/bf92557a-c10a-4f08-acca-4cd6e2a152ef/670b932e-e101-46d7-b8a4-aaf93548afb2"
       (reference "#PWR0406") (unit 1) (value "GND") (footprint "")
     )
+    (path "/66ed4d0f-c88d-4344-b80b-e7168d5fbef9"
+      (reference "#PWR?") (unit 1) (value "+12V") (footprint "")
+    )
     (path "/9f8f850e-f21d-4cfa-8d52-ecff05516820"
       (reference "C101") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
@@ -4692,12 +4772,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/763ce089-a3df-44ec-97d0-7ca9a232e3e7"
       (reference "C311") (unit 1) (value "4.7µF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/50b053ff-82d5-4478-aa02-889e2343ef3d"
-      (reference "C312") (unit 1) (value "4.7pF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/3b4cf256-46be-450a-b8f9-0847521f9e38"
-      (reference "C313") (unit 1) (value "4.7pF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/99f3763c-685d-4adf-b2ea-99d421921562"
       (reference "C314") (unit 1) (value "8.2pF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -4879,6 +4953,12 @@
     (path "/297a529c-84dd-42da-afbb-40e64c207174"
       (reference "R116") (unit 1) (value "4k7") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/bcc18b17-96b9-48cd-932a-677e4d4ba0fe"
+      (reference "R117") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/03f887b5-9d39-41a6-9726-df442700dce7"
+      (reference "R118") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/92f6f638-55af-481a-b7ad-667d55b168c7"
       (reference "R201") (unit 1) (value "4k7") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
@@ -4899,9 +4979,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/582450e5-33c6-49b9-a128-ebcee0b3b7b9"
       (reference "R302") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/f1dd52e2-6d74-4588-b051-531a5b71342b"
-      (reference "R303") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/41dfb0e8-c668-4288-b549-95d038dba148"
       (reference "R304") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -4965,9 +5042,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/bf92557a-c10a-4f08-acca-4cd6e2a152ef/e2622a2a-3d3d-4a26-b9d8-22bb133dc432"
       (reference "X401") (unit 1) (value "50MHz") (footprint "Oscillator:Oscillator_SMD_SeikoEpson_SG8002LB-4Pin_5.0x3.2mm")
-    )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/d6daf199-892d-4263-9274-a53b58b85ea7"
-      (reference "Y301") (unit 1) (value "32.768kHz") (footprint "Crystal:Crystal_AT310_D3.0mm_L10.0mm_Vertical")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/c35b1d90-5923-4fad-9651-259dd8ec2387"
       (reference "Y302") (unit 1) (value "12MHz") (footprint "Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm_HandSoldering")
