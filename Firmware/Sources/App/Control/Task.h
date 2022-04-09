@@ -10,6 +10,8 @@
 #include <etl/string_view.h>
 
 namespace App::Control {
+class LoadDriver;
+
 class Task {
     friend void Start();
 
@@ -64,10 +66,12 @@ class Task {
         /// Task handle
         TaskHandle_t task;
 
-        /// Hardware revision of driver
-        uint16_t driverRev{0};
+        /// Driver handling the load
+        LoadDriver *driver{nullptr};
         /// Driver identifier
         Util::Uuid driverId;
+        /// Hardware revision of driver
+        uint16_t pcbRev{0};
 
     private:
         /// Runtime priority level

@@ -1,5 +1,7 @@
 #include "Task.h"
 #include "Hardware.h"
+#include "LoadDriver.h"
+#include "DumbLoadDriver.h"
 
 #include "Drivers/I2C.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
@@ -71,8 +73,12 @@ void Task::main() {
                 portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
-        // TODO: handle
+        // handle interrupt and triggers
         Logger::Warning("control notify: $%08x", note);
+
+        if(note & TaskNotifyBits::IrqAsserted) {
+            this->driver->handleIrq();
+        }
     }
 }
 
@@ -94,15 +100,10 @@ void Task::identifyDriver() {
     Drivers::I2CDevice::AT24CS32 idprom(Hw::gBus);
 
     err = idprom.readSerial(serial);
-    REQUIRE(!err, "failed to read controller %s: %d", "serial", err);
+    REQUIRE(!err, "failed to read driver pcb %s: %d", "serial", err);
 
     Util::Base32::Encode(serial, serialBase32);
-
-    Logger::Notice("controller serial: %02x%02x%02x%02x%02x%02x%02x%02x"
-            "%02x%02x%02x%02x%02x%02x%02x%02x", serial[0], serial[1], serial[2], serial[3],
-            serial[4], serial[5], serial[6], serial[7], serial[8], serial[9], serial[10],
-            serial[11], serial[12], serial[13], serial[14], serial[15]);
-    Logger::Notice("controller serial: %s", serialBase32.data());
+    Logger::Notice("driver pcb serial: %s", serialBase32.data());
 
     /*
      * Now read the identification data out of the ROM. This consists first of a fixed 16-byte
@@ -148,7 +149,9 @@ void Task::identifyDriver() {
              * Hardware revision is represented as a big endian 16-bit integer.
              */
             case Util::InventoryRom::AtomType::HwRevision:
-                memcpy(&inst->driverRev, buffer.data(), 2);
+                uint16_t temp;
+                memcpy(&temp, buffer.data(), 2);
+                inst->pcbRev = __builtin_bswap16(temp);
                 break;
             /*
              * Driver ID is encoded as a 16 byte binary representation of an UUID.
@@ -162,11 +165,11 @@ void Task::identifyDriver() {
         }
     }, this);
 
-    REQUIRE(err >= 0, "failed to read controller %s: %d", "prom atoms", err);
+    REQUIRE(err >= 0, "failed to read driver pcb %s: %d", "prom atoms", err);
 
     // log info about it
     etl::array<char, 0x26> uuidStr;
     this->driverId.format(uuidStr);
 
-    Logger::Notice("Load pcb: rev %u (driver %s)", this->driverRev, uuidStr);
+    Logger::Notice("Driver pcb: rev %u (driver %s)", this->pcbRev, uuidStr.data());
 }

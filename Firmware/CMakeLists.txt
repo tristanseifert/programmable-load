@@ -66,6 +66,7 @@ add_compile_options(-fstack-protector-strong)
 add_executable(firmware
     Sources/Init/Vectors.c
     Sources/Init/Startup.cpp
+    ${BuildInfoFile}
     Sources/Init/StackGuard.cpp
     Sources/Init/CppHeap.cpp
     Sources/Init/FaultHandlers.cpp
@@ -113,7 +114,7 @@ add_executable(firmware
     Sources/App/Thermal/Task.cpp
     Sources/App/Control/Hardware.cpp
     Sources/App/Control/Task.cpp
-    ${BuildInfoFile}
+    Sources/App/Control/DumbLoadDriver.cpp
 )
 
 # Set defines for the platform

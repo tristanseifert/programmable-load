@@ -132,10 +132,12 @@ void Hw::PulseReset() {
 /**
  * @brief Set the state of the driver reset line
  *
- * @param asserted Whether the reset line is asserted (low)
+ * The line is active high, since we'll have the optocoupler on the driver board invert it.
+ *
+ * @param asserted Whether the reset line is asserted
  */
 void Hw::SetResetState(const bool asserted) {
-    Drivers::Gpio::SetOutputState(kDriverReset, !asserted);
+    Drivers::Gpio::SetOutputState(kDriverReset, asserted);
 }
 
 
