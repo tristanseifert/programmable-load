@@ -225,6 +225,17 @@ int I2C::perform(etl::span<const Transaction> transactions) {
         return Errors::InUse;
     }
 
+    /*
+     * Perform setup inside a critical section.
+     *
+     * This is required so that we don't get interrupted while we configure the address of the
+     * peripheral and reset state machine state. Otherwise, we can get into some fucked state where
+     * subsequent bus transactions will hang.
+     *
+     * XXX: This probably needs more debugging...
+     */
+    taskENTER_CRITICAL();
+
     this->waiting = xTaskGetCurrentTaskHandle();
     this->completion = -1;
     this->state = State::Idle;
@@ -242,6 +253,8 @@ int I2C::perform(etl::span<const Transaction> transactions) {
 
     this->state = State::SendAddress;
     this->beginTransaction(first, false);
+
+    taskEXIT_CRITICAL();
 
     // wait for the transactions to complete/error out
     ok = xTaskNotifyWaitIndexed(Rtos::TaskNotifyIndex::DriverPrivate, 0,

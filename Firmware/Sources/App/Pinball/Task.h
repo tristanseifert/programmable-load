@@ -119,8 +119,6 @@ class Task {
         Task();
 
         void main();
-        void initEncoder();
-        void updateEncoder();
         void detectFrontPanel();
 
     private:

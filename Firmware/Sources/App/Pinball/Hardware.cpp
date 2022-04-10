@@ -19,6 +19,31 @@ Drivers::TimerCounter *Hw::gBeeperTc{nullptr};
 Drivers::I2CBus *Hw::gFrontI2C{nullptr};
 Drivers::I2CBus *Hw::gRearI2C{nullptr};
 
+uint8_t Hw::gEncoderCurrentState{0};
+int Hw::gEncoderDelta{0};
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+
+const uint8_t Hw::kEncoderStateTable[7][4]{
+    // Initial
+    {Initial,   CwBegin,        CcwBegin,       Initial},
+    // CwFinal
+    {CwNext,    Initial,        CwFinal,        (Initial | DirectionCW)},
+    // CwBegin
+    {CwNext,    CwBegin,        Initial,        Initial},
+    // CwNext
+    {CwNext,    CwBegin,        CwFinal,        Initial},
+    // CcwBegin
+    {CcwNext,   Initial,        CcwBegin,       Initial},
+    // CcwFinal
+    {CcwNext,   CcwFinal,       Initial,        (Initial | DirectionCCW)},
+    // CcwNext
+    {CcwNext,   CcwFinal,       CcwBegin,       Initial},
+};
+
+#pragma GCC diagnostic pop
+
 /**
  * @brief Initialize user interface hardware
  *
@@ -154,7 +179,8 @@ void Hw::InitPowerButton() {
  * Each of these is also set up for external interrupts on both the rising and falling edge.
  */
 void Hw::InitEncoder() {
-    // TODO: reset the encoder state machine
+    // reset the encoder state machine
+    gEncoderCurrentState = EncoderState::Initial;
 
     // configure encoder A and B inputs
     Drivers::Gpio::ConfigurePin(kEncoderA, { // A
@@ -274,19 +300,27 @@ void Hw::SetPowerLight(const PowerLightMode mode) {
 }
 
 /**
- * @brief Read the state of the two encoder pins.
+ * @brief Update rotary encoder state machine
  *
- * @return Encoder state; bit 0 is the A line, bit 1 the B line.
+ * Reads the IO pins of the rotary encoder, and updates the state machine for it. When a full left
+ * or right click is detected, we'll notify the pinball task.
  */
-uint8_t Hw::ReadEncoder() {
-    uint8_t temp{0};
-    if(Drivers::Gpio::GetInputState(kEncoderA)) {
-        temp |= (1 << 0);
+void Hw::AdvanceEncoderState(BaseType_t *woken) {
+    const auto state = Hw::ReadEncoder();
+
+    gEncoderCurrentState = kEncoderStateTable[gEncoderCurrentState & 0xf][state];
+    const auto direction = gEncoderCurrentState & EncoderDirection::DirectionMask;
+
+    // one "step" has taken place now
+    if(direction) {
+        if(direction == EncoderDirection::DirectionCW) {
+            __atomic_add_fetch(&gEncoderDelta, 1, __ATOMIC_RELAXED);
+        } else if(direction == EncoderDirection::DirectionCCW) {
+            __atomic_sub_fetch(&gEncoderDelta, 1, __ATOMIC_RELAXED);
+        }
+
+        Task::NotifyFromIsr(Task::TaskNotifyBits::EncoderChanged, woken);
     }
-    if(Drivers::Gpio::GetInputState(kEncoderB)) {
-        temp |= (1 << 1);
-    }
-    return temp;
 }
 
 
@@ -301,7 +335,7 @@ void EIC_7_Handler() {
     BaseType_t woken{pdFALSE};
 
     if(Drivers::ExternalIrq::HandleIrq(7)) {
-        Task::NotifyFromIsr(Task::TaskNotifyBits::EncoderChanged, &woken);
+        Hw::AdvanceEncoderState(&woken);
     }
 
     portYIELD_FROM_ISR(woken);
@@ -317,7 +351,7 @@ void EIC_8_Handler() {
     BaseType_t woken{pdFALSE};
 
     if(Drivers::ExternalIrq::HandleIrq(8)) {
-        Task::NotifyFromIsr(Task::TaskNotifyBits::EncoderChanged, &woken);
+        Hw::AdvanceEncoderState(&woken);
     }
 
     portYIELD_FROM_ISR(woken);

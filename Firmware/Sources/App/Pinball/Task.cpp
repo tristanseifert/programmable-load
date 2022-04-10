@@ -72,7 +72,6 @@ void Task::main() {
 
     // discover front panel hardware, and initialize itz
     Logger::Trace("pinball: %s", "init front panel");
-    this->initEncoder();
     this->detectFrontPanel();
 
     /*
@@ -95,13 +94,16 @@ void Task::main() {
 
         /*
          * Handle front panel interactions: IRQs from the HMI board are forwarded to the driver,
-         * and we handle the encoder inputs changing in our encoder state machine.
+         * which will call into the GUI code with updated button states. If the encoder state was
+         * changed (handled in Hw class state machine) we'll read it out and forward it to the
+         * GUI task as well.
          */
         if(note & TaskNotifyBits::FrontIrq) {
             this->frontDriver->handleIrq();
         }
         if(note & TaskNotifyBits::EncoderChanged) {
-            this->updateEncoder();
+            const auto delta = Hw::ReadEncoderDelta();
+            Logger::Trace("Encoder delta: %d", delta);
         }
 
         /*
@@ -114,29 +116,6 @@ void Task::main() {
         }
     }
 }
-
-/**
- * @brief Initialize encoder state machine
- *
- * Sets up the state of the rotary encoder reading state machine. We'll sample the input pins here
- * to get the baseline value.
- */
-void Task::initEncoder() {
-
-}
-
-/**
- * @brief Read the state of the encoder pins and update UI
- *
- * Advances the state of the encoder state machine to determine whether we should increment or
- * decrement the current value.
- */
-void Task::updateEncoder() {
-    const auto state = Hw::ReadEncoder();
-    Logger::Trace("Encoder state: %02x", state);
-}
-
-
 
 /**
  * @brief Detect front panel hardware

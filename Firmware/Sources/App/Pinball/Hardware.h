@@ -7,6 +7,11 @@
 
 #include "Drivers/Gpio.h"
 
+extern "C" {
+void EIC_8_Handler();
+void EIC_7_Handler();
+}
+
 namespace Drivers {
 class I2CBus;
 class Spi;
@@ -33,6 +38,9 @@ enum class PowerLightMode {
  * behind a multiplexer) and some general IO.
  */
 class Hw {
+    friend void ::EIC_7_Handler();
+    friend void ::EIC_8_Handler();
+
     friend class Task;
     friend class Display;
 
@@ -94,6 +102,34 @@ class Hw {
         Drivers::Gpio::Port::PortB, 10
     };
 
+    /// Constants used by the encoder state machine
+    enum EncoderState: uint8_t {
+        Initial                         = 0,
+        CwFinal                         = 1,
+        CwBegin                         = 2,
+        CwNext                          = 3,
+        CcwBegin                        = 4,
+        CcwFinal                        = 5,
+        CcwNext                         = 6,
+    };
+    /// Encoder rotation direction
+    enum EncoderDirection: uint8_t {
+        DirectionNone                   = 0,
+        /// One step clockwise
+        DirectionCW                     = (1 << 4),
+        /// One step counterclockwise
+        DirectionCCW                    = (1 << 5),
+        /// Bitmask for direction values
+        DirectionMask                   = (DirectionCW | DirectionCCW),
+    };
+    /**
+     * @brief State table for encoder state machine
+     *
+     * This is a 2 dimensional array, where the first index is the current state, and the second
+     * index is the current state of the IO lines.
+     */
+    static const uint8_t kEncoderStateTable[7][4];
+
     public:
         static void Init(const etl::span<Drivers::I2CBus *, 2> &busses);
 
@@ -115,8 +151,34 @@ class Hw {
             Drivers::Gpio::SetOutputState(kDisplayCmdData, isData);
         }
 
+        /**
+         * @brief Read the state of the two encoder pins.
+         *
+         * @return Encoder state; bit 0 is the A line, bit 1 the B line.
+         */
+        static inline uint8_t ReadEncoder() {
+            uint8_t temp{0};
+            if(Drivers::Gpio::GetInputState(kEncoderA)) {
+                temp |= (1 << 0);
+            }
+            if(Drivers::Gpio::GetInputState(kEncoderB)) {
+                temp |= (1 << 1);
+            }
+            return temp;
+        }
+        /**
+         * @brief Read, then reset the encoder delta
+         *
+         * Atomically reads out the encoder delta (steps since last read) then resets it to
+         * zero.
+         */
+        static inline int ReadEncoderDelta() {
+            int zero{0}, value;
+            __atomic_exchange(&gEncoderDelta, &zero, &value, __ATOMIC_RELAXED);
+            return value;
+        }
+
         static void SetPowerLight(const PowerLightMode mode);
-        static uint8_t ReadEncoder();
 
     private:
         static void InitDisplaySpi();
@@ -124,6 +186,8 @@ class Hw {
         static void InitEncoder();
         static void InitBeeper();
         static void InitMisc();
+
+        static void AdvanceEncoderState(long *);
 
         /// Display SPI bus
         static Drivers::Spi *gDisplaySpi;
@@ -134,6 +198,17 @@ class Hw {
         static Drivers::I2CBus *gFrontI2C;
         /// rear IO bus
         static Drivers::I2CBus *gRearI2C;
+
+        /// current state of encoder state machine
+        static uint8_t gEncoderCurrentState;
+        /**
+         * @brief Current encoder sum
+         *
+         * This is an integer value, initialized to 0 at startup, and any time the pinball task
+         * has read (and then reset) this value. For each step of the encoder, 1 or -1 is added to
+         * it, depending on the rotation direction.
+         */
+        static int gEncoderDelta;
 };
 }
 
