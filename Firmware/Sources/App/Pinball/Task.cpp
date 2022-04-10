@@ -7,6 +7,7 @@
 #include "Drivers/Gpio.h"
 #include "Drivers/Spi.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
+#include "Gui/ScreenManager.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 #include "Util/Base32.h"
@@ -14,6 +15,7 @@
 
 #include <etl/array.h>
 
+#include <BuildInfo.h>
 #include <vendor/sam.h>
 
 using namespace App::Pinball;
@@ -70,9 +72,13 @@ void Task::main() {
     Logger::Trace("pinball: %s", "init display");
     Display::Init();
 
-    // discover front panel hardware, and initialize itz
+    // discover front panel hardware, and initialize it
     Logger::Trace("pinball: %s", "init front panel");
     this->detectFrontPanel();
+
+    // with the display and front panel IO set up, initialize the GUI
+    Gui::ScreenManager::Init();
+    this->showVersionScreen();
 
     /*
      * Start handling messages
@@ -84,6 +90,8 @@ void Task::main() {
     Logger::Trace("pinball: %s", "start message loop");
 
     while(1) {
+        bool uiDirty{false};
+
         ok = xTaskNotifyWaitIndexed(kNotificationIndex, 0, TaskNotifyBits::All, &note,
                 portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
@@ -107,10 +115,24 @@ void Task::main() {
         }
 
         /*
-         * Redraw the user interface, when it's explicitly requested for now. Later, we'll add
-         * some other checks here.
+         * We can select some main screen modes here to replace the entirety of what's on screen
+         * at a time. This is only used for the home screen now.
          */
-        if(note & TaskNotifyBits::RedrawUI) {
+        if(note & TaskNotifyBits::ShowHomeScreen) {
+            // cancel timer (in case a button press got us here)
+            xTimerStop(this->versionDismissTimer, 0);
+
+            // TODO: present it
+            Logger::Warning("XXX: this is where we'd present the home screen");
+            uiDirty = true;
+        }
+
+        /*
+         * Redraw the user interface, when it's been explicitly requested.
+         */
+        if(note & TaskNotifyBits::RedrawUI || uiDirty) {
+            Gui::ScreenManager::Draw();
+
             err = Display::Transfer();
             REQUIRE(!err, "pinball: %s (%d)", "failed to transfer display buffer", err);
         }
@@ -211,4 +233,61 @@ void Task::detectFrontPanel() {
     auto ptr = reinterpret_cast<HmiDriver *>(gHmiDriverBuf);
 
     this->frontDriver = new (ptr) HmiDriver(Hw::gFrontI2C, idprom);
+}
+
+
+
+#include "Gui/Components/StaticLabel.h"
+#include "Gfx/Font.h"
+
+/**
+ * @brief Present the initialization (version) screen
+ *
+ * This display shows the software and hardware revision and serial numbers on the display for a
+ * bit, until either Menu is pressed, or the timer we set times out.
+ */
+void Task::showVersionScreen() {
+    BaseType_t ok;
+
+    // static labels
+    static Gui::Components::StaticLabel gHelloLabel(
+        {Gfx::MakePoint(4, 0), Gfx::MakeSize(248, 20)},
+        "Programmable Load",
+        Gfx::Font::gGeneral_16_Bold
+    );
+
+    static char gVersionString[50];
+    snprintf(gVersionString, sizeof(gVersionString), "Software: %s/%s (%s)",
+            gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType);
+
+    static Gui::Components::StaticLabel gSwVersionLabel(
+        {Gfx::MakePoint(4, 46), Gfx::MakeSize(42, 18)},
+        gVersionString,
+        Gfx::Font::gGeneral_14
+    );
+
+    // present the screen
+    static etl::array<Gui::Components::Base *, 2> gComponents{{
+        &gHelloLabel, &gSwVersionLabel
+    }};
+    static Gui::Screen gVersionScreen{
+        .title = "Version Info",
+        .components = gComponents,
+    };
+    Gui::ScreenManager::Present(&gVersionScreen);
+
+    // set up, and arm the timer
+    static StaticTimer_t gDismissVersionTimer;
+    this->versionDismissTimer = xTimerCreateStatic("Dismiss version screen",
+        // one-shot timer mode
+        pdMS_TO_TICKS(kShowVersionDuration), pdFALSE,
+        // timer ID is this object
+        this, [](auto timer) {
+            xTaskNotifyIndexed(gShared->task, kNotificationIndex, TaskNotifyBits::ShowHomeScreen,
+                    eSetBits);
+        }, &gDismissVersionTimer);
+    REQUIRE(this->versionDismissTimer, "pinball: %s", "failed to allocate version dismiss timer");
+
+    ok = xTimerReset(this->versionDismissTimer, 0);
+    REQUIRE(ok == pdTRUE, "pinball: %s", "failed to start version dismiss timer");
 }

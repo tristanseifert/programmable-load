@@ -68,12 +68,19 @@ class Task {
             RedrawUI                    = (1 << 4),
 
             /**
+             * @brief Present main screen
+             *
+             * Reset the UI to show only the instrument home screen.
+             */
+            ShowHomeScreen              = (1 << 5),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
             All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged |
-                    RedrawUI),
+                    RedrawUI | ShowHomeScreen),
         };
 
     public:
@@ -115,11 +122,23 @@ class Task {
                     static_cast<BaseType_t>(bits), eSetBits, woken);
         }
 
+        /**
+         * @brief Send a notification
+         *
+         * Notify the UI task something happened.
+         *
+         * @brief bits Notification bits to set
+         */
+        static void NotifyTask(const TaskNotifyBits bits) {
+            xTaskNotifyIndexed(gShared->task, kNotificationIndex, bits, eSetBits);
+        }
+
     private:
         Task();
 
         void main();
         void detectFrontPanel();
+        void showVersionScreen();
 
     private:
         /// Task handle
@@ -132,6 +151,9 @@ class Task {
         /// Front panel driver id
         Util::Uuid frontDriverId;
 
+        /// Timer to dismiss the version screen
+        TimerHandle_t versionDismissTimer;
+
     private:
         /// Runtime priority level
         static const constexpr uint8_t kPriority{Rtos::TaskPriority::AppLow};
@@ -142,6 +164,9 @@ class Task {
         static const constexpr etl::string_view kName{"Pinball"};
         /// Notification index
         static const constexpr size_t kNotificationIndex{Rtos::TaskNotifyIndex::TaskSpecific};
+
+        /// Duration to show the version/information screen, in milliseconds
+        static const constexpr size_t kShowVersionDuration{5*1000};
 
 
         /// Task information structure
