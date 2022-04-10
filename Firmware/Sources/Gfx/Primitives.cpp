@@ -68,11 +68,13 @@ void Gfx::DrawLine(Framebuffer &fb, const Point start, const Point end, const ui
  * Renders a rectangle by stroking its borders.
  *
  * @param fb Framebuffer to draw on
- * @param p1 Top left point
- * @param p2 Bottom right point
+ * @param bounds Rectangle bounds to draw in
  * @param strokeColor Color for the border of the rectangle
  */
-void Gfx::StrokeRect(Framebuffer &fb, const Point p1, const Point p2, const uint32_t strokeColor) {
+void Gfx::StrokeRect(Framebuffer &fb, const Rect bounds, const uint32_t strokeColor) {
+    const auto p1 = bounds.origin;
+    const auto p2 = MakePoint<int>(p1.x + bounds.size.width, p1.y + bounds.size.height);
+
     DrawLine(fb, p1, MakePoint(p2.x, p1.y), strokeColor);
     DrawLine(fb, MakePoint(p2.x, p1.y), MakePoint(p2.x, p2.y), strokeColor);
     DrawLine(fb, p2, MakePoint(p1.x, p2.y), strokeColor);
@@ -86,11 +88,13 @@ void Gfx::StrokeRect(Framebuffer &fb, const Point p1, const Point p2, const uint
  * to draw a border, draw an outlined rectangle one pixel larger in each direction.
  *
  * @param fb Framebuffer to draw on
- * @param p1 Top left point
- * @param p2 Bottom right point
+ * @param bounds Bounds of the rectangle to fill
  * @param fillColor Color for the fill of the rectangle
  */
-void Gfx::FillRect(Framebuffer &fb, const Point p1, const Point p2, const uint32_t fillColor) {
+void Gfx::FillRect(Framebuffer &fb, const Rect bounds, const uint32_t fillColor) {
+    const auto p1 = bounds.origin;
+    const auto p2 = MakePoint<int>(p1.x + bounds.size.width, p1.y + bounds.size.height);
+
     for(uint16_t y = p1.y; y <= p2.y; y++) {
         for(uint16_t x = p1.x; x <= p2.x; x++) {
             fb.setPixel(MakePoint(x, y), fillColor);

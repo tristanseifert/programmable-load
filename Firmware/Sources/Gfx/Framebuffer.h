@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <etl/algorithm.h>
 #include <etl/span.h>
 #include <etl/utility.h>
 
@@ -77,6 +78,15 @@ class Framebuffer {
                 const BlitFlags flags = BlitFlags::None);
 
         /**
+         * @brief Clear the framebuffer
+         *
+         * The framebuffer will be filled with zero bytes.
+         */
+        void clear() {
+            etl::fill(this->data.begin(), this->data.end(), 0);
+        }
+
+        /**
          * @brief Calculate pixel offset into framebuffer
          *
          * @param point Point in the framebuffer to get the memory address for
@@ -98,6 +108,8 @@ class Framebuffer {
          */
         inline void setPixel(const Point point, const uint32_t value) {
             const auto offset = this->getPixelOffset(point);
+            if(offset > this->data.size()) return;
+
             auto temp = this->data[offset];
 
             if(!(point.x & 1)) { // even pixel

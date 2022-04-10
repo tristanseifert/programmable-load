@@ -69,6 +69,7 @@ add_executable(firmware
     ${BuildInfoFile}
     Sources/Init/StackGuard.cpp
     Sources/Init/CppHeap.cpp
+    Sources/Init/CppRuntime.cpp
     Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
     Sources/Log/Logger.cpp
