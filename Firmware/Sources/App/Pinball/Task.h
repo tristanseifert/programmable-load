@@ -59,11 +59,21 @@ class Task {
             EncoderChanged              = (1 << 3),
 
             /**
+             * @brief Update UI
+             *
+             * The user interface needs to be redrawn. This is usually set by the user interface
+             * layer as long as it's doing animations, or when user interaction causes the display
+             * to be dirtied.
+             */
+            RedrawUI                    = (1 << 4),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
-            All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged),
+            All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged |
+                    RedrawUI),
         };
 
     public:

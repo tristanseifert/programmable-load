@@ -52,6 +52,7 @@ Task::Task() {
  * updates the interface (display, indicators) appropriately.
  */
 void Task::main() {
+    int err;
     BaseType_t ok;
     uint32_t note;
 
@@ -88,12 +89,28 @@ void Task::main() {
                 portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
-        Logger::Warning("pinball notify: $%08x", note);
+        if(note & TaskNotifyBits::PowerPressed) {
+            Logger::Warning("!!! Power button changed");
+        }
+
+        /*
+         * Handle front panel interactions: IRQs from the HMI board are forwarded to the driver,
+         * and we handle the encoder inputs changing in our encoder state machine.
+         */
         if(note & TaskNotifyBits::FrontIrq) {
             this->frontDriver->handleIrq();
         }
         if(note & TaskNotifyBits::EncoderChanged) {
             this->updateEncoder();
+        }
+
+        /*
+         * Redraw the user interface, when it's explicitly requested for now. Later, we'll add
+         * some other checks here.
+         */
+        if(note & TaskNotifyBits::RedrawUI) {
+            err = Display::Transfer();
+            REQUIRE(!err, "pinball: %s (%d)", "failed to transfer display buffer", err);
         }
     }
 }

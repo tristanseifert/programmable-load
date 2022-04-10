@@ -182,6 +182,7 @@ class HmiDriver: public FrontIoDriver {
                 .pullUp = true,
                 .invertInput = true,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
                 .irqFilter = true,
             },
@@ -191,6 +192,7 @@ class HmiDriver: public FrontIoDriver {
                 .pullUp = true,
                 .invertInput = true,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
                 .irqFilter = true,
             },
@@ -203,11 +205,10 @@ class HmiDriver: public FrontIoDriver {
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
 
             // LED driver output enable (we don't use this)
-            /*{
+            {
                 .input = false,
                 .initialOutput = false,
-            },*/
-            Drivers::I2CDevice::XRA1203::kPinConfigUnused,
+            },
             // unused IOs x2
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
@@ -257,11 +258,38 @@ class HmiDriver: public FrontIoDriver {
                 .irqFilter = true,
             },
         }};
+        /// Bitmask of IO lines that have buttons connected
+        constexpr static const uint16_t kIoButtonMask{0xF803};
+        /// Input line for the menu button
+        constexpr static const uint16_t kIoButtonMenu{1 << 0};
+        /// Input line for the select (encoder) button
+        constexpr static const uint16_t kIoButtonSelect{1 << 1};
+        /// Input line for the input enable button
+        constexpr static const uint16_t kIoButtonInputEnable{1 << 11};
+        /// Input line for the constant current mode button
+        constexpr static const uint16_t kIoButtonModeCC{1 << 12};
+        /// Input line for the constant voltage mode button
+        constexpr static const uint16_t kIoButtonModeCV{1 << 13};
+        /// Input line for the constant wattage mode button
+        constexpr static const uint16_t kIoButtonModeCW{1 << 14};
+        /// Input line for the bonus mode button
+        constexpr static const uint16_t kIoButtonModeExt{1 << 15};
 
-        /// Button IO expander
-        //Drivers::I2CDevice::XRA1203 ioExpander;
+    private:
         /// LED driver
         Drivers::I2CDevice::PCA9955B ledDriver;
+        /// Button IO expander
+        Drivers::I2CDevice::XRA1203 ioExpander;
+
+        /// Current state of the buttons
+        Button buttonState{0};
+        /**
+         * @brief Current indicator state
+         *
+         * This is initialized to all 1's so that on the first request to set the indicators, we'll
+         * update every indicator on the board.
+         */
+        Indicator indicatorState{UINTPTR_MAX};
 };
 }
 

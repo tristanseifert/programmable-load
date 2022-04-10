@@ -220,11 +220,6 @@ void Hw::InitBeeper() {
         __attribute__((aligned(alignof(Drivers::TimerCounter))));
     auto ptr = reinterpret_cast<Drivers::TimerCounter *>(gTcBuf);
     gBeeperTc = new (ptr) Drivers::TimerCounter(Drivers::TimerCounter::Unit::Tc5, cfg);
-
-    // test beep
-    gBeeperTc->setDutyCycle(0, .1);
-    vTaskDelay(pdMS_TO_TICKS(200));
-    gBeeperTc->setDutyCycle(0, 0);
 }
 
 /**

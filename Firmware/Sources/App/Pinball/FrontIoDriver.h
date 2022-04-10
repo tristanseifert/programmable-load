@@ -22,6 +22,52 @@ namespace App::Pinball {
 class FrontIoDriver {
     public:
         /**
+         * @brief Bitmask of button states
+         *
+         * The state of all buttons on the front panel can be described by a bitwise OR of various
+         * constants in this enumeration.
+         */
+        enum Button: uintptr_t {
+            /**
+             * @brief Menu selection
+             *
+             * This is typically the button in the middle of a rotary encoder.
+             */
+            Select                      = (1 << 0),
+            /**
+             * @brief Menu
+             *
+             * Opens a menu or goes back. This button supports illumination.
+             */
+            MenuBtn                     = (1 << 1),
+
+            /**
+             * @brief Load on/off
+             *
+             * Momentary push button used to control a software toggle to turn the load on or off.
+             * The switch may have up to two indicators (one for off, one for on) inside.
+             */
+            InputBtn                    = (1 << 2),
+
+            /**
+             * @brief Activate constant current mode
+             */
+            ModeSelectCC                = (1 << 3),
+            /**
+             * @brief Activate constant voltage mode
+             */
+            ModeSelectCV                = (1 << 4),
+            /**
+             * @brief Activate constant wattage mode
+             */
+            ModeSelectCW                = (1 << 5),
+            /**
+             * @brief Activate bonus mode
+             */
+            ModeSelectExt               = (1 << 6),
+        };
+
+        /**
          * @brief Various indicators available on the front panel
          *
          * These indicator constants can map to an indicator (LED) on the front panel, or perhaps
@@ -79,6 +125,11 @@ class FrontIoDriver {
              * @brief Bonus mode enabled
              */
             ModeExt                     = (1 << 8),
+
+            /**
+             * @brief Limiter active
+             */
+            LimitingOn                  = (1 << 9),
         };
 
     public:

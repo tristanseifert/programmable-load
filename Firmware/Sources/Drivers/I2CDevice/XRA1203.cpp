@@ -164,7 +164,9 @@ int XRA1203::setOutputTristate(const uint8_t pin, const bool isTristate) {
  * @brief Write the upper and lower part of a register
  *
  * Writes the 16-bit value to two consecutive registers. All registers are laid out with the
- * register 1 having the high 8 bits, and register 2 the low 8 bits.
+ * register 0 having the high 8 bits, and register 1 the low 8 bits. That is to say, when writing
+ * a 16-bit register, each bit corresponds to channels 0-15, and the byte halves are swapped when
+ * writing to the device. (just trust me bro this works)
  *
  * @param reg Register to write
  * @param value 16-bit value to write to register
@@ -173,8 +175,9 @@ int XRA1203::setOutputTristate(const uint8_t pin, const bool isTristate) {
  */
 int XRA1203::writeRegister(const Register reg, const uint16_t value) {
     etl::array<uint8_t, 3> request{
-        static_cast<uint8_t>(reg), static_cast<uint8_t>((value & 0xFF00) >> 8),
+        static_cast<uint8_t>(reg),
         static_cast<uint8_t>(value & 0x00FF),
+        static_cast<uint8_t>((value & 0xFF00) >> 8),
     };
 
     etl::array<I2CBus::Transaction, 1> txns{{
@@ -193,7 +196,7 @@ int XRA1203::writeRegister(const Register reg, const uint16_t value) {
  * @brief Read the upper and lower part of a register
  *
  * @param reg First (high) register to read
- * @param outValue Variable to receive the resulting value
+ * @param outValue Variable to receive the resulting value. The byte halves will be swapped.
  *
  * @return 0 on success, or an error code
  */
@@ -226,7 +229,7 @@ int XRA1203::readRegister(const Register reg, uint16_t &outValue) {
     err = this->bus->perform(txns);
 
     if(!err) {
-        outValue = (static_cast<uint16_t>(reply[0]) << 8) | reply[1];
+        outValue = (static_cast<uint16_t>(reply[1]) << 8) | reply[0];
     }
 
     return err;
