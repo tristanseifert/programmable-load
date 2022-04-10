@@ -95,8 +95,8 @@
   (fp_line (start -20.5 -5.5) (end -20.9 -5.5) (layer "F.Fab") (width 0.127) (tstamp ff2dfcb6-5aef-464e-a0ac-e329d598d62d))
   (fp_line (start -20 5.5) (end -19.5 5.5) (layer "F.Fab") (width 0.127) (tstamp ff3d0755-420a-4dfa-8d4d-7be46ef88d3a))
   (fp_line (start -30.48 -5.5) (end -29.21 -5.5) (layer "F.Fab") (width 0.127) (tstamp ffa4b8ea-7a26-4e86-b756-a7acd830cd3e))
-  (pad "" np_thru_hole circle (at -5.08 5.08) (size 3.015 3.015) (drill 2.01) (layers F&B.Cu *.Mask) (tstamp ac8087b1-7fd9-4b44-a2e1-78c152fe3c02))
-  (pad "" np_thru_hole circle (at -5.08 -5.08) (size 3.015 3.015) (drill 2.01) (layers F&B.Cu *.Mask) (tstamp fb4f507b-0ad4-4cc7-9a04-829db5b5b5e7))
+  (pad "" np_thru_hole rect (at -5.08 5.08) (size 3.5 3.5) (drill 2) (layers F&B.Cu *.Mask) (tstamp ac8087b1-7fd9-4b44-a2e1-78c152fe3c02))
+  (pad "" np_thru_hole rect (at -5.08 -5.08) (size 3.5 3.5) (drill 2) (layers F&B.Cu *.Mask) (tstamp fb4f507b-0ad4-4cc7-9a04-829db5b5b5e7))
   (pad "1" thru_hole rect (at 0 0) (size 1.398 1.398) (drill 0.89) (layers *.Cu *.Mask) (tstamp 3e4f5a0f-3fe4-437e-a33b-27b1dcf81595))
   (pad "2" thru_hole circle (at 0 2.54) (size 1.398 1.398) (drill 0.89) (layers *.Cu *.Mask) (tstamp 8f5e0199-cc8a-4c06-9bcc-c0d10b0dc9ec))
   (model "../shared/programmable-load.pretty/1-1337543-0.step"
