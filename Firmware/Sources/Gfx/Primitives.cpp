@@ -72,7 +72,7 @@ void Gfx::DrawLine(Framebuffer &fb, const Point start, const Point end, const ui
  * @param p2 Bottom right point
  * @param strokeColor Color for the border of the rectangle
  */
-void Gfx::DrawRect(Framebuffer &fb, const Point p1, const Point p2, const uint32_t strokeColor) {
+void Gfx::StrokeRect(Framebuffer &fb, const Point p1, const Point p2, const uint32_t strokeColor) {
     DrawLine(fb, p1, MakePoint(p2.x, p1.y), strokeColor);
     DrawLine(fb, MakePoint(p2.x, p1.y), MakePoint(p2.x, p2.y), strokeColor);
     DrawLine(fb, p2, MakePoint(p1.x, p2.y), strokeColor);
@@ -110,7 +110,7 @@ void Gfx::FillRect(Framebuffer &fb, const Point p1, const Point p2, const uint32
  * @param center Center point of the circle
  * @param 
  */
-static void DrawCircleHelper(Framebuffer &fb, const Point center, const int16_t x, const int16_t y,
+static void StrokeCircleHelper(Framebuffer &fb, const Point center, const int16_t x, const int16_t y,
         const uint32_t strokeColor) {
     if(!x) {
         fb.setPixel(MakePoint<int>(center.x, center.y + y), strokeColor);
@@ -148,13 +148,13 @@ static void DrawCircleHelper(Framebuffer &fb, const Point center, const int16_t 
  * @param radius Radius of circle, in pixels
  * @param strokeColor Color to paint the border with
  */
-void Gfx::DrawCircle(Framebuffer &fb, const Point center, const uint16_t radius,
+void Gfx::StrokeCircle(Framebuffer &fb, const Point center, const uint16_t radius,
         const uint32_t strokeColor) {
     int16_t x{0};
     int16_t y = radius;
     int p = (5 - radius*4) / 4;
 
-    DrawCircleHelper(fb, center, x, y, strokeColor);
+    StrokeCircleHelper(fb, center, x, y, strokeColor);
 
     while(x < y) {
         x++;
@@ -166,7 +166,7 @@ void Gfx::DrawCircle(Framebuffer &fb, const Point center, const uint16_t radius,
             p += 2*(x-y)+1;
         }
 
-        DrawCircleHelper(fb, center, x, y, strokeColor);
+        StrokeCircleHelper(fb, center, x, y, strokeColor);
     }
 }
 
@@ -178,7 +178,7 @@ void Gfx::DrawCircle(Framebuffer &fb, const Point center, const uint16_t radius,
  * @param fb Framebuffer to draw on
  * @param center Center of the circle
  * @param radius Radius of circle, in pixels
- * @param strokeColor Color to fill the circle with
+ * @param fillColor Color to fill the circle with
  */
 void Gfx::FillCircle(Framebuffer &fb, const Point center, const uint16_t radius,
         const uint32_t fillColor) {
@@ -190,6 +190,46 @@ void Gfx::FillCircle(Framebuffer &fb, const Point center, const uint16_t radius,
         for(int y = -height; y <= height; y++) {
             fb.setPixel(MakePoint<int>(center.x + x, center.y + y), fillColor);
         }
+    }
+}
+
+
+
+/**
+ * @brief Draw an arc
+ *
+ * Draws a stroked arc – that is, a curved line approximating the radius of a circle.
+ *
+ * @param fb Framebuffer to draw on
+ * @param center Center of the circle
+ * @param start Starting point on the circle's radius
+ * @param theta Angle, in radians, of the arc
+ * @param strokeColor Color to stroke the arc with
+ */
+void Gfx::StrokeArc(Framebuffer &fb, const Point center, const Point start, const float theta,
+        const uint32_t strokeColor) {
+    // calculate number of samples
+    float dx = start.x - center.x;
+    float dy = start.y - center.y;
+    float r2 = dx * dx + dy * dy;
+    float r = sqrtf(r2);
+
+    int N = r * theta;
+
+    // calculate per sample step
+    float ctheta = cosf(theta/(N-1.f));
+    float stheta = sinf(theta/(N-1.f));
+
+    // set starting point
+    fb.setPixel(MakePoint<int>(center.x + dx, center.y + dy), strokeColor);
+
+    // draw the required number of samples
+    for(int i = 1; i != N; ++i) {
+        float dxtemp = ctheta * dx - stheta * dy;
+        dy = stheta * dx + ctheta * dy;
+        dx = dxtemp;
+
+        fb.setPixel(MakePoint<int>(center.x + dx, center.y + dy), strokeColor);
     }
 }
 

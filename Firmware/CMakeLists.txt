@@ -240,6 +240,42 @@ add_subdirectory(External/littlefs)
 target_link_libraries(firmware PRIVATE littlefs)
 
 ###############
+# CMSIS DSP
+#
+# This is primarily used for some fast math functions, which the C library then re-exports as
+# builtin C library functions.
+set(ROOT ${cmsis_5_SOURCE_DIR})
+set(DSP ${cmsis_5_SOURCE_DIR}/CMSIS/DSP)
+set(ARM_CPU "cortex-m4f")
+
+# hack to get cmake step to work
+function(compilerSpecificCompileOptions PROJECTNAME ROOT)
+endfunction()
+
+# disable a lot of code
+set(DISABLEFLOAT16 ON CACHE INTERNAL "" FORCE)
+set(COMPLEXMATH OFF CACHE INTERNAL "" FORCE)
+set(CONTROLLER OFF CACHE INTERNAL "" FORCE)
+set(FILTERING OFF CACHE INTERNAL "" FORCE)
+set(MATRIX OFF CACHE INTERNAL "" FORCE)
+set(TRANSFORM OFF CACHE INTERNAL "" FORCE)
+set(SVM OFF CACHE INTERNAL "" FORCE)
+set(BAYES OFF CACHE INTERNAL "" FORCE)
+set(DISTANCE OFF CACHE INTERNAL "" FORCE)
+set(INTERPOLATION OFF CACHE INTERNAL "" FORCE)
+set(QUATERNIONMATH OFF CACHE INTERNAL "" FORCE)
+
+list(APPEND CMAKE_MODULE_PATH ${DSP})
+
+# this is a disgusting hack, we should figure out how to change it out
+add_compile_options(-Wno-error)
+include_directories(External/libc/Includes)
+
+add_subdirectory(${DSP}/Source bin_dsp)
+
+target_link_libraries(libc PRIVATE CMSISDSP)
+
+###############
 # Produce a firmware image from the primary target, ready to be flashed into the microcontroller;
 # this just pulls out the .text segment out of the executable.
 

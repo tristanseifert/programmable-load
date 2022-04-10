@@ -17,6 +17,8 @@ add_library(libc STATIC
 
     Sources/aeabi/aeabi_memcpy.c
     Sources/aeabi/aeabi_memcpy.S
+
+    Sources/math/trig.c
 )
 
 target_include_directories(libc PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Includes)
