@@ -28,6 +28,15 @@ static inline float fabsf(float x) {
     return -x; // deals with [-inf .. 0.0[, and NaNs
 }
 
+/**
+ * @brief Calculate floating point square root
+ */
+static inline float sqrtf(float x) {
+    float result;
+    asm("vsqrt.f32 %0, %1" : "=w" (result) : "w" (x));
+    return result;
+}
+
 #ifdef __cplusplus
 }
 #endif

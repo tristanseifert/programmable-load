@@ -27,18 +27,18 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
     }
 
     // calculate X and Y extents for the drawing, and some bitmap info
-    const Point endPoint{
-        .x = ((destPoint.x + sourceSize.width) > this->size.width) ?
-            this->size.width : static_cast<uint16_t>(destPoint.x + sourceSize.width),
-        .y = ((destPoint.y + sourceSize.height) > this->size.height) ?
-            this->size.height : static_cast<uint16_t>(destPoint.y + sourceSize.height),
-    };
+    const Point endPoint = MakePoint<int>(
+        ((destPoint.x + sourceSize.width) > this->size.width) ?
+            this->size.width : (destPoint.x + sourceSize.width),
+        ((destPoint.y + sourceSize.height) > this->size.height) ?
+            this->size.height : (destPoint.y + sourceSize.height)
+    );
 
     size_t bitmapStride = (sourceSize.width / 2) + (sourceSize.width & 1); // round odd up
 
     // iterate over each pixel of the framebuffer
-    for(uint16_t y = destPoint.y, srcY = 0; y < endPoint.y; y++, srcY++) {
-        for(uint16_t x = destPoint.x, srcX = 0; x < endPoint.x; x++, srcX++) {
+    for(int16_t y = destPoint.y, srcY = 0; y < endPoint.y; y++, srcY++) {
+        for(int16_t x = destPoint.x, srcX = 0; x < endPoint.x; x++, srcX++) {
             // get the value of the source bitmap
             srcTemp = source[(srcY * bitmapStride) + (srcX / 2)];
 
@@ -52,7 +52,7 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
                 continue;
             }
 
-            this->setPixel({x, y}, srcTemp);
+            this->setPixel(MakePoint(x, y), srcTemp);
         }
     }
 }

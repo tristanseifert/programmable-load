@@ -10,8 +10,13 @@
 
 namespace Gfx {
 struct Point {
-    uint16_t x, y;
+    int16_t x, y;
 };
+
+template<typename IntType = int>
+constexpr static inline Point MakePoint(IntType x, IntType y) {
+    return {static_cast<int16_t>(x), static_cast<int16_t>(y)};
+}
 
 struct Size {
     uint16_t width, height;
