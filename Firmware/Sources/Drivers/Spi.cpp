@@ -144,18 +144,87 @@ int Spi::doPolledTransfer(const Transaction &txn) {
     // process as many bytes as provided
     taskENTER_CRITICAL();
 
-    for(size_t i = 0; i < txn.length; i++) {
-        // wait for TXRDY and write out
-        while(!this->regs->INTFLAG.bit.DRE){}
-        this->regs->DATA.reg = txPtr ? *txPtr++ : 0;
+    // send 32 bits at a time
+    const auto blocks = txn.length / 4;
 
-        // if receiver is enabled, wait for data and read it
+    if(blocks) {
+        // disable length register (write all 32 bits)
+        this->regs->LENGTH.reg = 0;
+
+        size_t timeout{kResetSyncTimeout};
+        do {
+            REQUIRE(--timeout, "SPI %s timed out", "disable length");
+        } while(!!this->regs->SYNCBUSY.bit.LENGTH);
+
+        // process each block
+        for(size_t i = 0; i < blocks; i++) {
+            // wait for TXRDY and write out
+            while(!this->regs->INTFLAG.bit.DRE){}
+
+            if(txPtr) {
+                this->regs->DATA.reg =
+                    (txPtr[0] | (txPtr[1] << 8) | (txPtr[2] << 16) | (txPtr[3] << 24));
+                txPtr += 4;
+            } else {
+                this->regs->DATA.reg = 0;
+            }
+
+            // if receiver is enabled, wait for data and read it
+            if(this->rxEnabled) {
+                while(!this->regs->INTFLAG.bit.RXC){}
+
+                const uint32_t rxWord = this->regs->DATA.reg;
+                if(rxPtr) {
+                    *rxPtr++ = rxWord & 0xFF;
+                    *rxPtr++ = (rxWord >> 8) & 0xFF;
+                    *rxPtr++ = (rxWord >> 16) & 0xFF;
+                    *rxPtr++ = (rxWord >> 24) & 0xFF;
+                }
+            }
+        }
+    }
+
+    // set the length register for the remaining bytes, if any
+    const auto remaining = txn.length - (blocks * 4);
+
+    if(remaining) {
+        // prepare the transmit data
+        uint32_t transmit{0};
+
+        if(txPtr) {
+            for(size_t i = 0; i < remaining; i++) {
+                transmit |= static_cast<uint32_t>(*txPtr++) << (i * 8);
+            }
+        }
+
+        // ensure the previous block is transmitted, before we write the length register
+        if(blocks) {
+            while(!this->regs->INTFLAG.bit.TXC){}
+        }
+
+        // program length register
+        this->regs->LENGTH.reg = SERCOM_SPI_LENGTH_LENEN | SERCOM_SPI_LENGTH_LEN(remaining);
+
+        size_t timeout{kResetSyncTimeout};
+        do {
+            REQUIRE(--timeout, "SPI %s timed out", "enable length");
+        } while(!!this->regs->SYNCBUSY.bit.LENGTH);
+
+        // write transmit data
+        while(!this->regs->INTFLAG.bit.DRE){}
+        this->regs->DATA.reg = transmit;
+
+        // decode the receive data, if desired
         if(this->rxEnabled) {
             while(!this->regs->INTFLAG.bit.RXC){}
 
-            const auto rxByte = this->regs->DATA.reg;
+            // TODO: validate this
+            uint32_t rxWord = this->regs->DATA.reg;
             if(rxPtr) {
-                *rxPtr++ = rxByte & 0xFF;
+                for(size_t i = 0; i < remaining; i++) {
+                    *rxPtr++ = (rxWord & 0xFF);
+                    rxWord >>= 8;
+                }
             }
         }
     }
@@ -235,8 +304,7 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
      * Use 32-bit data register transfers (meaning we must also load LENGTH each time) and disable
      * all inter-character spacing.
      */
-    //temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
-    temp = SERCOM_SPI_CTRLC_ICSPACE(0);
+    temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
 
     Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLC", temp);
     regs->CTRLC.reg = temp & SERCOM_SPI_CTRLC_MASK;

@@ -162,16 +162,16 @@ int DumbLoadDriver::setEnabled(const bool isEnabled) {
  * @return 0 on success, error code otherwise
  */
 int DumbLoadDriver::readInputVoltage(uint32_t &outVoltage) {
-    int err, scaledVoltage;
+    int err, senseVoltage;
 
     // read ADC as voltage
-    err = this->voltageAdc.readVoltage(scaledVoltage);
+    err = this->voltageAdc.readVoltage(senseVoltage);
     if(err) {
         return err;
     }
 
     // scale based on frontend amp (it has a 1:50 gain)
-    outVoltage = scaledVoltage;
+    outVoltage = (static_cast<float>(senseVoltage) * kVSenseGain) / 1000.f;
 
     // TODO: update PGA/scale/gain as needed
     return 0;
