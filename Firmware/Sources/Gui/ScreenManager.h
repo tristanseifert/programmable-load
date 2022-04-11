@@ -26,13 +26,17 @@ class ScreenManager {
         /**
          * @brief Animations used for presenting a screen
          */
-        enum class PresentationAnimation {
+        enum class Animation {
             /// No animation
             None                        = 0,
             /// Slide up from bottom
             SlideUp                     = 1,
+            /// Slide down from the top
+            SlideDown                   = 2,
             /// Slide in from right
-            SlideIn                     = 2,
+            SlideIn                     = 3,
+            /// Slide out to the left
+            SlideOut                    = 4,
         };
 
     public:
@@ -50,7 +54,7 @@ class ScreenManager {
          * @param screen Screen to display
          */
         inline static void Present(Screen *screen) {
-            Present(screen, PresentationAnimation::None);
+            Present(screen, Animation::None);
         }
         /**
          * @brief Present the specified screen
@@ -59,7 +63,7 @@ class ScreenManager {
          * is specified, the end result is the same as if the screen were pushed with the specified
          * animation.
          */
-        inline static void Present(Screen *screen, const PresentationAnimation animation) {
+        inline static void Present(Screen *screen, const Animation animation) {
             gShared->present(screen, animation);
         }
 
@@ -69,9 +73,12 @@ class ScreenManager {
         void draw();
         void drawScreen(Gfx::Framebuffer &fb, Screen *screen);
 
-        void present(Screen *screen, const PresentationAnimation animation);
-
+        void prepareAnimation(const Animation);
+        void drawAnimationFrame();
         void advanceAnimationFrame();
+
+        void present(Screen *screen, const Animation animation);
+
         void requestDraw();
 
     private:
@@ -84,9 +91,32 @@ class ScreenManager {
         etl::stack<Screen *, kNavStackDepth> navStack;
 
         /// Animation period (in msec)
-        constexpr static const size_t kAnimationPeriod{50};
+        constexpr static const size_t kAnimationPeriod{30};
         /// Timer used to drive animations
         TimerHandle_t animationTimer;
+        /**
+         * @brief Progress of the current animation
+         *
+         * A percentage value, between [0, 1] that specifies the progress of the currently
+         * proceeding animation.
+         */
+        float animationProgress;
+        /// Step (increment) for the animation progress for this animation
+        float animationProgressStep;
+        /// is an animation in progress?
+        bool isAnimating{false};
+        /// did an animation just complete?
+        bool animationComplete{false};
+        /// current animation
+        Animation currentAnimation{Animation::None};
+
+        /**
+         * @brief Secondary (back) buffer
+         *
+         * This is used for animations, as a second "layer" to hold the new content, which is then
+         * blitted over the old content, gradually replacing it.
+         */
+        static Gfx::Framebuffer gAnimationBuffer;
 };
 }
 

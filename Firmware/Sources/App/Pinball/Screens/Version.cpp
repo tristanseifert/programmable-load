@@ -7,6 +7,7 @@
  * software and hardware information.
  */
 #include "Screens.h"
+#include "../Task.h"
 
 #include "Gfx/Font.h"
 #include "Gui/Components/StaticLabel.h"
@@ -69,6 +70,10 @@ Gui::Screen *Screens::GetVersionSplash() {
         static Gui::Screen gVersionScreen{
             .title = "Version Info",
             .components = gComponents,
+            // pressing menu will open the home screen
+            .menuPressed = [](auto screen, auto ctx){
+                Task::NotifyTask(Task::TaskNotifyBits::ShowHomeScreen);
+            },
         };
 
         screen = &gVersionScreen;

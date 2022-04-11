@@ -282,7 +282,7 @@
 // <i> Indicates whether USB Clock Recovery Mode is enabled or not
 // <id> dfll_arch_usbcrm
 #ifndef CONF_DFLL_USBCRM
-#define CONF_DFLL_USBCRM 0
+#define CONF_DFLL_USBCRM 1
 #endif
 
 // <q> Wait Lock

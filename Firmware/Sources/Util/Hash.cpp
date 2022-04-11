@@ -12,8 +12,8 @@ inline uint64_t rotl64(uint64_t x, int8_t r) {
     return (x << r) | (x >> (64 - r));
 }
 
-#define	ROTL32(x,y)	rotl32(x,y)
-#define ROTL64(x,y)	rotl64(x,y)
+#define	ROTL32(x, y)                    rotl32(x, y)
+#define ROTL64(x, y)                    rotl64(x, y)
 
 FORCE_INLINE static constexpr uint32_t getblock32(const uint32_t *p, size_t i) {
     return p[i];
@@ -42,14 +42,14 @@ uint32_t Hash::MurmurHash3(const void *dataIn, const size_t dataLen, const uint3
     const uint8_t * data = static_cast<const uint8_t *>(dataIn);
     const int nblocks = dataLen / 4;
 
-    uint32_t h1 = seed;
+    uint32_t h1{seed};
 
-    const uint32_t c1 = 0xcc9e2d51;
-    const uint32_t c2 = 0x1b873593;
+    constexpr static const uint32_t c1{0xcc9e2d51};
+    constexpr static const uint32_t c2{0x1b873593};
 
     //----------
     // body
-    const uint32_t * blocks = static_cast<const uint32_t *>(data + nblocks*4);
+    const uint32_t *blocks = reinterpret_cast<const uint32_t *>(data + nblocks*4);
 
     for(int i = -nblocks; i; i++) {
         uint32_t k1 = getblock32(blocks, i);
@@ -65,7 +65,7 @@ uint32_t Hash::MurmurHash3(const void *dataIn, const size_t dataLen, const uint3
 
     //----------
     // tail
-    const uint8_t * tail = static_cast<const uint8_t *>(data + nblocks*4);
+    const uint8_t *tail = static_cast<const uint8_t *>(data + nblocks*4);
     uint32_t k1{0};
 
     switch(dataLen & 3) {

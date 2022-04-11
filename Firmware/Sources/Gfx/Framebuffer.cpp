@@ -38,7 +38,11 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
 
     // iterate over each pixel of the framebuffer
     for(int16_t y = destPoint.y, srcY = 0; y < endPoint.y; y++, srcY++) {
+        if(y >= this->size.height || y < 0) continue;
+
         for(int16_t x = destPoint.x, srcX = 0; x < endPoint.x; x++, srcX++) {
+            if(x >= this->size.width || x < 0) continue;
+
             // get the value of the source bitmap
             srcTemp = source[(srcY * bitmapStride) + (srcX / 2)];
 

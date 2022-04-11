@@ -256,8 +256,7 @@ void Task::showVersionScreen() {
         pdMS_TO_TICKS(kShowVersionDuration), pdFALSE,
         // timer ID is this object
         this, [](auto timer) {
-            xTaskNotifyIndexed(gShared->task, kNotificationIndex, TaskNotifyBits::ShowHomeScreen,
-                    eSetBits);
+            NotifyTask(TaskNotifyBits::ShowHomeScreen);
         }, &gDismissVersionTimer);
     REQUIRE(this->versionDismissTimer, "pinball: %s", "failed to allocate version dismiss timer");
 
