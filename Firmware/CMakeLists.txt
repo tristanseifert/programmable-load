@@ -78,6 +78,8 @@ add_executable(firmware
     Sources/Rtos/Memory.cpp
     Sources/Rtos/Start.cpp
     Sources/Util/InventoryRom.cpp
+    Sources/Util/Hash.cpp
+    Sources/Util/HwInfo.cpp
     Sources/Drivers/ClockMgmt.cpp
     Sources/Drivers/Dma.cpp
     Sources/Drivers/ExternalIrq.cpp
@@ -104,6 +106,7 @@ add_executable(firmware
     Sources/Gfx/Fonts/General_16_BoldCondensed.cpp
     Sources/Gfx/Fonts/Numbers_L.cpp
     Sources/Gfx/Fonts/Numbers_XL.cpp
+    Sources/Gfx/Fonts/Font_Small.cpp
     Sources/Gui/ScreenManager.cpp
     Sources/Gui/Components/StaticLabel.cpp
     Sources/Usb/Descriptors.cpp
@@ -115,6 +118,7 @@ add_executable(firmware
     Sources/App/Pinball/Task.cpp
     Sources/App/Pinball/FrontIo/Display.cpp
     Sources/App/Pinball/FrontIo/HmiDriver.cpp
+    Sources/App/Pinball/Screens/Version.cpp
     Sources/App/Thermal/Hardware.cpp
     Sources/App/Thermal/Task.cpp
     Sources/App/Control/Hardware.cpp

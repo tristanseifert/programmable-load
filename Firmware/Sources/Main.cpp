@@ -5,6 +5,7 @@
 #include "Drivers/ExternalIrq.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
+#include "Util/HwInfo.h"
 
 #include "Drivers/Gpio.h"
 
@@ -74,6 +75,8 @@ extern "C" int main() {
      */
     Drivers::Dma::Init();
     Drivers::ExternalIrq::Init();
+
+    Util::HwInfo::Init();
 
     /*
      * Create the main app task

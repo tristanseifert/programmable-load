@@ -2,6 +2,7 @@
 #include "Hardware.h"
 #include "FrontIo/Display.h"
 #include "FrontIo/HmiDriver.h"
+#include "Screens/Screens.h"
 
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
@@ -15,7 +16,6 @@
 
 #include <etl/array.h>
 
-#include <BuildInfo.h>
 #include <vendor/sam.h>
 
 using namespace App::Pinball;
@@ -237,9 +237,6 @@ void Task::detectFrontPanel() {
 
 
 
-#include "Gui/Components/StaticLabel.h"
-#include "Gfx/Font.h"
-
 /**
  * @brief Present the initialization (version) screen
  *
@@ -249,32 +246,8 @@ void Task::detectFrontPanel() {
 void Task::showVersionScreen() {
     BaseType_t ok;
 
-    // static labels
-    static Gui::Components::StaticLabel gHelloLabel(
-        {Gfx::MakePoint(4, 0), Gfx::MakeSize(248, 20)},
-        "Programmable Load",
-        Gfx::Font::gGeneral_16_Bold
-    );
-
-    static char gVersionString[50];
-    snprintf(gVersionString, sizeof(gVersionString), "Software: %s/%s (%s)",
-            gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType);
-
-    static Gui::Components::StaticLabel gSwVersionLabel(
-        {Gfx::MakePoint(4, 46), Gfx::MakeSize(42, 18)},
-        gVersionString,
-        Gfx::Font::gGeneral_14
-    );
-
     // present the screen
-    static etl::array<Gui::Components::Base *, 2> gComponents{{
-        &gHelloLabel, &gSwVersionLabel
-    }};
-    static Gui::Screen gVersionScreen{
-        .title = "Version Info",
-        .components = gComponents,
-    };
-    Gui::ScreenManager::Present(&gVersionScreen);
+    Gui::ScreenManager::Present(Screens::GetVersionSplash());
 
     // set up, and arm the timer
     static StaticTimer_t gDismissVersionTimer;

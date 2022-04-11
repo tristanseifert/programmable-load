@@ -202,6 +202,13 @@ struct Font {
          */
         static const Font gGeneral_14;
 
+        /**
+         * @brief Small, information dense font
+         *
+         * This is a small 10 point font.
+         */
+        static const Font gFont_Small;
+
     private:
         bool processLine(Framebuffer &fb, const char* &str, Rect &bounds,
                 const RenderFlags flags) const;

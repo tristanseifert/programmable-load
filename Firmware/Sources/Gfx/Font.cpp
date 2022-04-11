@@ -230,7 +230,7 @@ void Font::renderLine(Framebuffer &fb, const char *str, const Rect bounds,
     Point current{bounds.origin};
     current.x += xOffset;
 
-    for(; *str && drawn < numCodepoints; ++str, ++drawn) {
+    for(; *str && drawn < numCodepoints; ++str) {
         if(Util::Unicode::Decode(*str, utfState, utfCodepoint)) {
             // have not yet consumed an entire codepoint, read another byte
             continue;
