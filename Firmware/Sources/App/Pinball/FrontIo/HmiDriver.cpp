@@ -2,6 +2,7 @@
 
 #include "Drivers/I2CBus.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
+#include "Gui/InputManager.h"
 #include "Log/Logger.h"
 #include "Util/InventoryRom.h"
 #include "Rtos/Rtos.h"
@@ -76,12 +77,38 @@ void HmiDriver::handleIrq() {
     const uintptr_t newDown = (down & (~this->buttonState));
     const uintptr_t newReleased = (down ^ this->buttonState) & ~down;
 
-    // invoke callbacks
     this->buttonState = static_cast<Button>(down);
 
+    /*
+     * Forward state changes in the mode and input enable buttons to our custom logic in the UI
+     * task. Their behavior does not change depending on what's on screen.
+     */
     if(newDown || newReleased) {
-        // TODO: call into GUI code
         Logger::Trace("down = %04x, up = %04x, state = %04x", newDown, newReleased, this->buttonState);
+    }
+
+    /*
+     * Forward button events to the GUI layer. Note that we only do this for the select and menu
+     * buttons: the other buttons are under the control of the UI task directly.
+     */
+    constexpr static const auto kGuiButtons{kIoButtonMenu | kIoButtonSelect};
+
+    if((newDown & kGuiButtons) || (newReleased & kGuiButtons)) {
+        Gui::InputKey guiDown{0}, guiUp{0};
+
+        if(newDown & kIoButtonMenu) {
+            guiDown |= Gui::InputKey::Menu;
+        } if(newReleased & kIoButtonMenu) {
+            guiUp |= Gui::InputKey::Menu;
+        }
+
+        if(newDown & kIoButtonSelect) {
+            guiDown |= Gui::InputKey::Select;
+        } if(newReleased & kIoButtonSelect) {
+            guiUp |= Gui::InputKey::Select;
+        }
+
+        Gui::InputManager::KeyStateChanged(guiDown, guiUp);
     }
 }
 

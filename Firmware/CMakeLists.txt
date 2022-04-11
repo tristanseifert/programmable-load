@@ -107,6 +107,8 @@ add_executable(firmware
     Sources/Gfx/Fonts/Numbers_L.cpp
     Sources/Gfx/Fonts/Numbers_XL.cpp
     Sources/Gfx/Fonts/Font_Small.cpp
+    Sources/Gui/WorkQueue.cpp
+    Sources/Gui/InputManager.cpp
     Sources/Gui/ScreenManager.cpp
     Sources/Gui/Components/StaticLabel.cpp
     Sources/Usb/Descriptors.cpp

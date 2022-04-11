@@ -236,6 +236,28 @@ void ScreenManager::drawScreen(Gfx::Framebuffer &fb, Screen *screen) {
  * @param animation Which animation to use for this display
  */
 void ScreenManager::present(Screen *screen, const Animation animation) {
+    // remove all existing controllers
+    if(!this->navStack.empty()) {
+        auto top = this->navStack.top();
+
+        if(top->willDisappear) {
+            top->willDisappear(top, top->callbackContext);
+        }
+        // XXX: call didDisappear?
+    }
+    this->navStack.clear();
+
+    // then push as normal
+    this->push(screen, animation);
+}
+
+/**
+ * @brief Push a screen to the top of the navigation hierarchy.
+ *
+ * @param screen Screen to display
+ * @param animation Which animation to use for this display
+ */
+void ScreenManager::push(Screen *screen, const Animation animation) {
     // notify the topmost controller it will disappear
     if(!this->navStack.empty()) {
         auto top = this->navStack.top();
@@ -244,12 +266,9 @@ void ScreenManager::present(Screen *screen, const Animation animation) {
             top->willDisappear(top, top->callbackContext);
         }
         // XXX: call didDisappear?
-
-        // clear navigation stack
-        this->navStack.clear();
     }
 
-    // make the new controller the first controller visible
+    // push the new screen
     if(screen->willPresent) {
         screen->willPresent(screen, screen->callbackContext);
     }
@@ -266,6 +285,17 @@ void ScreenManager::present(Screen *screen, const Animation animation) {
 
     // force redraw
     this->requestDraw();
+}
+
+/**
+ * @brief Open the navigation stack menu
+ *
+ * This populates the list of all navigation controllers on screen, in the navigation screen menu
+ * that will then be pushed to the display.
+ */
+void ScreenManager::openNavMenu() {
+    // TODO: implement
+    Logger::Warning("TODO: open GUI nav menu");
 }
 
 /**

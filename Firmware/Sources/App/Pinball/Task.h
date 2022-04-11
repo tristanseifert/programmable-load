@@ -75,12 +75,19 @@ class Task {
             ShowHomeScreen              = (1 << 5),
 
             /**
+             * @brief Process GUI work queue
+             *
+             * The GUI work queue needs to be processed.
+             */
+            ProcessWorkQueue            = (1 << 6),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
             All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged |
-                    RedrawUI | ShowHomeScreen),
+                    RedrawUI | ShowHomeScreen | ProcessWorkQueue),
         };
 
     public:

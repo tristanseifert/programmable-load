@@ -67,6 +67,16 @@ class ScreenManager {
             gShared->present(screen, animation);
         }
 
+        /**
+         * @brief Show the nav stack menu
+         *
+         * This will populate and display the navigation stack menu, which allows the user to
+         * select a view in the nav stack that we'll "pop" back to.
+         */
+        inline static void OpenNavStackMenu() {
+            gShared->openNavMenu();
+        }
+
     private:
         ScreenManager();
 
@@ -77,7 +87,10 @@ class ScreenManager {
         void drawAnimationFrame();
         void advanceAnimationFrame();
 
+        void push(Screen *screen, const Animation animation);
         void present(Screen *screen, const Animation animation);
+
+        void openNavMenu();
 
         void requestDraw();
 

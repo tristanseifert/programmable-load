@@ -8,7 +8,9 @@
 #include "Drivers/Gpio.h"
 #include "Drivers/Spi.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
+#include "Gui/InputManager.h"
 #include "Gui/ScreenManager.h"
+#include "Gui/WorkQueue.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 #include "Util/Base32.h"
@@ -77,6 +79,8 @@ void Task::main() {
     this->detectFrontPanel();
 
     // with the display and front panel IO set up, initialize the GUI
+    Gui::WorkQueue::Init();
+    Gui::InputManager::Init();
     Gui::ScreenManager::Init();
     this->showVersionScreen();
 
@@ -111,7 +115,16 @@ void Task::main() {
         }
         if(note & TaskNotifyBits::EncoderChanged) {
             const auto delta = Hw::ReadEncoderDelta();
-            Logger::Trace("Encoder delta: %d", delta);
+            Gui::InputManager::EncoderChanged(delta);
+        }
+
+        /*
+         * If the work queue (for the GUI) needs processing, handle it before we do any other GUI
+         * related stuff. This is usually used for things like user interface events like long
+         * button presses.
+         */
+        if(note & TaskNotifyBits::ProcessWorkQueue) {
+            Gui::WorkQueue::Drain();
         }
 
         /*
