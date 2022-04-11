@@ -5775,6 +5775,9 @@ static const etl::array<Gfx::Font::Character, 106> General_14_Chars{{
 const Gfx::Font Gfx::Font::gGeneral_14{
     .name = "General_14",
     // total of 106 characters
-    .characters = General_14_Chars
+    .characters = General_14_Chars,
+    // font metrics
+    .fontSize = 14,
+    .lineHeight = 17
 };
 

@@ -2,12 +2,9 @@
 #define GUI_COMPONENTS_STATICLABEL_H
 
 #include "Base.h"
+#include "Gfx/Font.h"
 
 #include <etl/string_view.h>
-
-namespace Gfx {
-struct Font;
-}
 
 namespace Gui::Components {
 /**
@@ -21,8 +18,15 @@ class StaticLabel: public Base {
     public:
         StaticLabel(const Gfx::Rect bounds, etl::string_view content, const Gfx::Font &font) :
             Base(bounds), string(content), font(&font) {}
+        StaticLabel(const Gfx::Rect bounds, etl::string_view content, const Gfx::Font &font,
+                const Gfx::Font::RenderFlags fontMode) : Base(bounds), string(content),
+                font(&font), fontMode(fontMode) {}
+
         StaticLabel(const Gfx::Rect bounds, etl::string_view content, const Gfx::Font *font) :
             Base(bounds), string(content), font(font) {}
+        StaticLabel(const Gfx::Rect bounds, etl::string_view content, const Gfx::Font *font,
+                const Gfx::Font::RenderFlags fontMode) : Base(bounds), string(content), font(font),
+                fontMode(fontMode) {}
 
         /**
          * @brief Label contents
@@ -35,6 +39,14 @@ class StaticLabel: public Base {
          * @brief Font to render the label with
          */
         const Gfx::Font *font;
+
+        /**
+         * @brief Text rendering mode
+         *
+         * These are the flags used to render the font.
+         */
+        Gfx::Font::RenderFlags fontMode{Gfx::Font::RenderFlags::HAlignLeft |
+            Gfx::Font::RenderFlags::WordWrap};
 
         /**
          * @brief Draw label inverted

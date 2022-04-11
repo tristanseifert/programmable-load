@@ -2019,6 +2019,9 @@ static const etl::array<Gfx::Font::Character, 24> Numbers_XL_Chars{{
 const Gfx::Font Gfx::Font::gNumbers_XL{
     .name = "Numbers_XL",
     // total of 24 characters
-    .characters = Numbers_XL_Chars
+    .characters = Numbers_XL_Chars,
+    // font metrics
+    .fontSize = 26,
+    .lineHeight = 31
 };
 

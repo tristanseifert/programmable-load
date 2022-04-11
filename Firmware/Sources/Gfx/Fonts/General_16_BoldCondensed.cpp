@@ -6199,6 +6199,9 @@ static const etl::array<Gfx::Font::Character, 106> General_16_BoldCondensed_Char
 const Gfx::Font Gfx::Font::gGeneral_16_BoldCondensed{
     .name = "General_16_BoldCondensed",
     // total of 106 characters
-    .characters = General_16_BoldCondensed_Chars
+    .characters = General_16_BoldCondensed_Chars,
+    // font metrics
+    .fontSize = 16,
+    .lineHeight = 19
 };
 

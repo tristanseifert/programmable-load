@@ -71,8 +71,45 @@ struct Font {
             const Glyph glyph;
         };
 
+        /**
+         * @brief Font drawing modifiers
+         *
+         * Some of these can be combined (via bitwise OR) to affect the font rendering.
+         */
+        enum RenderFlags: uintptr_t {
+            None                        = 0,
+
+            /// Mask for the horizontal alignment
+            HAlignMask                  = (0x7 << 0),
+            /// Align text to the left
+            HAlignLeft                  = (0x0 << 0),
+            /// Align text to the right
+            HAlignRight                 = (0x1 << 0),
+            /// Align text in the middle
+            HAlignCenter                = (0x2 << 0),
+
+            /**
+             * @brief Enable word wrapping
+             *
+             * When set, the string is broken at word boundaries rather than whenever it reaches
+             * the edge.
+             */
+            WordWrap                    = (1 << 8),
+
+            /**
+             * @brief Render partial lines
+             *
+             * If the vertical space is insufficient to draw a full line, and this flag is set,
+             * a partial line (glyphs are cut off at some point before the full line height) will
+             * be drawn. Otherwise, the space is left empty.
+             */
+            DrawPartialLine             = (1 << 9),
+        };
+
     public:
         int draw(const etl::string_view str, Framebuffer &fb, const Point origin) const;
+        void draw(const etl::string_view str, Framebuffer &fb, const Rect bounds,
+                const RenderFlags flags = RenderFlags::None) const;
 
         /**
          * @brief Search the font for a glyph for the given codepoint
@@ -114,6 +151,16 @@ struct Font {
          */
         etl::span<const Character> characters;
 
+        /// Font size (points)
+        uint16_t fontSize;
+
+        /**
+         * @brief Line height (pixels)
+         *
+         * The vertical distance between consecutive lines to be added.
+         */
+        uint16_t lineHeight;
+
     public:
         /**
          * @brief Number font, XL
@@ -154,6 +201,12 @@ struct Font {
          * Regular weight 14 point font
          */
         static const Font gGeneral_14;
+
+    private:
+        bool processLine(Framebuffer &fb, const char* &str, Rect &bounds,
+                const RenderFlags flags) const;
+        void renderLine(Framebuffer &, const char *, const Rect, const size_t, const int,
+                const RenderFlags) const;
 };
 }
 

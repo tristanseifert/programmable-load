@@ -6199,6 +6199,9 @@ static const etl::array<Gfx::Font::Character, 106> General_16_Bold_Chars{{
 const Gfx::Font Gfx::Font::gGeneral_16_Bold{
     .name = "General_16_Bold",
     // total of 106 characters
-    .characters = General_16_Bold_Chars
+    .characters = General_16_Bold_Chars,
+    // font metrics
+    .fontSize = 16,
+    .lineHeight = 19
 };
 

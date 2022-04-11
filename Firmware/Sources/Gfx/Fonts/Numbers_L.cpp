@@ -1683,6 +1683,9 @@ static const etl::array<Gfx::Font::Character, 24> Numbers_L_Chars{{
 const Gfx::Font Gfx::Font::gNumbers_L{
     .name = "Numbers_L",
     // total of 24 characters
-    .characters = Numbers_L_Chars
+    .characters = Numbers_L_Chars,
+    // font metrics
+    .fontSize = 20,
+    .lineHeight = 24
 };
 

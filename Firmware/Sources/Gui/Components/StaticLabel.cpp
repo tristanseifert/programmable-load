@@ -22,6 +22,5 @@ void StaticLabel::draw(Gfx::Framebuffer &fb) {
     }
 
     // draw text
-    // TODO: use fancier API
-    this->font->draw(this->string, fb, this->bounds.origin);
+    this->font->draw(this->string, fb, this->bounds, this->fontMode);
 }
