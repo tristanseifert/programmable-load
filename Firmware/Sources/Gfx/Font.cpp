@@ -75,7 +75,7 @@ beach:;
  * @param flags Customizations for drawing
  */
 void Font::draw(const etl::string_view str, Framebuffer &fb, const Rect bounds,
-        const RenderFlags flags) const {
+        const FontRenderFlags flags) const {
     // sanity checking
     if(str.empty()) {
         return;
@@ -99,7 +99,7 @@ void Font::draw(const etl::string_view str, Framebuffer &fb, const Rect bounds,
             this->lineHeight : remainingBounds.size.height;
 
         // insufficient vertical space for another line
-        if(height < this->lineHeight && !(flags & RenderFlags::DrawPartialLine)) {
+        if(height < this->lineHeight && !TestFlags(flags & FontRenderFlags::DrawPartialLine)) {
             goto beach;
         }
     }
@@ -133,7 +133,7 @@ beach:;
  * @return Whether we've reached the end of the string
  */
 bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
-        const RenderFlags flags) const {
+        const FontRenderFlags flags) const {
     bool endOfString{false};
     unsigned int lineWidth{0};
     size_t codepoints{0}, byteOffset{0}, codepointBytes{0};
@@ -141,6 +141,11 @@ bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
     // prepare Unicode reading state machine
     uint32_t utfState{Util::Unicode::kStateAccept}, utfCodepoint;
     const Glyph *glyph{nullptr};
+
+    // store the last break point for word wrapping
+    const char *wrapEnd{nullptr};
+    size_t wrapEndCodepoints{0};
+    int wrapEndLineWidth{0};
 
     // record the start of the line string
     const char *strStart = str;
@@ -162,6 +167,10 @@ bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
         if(utfCodepoint == '\n') { // newline
             goto draw;
         }
+        // skip whitespace at start of line
+        else if(utfCodepoint == ' ' && !codepoints) {
+            continue;
+        }
         // find the associated glyph
         else if(!this->findGlyph(utfCodepoint, glyph)) {
             Logger::Warning("No glyph for codepoint $%04x in font %p (%s)", utfCodepoint, this,
@@ -180,7 +189,20 @@ bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
         if(codepoints) {
             // TODO: this is where we'd implement word wrapping
             if((lineWidth + glyph->size.width) > bounds.size.width) {
-                str -= toRewind;
+                // if word wrapping, reset to the last break point
+                if(TestFlags(flags & FontRenderFlags::WordWrap)) {
+                    //this->handleWordWrap(strStart, str, codepoints, lineWidth);
+                    if(wrapEnd) {
+                        str = wrapEnd;
+                        codepoints = wrapEndCodepoints;
+                        lineWidth = wrapEndLineWidth;
+                    }
+                }
+
+                // handle wrapping on multi-byte boundaries
+                if(toRewind > 1) {
+                    str -= (toRewind - 1);
+                }
                 goto draw;
             }
         }
@@ -190,6 +212,24 @@ bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
          */
         codepoints++;
         lineWidth += glyph->size.width;
+
+        /*
+         * If word wrapping is enabled, record the current position into the line if the character
+         * is a point at which we can wrap.
+         */
+        if(TestFlags(flags & FontRenderFlags::WordWrap)) {
+            if(IsWrapPoint(utfCodepoint)) {
+                wrapEnd = str;
+                wrapEndCodepoints = codepoints;
+                wrapEndLineWidth = lineWidth;
+
+                // when breaking on whitespace, don't include it in the size calculation
+                if(utfCodepoint == ' ') {
+                    wrapEndCodepoints--;
+                    wrapEndLineWidth -= glyph->size.width;
+                }
+            }
+        }
     }
     // if we fall through to here, we've reached the end of the string
     endOfString = true;
@@ -197,15 +237,15 @@ bool Font::processLine(Framebuffer &fb, const char* &str, Rect &bounds,
     // jump down here if the line is too long, rather than us reaching the end of the string
 draw:;
     // render the line
-    const auto hAlignFlag = (flags & RenderFlags::HAlignMask);
+    const auto hAlignFlag = (flags & FontRenderFlags::HAlignMask);
     int xOffset{0};
 
     // to center align, move it right half the remaining space
-    if(hAlignFlag == RenderFlags::HAlignCenter) {
+    if(hAlignFlag == FontRenderFlags::HAlignCenter) {
         xOffset = (bounds.size.width - lineWidth) / 2;
     }
     // for right align, it move it right all the remaining space
-    else if(hAlignFlag == RenderFlags::HAlignRight) {
+    else if(hAlignFlag == FontRenderFlags::HAlignRight) {
         xOffset = (bounds.size.width - lineWidth);
     }
 
@@ -221,7 +261,7 @@ draw:;
  * @remark Only codepoints below 0xffff are currently supported.
  */
 void Font::renderLine(Framebuffer &fb, const char *str, const Rect bounds,
-        const size_t numCodepoints, const int xOffset, const RenderFlags flags) const {
+        const size_t numCodepoints, const int xOffset, const FontRenderFlags flags) const {
     size_t drawn{0};
     uint32_t utfState{Util::Unicode::kStateAccept}, utfCodepoint;
     const Glyph *glyph{nullptr};

@@ -108,7 +108,7 @@ class Framebuffer {
          */
         inline void setPixel(const Point point, const uint32_t value) {
             const auto offset = this->getPixelOffset(point);
-            if(offset > this->data.size()) return;
+            if(offset >= this->data.size()) return;
 
             auto temp = this->data[offset];
 

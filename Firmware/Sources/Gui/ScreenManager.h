@@ -53,7 +53,7 @@ class ScreenManager {
          *
          * @param screen Screen to display
          */
-        inline static void Present(Screen *screen) {
+        inline static void Present(const Screen *screen) {
             Present(screen, Animation::None);
         }
         /**
@@ -63,7 +63,7 @@ class ScreenManager {
          * is specified, the end result is the same as if the screen were pushed with the specified
          * animation.
          */
-        inline static void Present(Screen *screen, const Animation animation) {
+        inline static void Present(const Screen *screen, const Animation animation) {
             gShared->present(screen, animation);
         }
 
@@ -72,7 +72,7 @@ class ScreenManager {
          *
          * Add the screen to the top of the navigation stack.
          */
-        inline static void Push(Screen *screen, const Animation animation = Animation::SlideIn) {
+        inline static void Push(const Screen *screen, const Animation animation = Animation::SlideIn) {
             gShared->push(screen, animation);
         }
 
@@ -107,14 +107,14 @@ class ScreenManager {
         ScreenManager();
 
         void draw();
-        void drawScreen(Gfx::Framebuffer &fb, Screen *screen);
+        void drawScreen(Gfx::Framebuffer &fb, const Screen *screen);
 
         void prepareAnimation(const Animation);
-        void drawAnimationFrame(Screen *);
+        void drawAnimationFrame(const Screen *);
         void advanceAnimationFrame();
 
-        void present(Screen *screen, const Animation animation);
-        void push(Screen *screen, const Animation animation);
+        void present(const Screen *screen, const Animation animation);
+        void push(const Screen *screen, const Animation animation);
         void pop(const Animation animation);
 
         void doMenuAction();
@@ -129,7 +129,7 @@ class ScreenManager {
         /// Maximum depth of navigation stack
         constexpr static const size_t kNavStackDepth{8};
         /// Navigation stack
-        etl::stack<Screen *, kNavStackDepth> navStack;
+        etl::stack<const Screen *, kNavStackDepth> navStack;
 
         /// Animation period (in msec)
         constexpr static const size_t kAnimationPeriod{30};

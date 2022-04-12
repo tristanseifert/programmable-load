@@ -8,10 +8,71 @@
 #include <etl/span.h>
 #include <etl/string_view.h>
 
+#include "Gfx/Font.h"
+#include "Gfx/Types.h"
+
 namespace Gui {
 namespace Components {
 class Base;
 }
+/**
+ * @brief Component type value
+ *
+ * These serve as an index into the GUI system's table of drawing and event handling routines.
+ */
+enum class ComponentType: uint32_t {
+    /**
+     * @brief Null entry
+     *
+     * This is used to indicate that we've reached the end of a list; all processing for
+     * components will stop when this type is encountered.
+     */
+    None                                = 0,
+
+    /**
+     * @brief Static text label
+     *
+     * A simple text label that displays a string.
+     */
+    StaticLabel                         = 1,
+};
+
+/**
+ * @brief Component definition
+ *
+ * Defines the static payload needed to render a particular component.
+ */
+struct ComponentData {
+    /**
+     * @brief Type of component
+     *
+     * This indicates which of the payload fields is valid, and in turn, which drawing routine
+     * will be invoked.
+     */
+    ComponentType type;
+
+    /**
+     * @brief Component bounds
+     *
+     * The bounding rectangle inside which the component renders its contents.
+     */
+    Gfx::Rect bounds;
+
+    /// Payload holder
+    union {
+        struct {
+            /// UTF-8 encoded string to display
+            const char *string{nullptr};
+            /// Font to display the string in
+            const Gfx::Font *font{nullptr};
+            /// Render flags for the font
+            Gfx::FontRenderFlags fontMode;
+        } staticLabel;
+    };
+
+    /// Is the control drawn inverted?
+    uint8_t isInverted:1{0};
+};
 
 /**
  * @brief Screen definition
@@ -27,6 +88,8 @@ struct Screen {
      */
     etl::string_view title;
 
+    /// Total number of components to draw
+    const size_t numComponents{0};
     /**
      * @brief Components on screen
      *
@@ -34,7 +97,7 @@ struct Screen {
      * in the order they are specified here, and likewise, their selection order is defined by
      * this ordering.
      */
-    etl::span<Components::Base *> components;
+    const ComponentData *components;
 
     /**
      * @brief Context to pass to callbacks
@@ -49,14 +112,14 @@ struct Screen {
      * Use this to reset some screen state as the screen is about to be rendered on the screen for
      * the first time.
      */
-    void (*willPresent)(Screen *screen, void *context){nullptr};
+    void (*willPresent)(const Screen *screen, void *context){nullptr};
 
     /**
      * @brief Callback invoked after the screen is fully visible
      *
      * Invoked after the screen presentation animation, if any, has completed.
      */
-    void (*didPresent)(Screen *screen, void *context){nullptr};
+    void (*didPresent)(const Screen *screen, void *context){nullptr};
 
     /**
      * @brief Callback invoked immediately before the screen will disappear
@@ -64,14 +127,14 @@ struct Screen {
      * This is called right before the animation (if any) is started to hide the screen from the
      * display.
      */
-    void (*willDisappear)(Screen *screen, void *context){nullptr};
+    void (*willDisappear)(const Screen *screen, void *context){nullptr};
 
     /**
      * @brief Callback invoked after screen has disappeared
      *
      * Invoked once the screen's disappear animation (if any) has completed.
      */
-    void (*didDisappear)(Screen *screen, void *context){nullptr};
+    void (*didDisappear)(const Screen *screen, void *context){nullptr};
 
     /**
      * @brief Menu button callback
@@ -83,7 +146,7 @@ struct Screen {
      * If this callback is not specified, the default behavior (going up one level in the
      * navigation stack) will apply.
      */
-    void (*menuPressed)(Screen *screen, void *context){nullptr};
+    void (*menuPressed)(const Screen *screen, void *context){nullptr};
 };
 }
 

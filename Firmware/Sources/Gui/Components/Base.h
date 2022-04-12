@@ -1,7 +1,11 @@
 #ifndef GUI_COMPONENTS_BASE_H
 #define GUI_COMPONENTS_BASE_H
 
+#include "../Screen.h"
+#include "StaticLabel.h"
+
 #include "Gfx/Types.h"
+#include "Log/Logger.h"
 
 namespace Gfx {
 class Framebuffer;
@@ -12,33 +16,21 @@ class Framebuffer;
  */
 namespace Gui::Components {
 /**
- * @brief Base class for GUI components
+ * @brief Draws a component.
  *
- * This is an abstract base class for a GUI component. It provides the interface methods called by
- * the GUI code to draw, and dispatch events to a component. Components may also use it to opt in
- * to automatic selection handling.
+ * Invokes the appropriate draw function for a particular component, given a component data
+ * structure.
  */
-class Base {
-    public:
-        Base(const Gfx::Rect bounds) : bounds(bounds) {}
-        virtual ~Base() = default;
+void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
+    switch(data.type) {
+        case ComponentType::StaticLabel:
+            StaticLabel::Draw(fb, data);
+            break;
 
-        /**
-         * @brief Draw the component
-         *
-         * Render the contents of the component on the framebuffer at the location specified by
-         * the component's rect.
-         */
-        virtual void draw(Gfx::Framebuffer &fb) = 0;
-
-    public:
-        /**
-         * @brief Bounding rectangle of component
-         *
-         * Defines the origin and size of the component's content.
-         */
-        Gfx::Rect bounds;
-};
+        default:
+            Logger::Panic("unknown component type %08x", static_cast<uint32_t>(data.type));
+    }
+}
 }
 
 #endif

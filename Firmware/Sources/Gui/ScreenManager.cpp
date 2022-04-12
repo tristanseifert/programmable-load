@@ -144,7 +144,7 @@ void ScreenManager::prepareAnimation(const Animation animation) {
  *
  * @param screen The screen that's currently the top of the nav stack
  */
-void ScreenManager::drawAnimationFrame(Screen *screen) {
+void ScreenManager::drawAnimationFrame(const Screen *screen) {
     float progress;
 
     /*
@@ -159,7 +159,8 @@ void ScreenManager::drawAnimationFrame(Screen *screen) {
      */
     if(this->currentAnimation == Animation::SlideOut ||
             this->currentAnimation == Animation::SlideDown) {
-        // TODO: check if screen wants to be redrawn
+        // TODO: selectively clear the buffer
+        Gfx::Framebuffer::gMainBuffer.clear();
         this->drawScreen(Gfx::Framebuffer::gMainBuffer, screen);
     } else {
         // TODO: check if screen wants to be redrawn
@@ -240,12 +241,15 @@ void ScreenManager::advanceAnimationFrame() {
  * @param fb Framebuffer to draw into
  * @param screen Screen to draw
  */
-void ScreenManager::drawScreen(Gfx::Framebuffer &fb, Screen *screen) {
+void ScreenManager::drawScreen(Gfx::Framebuffer &fb, const Screen *screen) {
+    REQUIRE(screen, "gui: %s", "invalid screen");
+
     // XXX: does the screen want the framebuffer clared first?
 
     // draw each component in sequence
-    for(auto component : screen->components) {
-        component->draw(fb);
+    for(size_t i = 0; i < screen->numComponents; i++) {
+        const auto &cd = screen->components[i];
+        Components::Draw(fb, cd);
     }
 }
 
@@ -259,7 +263,7 @@ void ScreenManager::drawScreen(Gfx::Framebuffer &fb, Screen *screen) {
  * @param screen Screen to display
  * @param animation Which animation to use for this display
  */
-void ScreenManager::present(Screen *screen, const Animation animation) {
+void ScreenManager::present(const Screen *screen, const Animation animation) {
     // remove all existing controllers
     if(!this->navStack.empty()) {
         auto top = this->navStack.top();
@@ -281,7 +285,7 @@ void ScreenManager::present(Screen *screen, const Animation animation) {
  * @param screen Screen to display
  * @param animation Which animation to use for this display
  */
-void ScreenManager::push(Screen *screen, const Animation animation) {
+void ScreenManager::push(const Screen *screen, const Animation animation) {
     // notify the topmost controller it will disappear
     if(!this->navStack.empty()) {
         auto top = this->navStack.top();
@@ -326,7 +330,7 @@ void ScreenManager::pop(const Animation animation) {
      * If we're using an animation, render the screen we're about to disappear into our back buffer
      * so we can draw it on top of the new "top" of the navigation stack as it disappears.
      */
-    Screen *top = this->navStack.top();
+    const Screen *top = this->navStack.top();
 
     if(animation != Animation::None) {
         gAnimationBuffer.clear();
@@ -340,7 +344,7 @@ void ScreenManager::pop(const Animation animation) {
 
     // get the screen to show after
     this->navStack.pop();
-    Screen *revealed = this->navStack.top();
+    const Screen *revealed = this->navStack.top();
 
     // prepare the animation
     if(animation != Animation::None) {
@@ -376,10 +380,10 @@ void ScreenManager::doMenuAction() {
     }
     // otherwise, pop this controller
     if(this->navStack.size() == 1) {
+        // TODO: angerey beep
         return;
     }
 
-    // TODO: use an animation
     this->pop(Animation::SlideOut);
 }
 

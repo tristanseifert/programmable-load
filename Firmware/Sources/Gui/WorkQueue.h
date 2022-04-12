@@ -5,6 +5,8 @@
 
 #include "Rtos/Rtos.h"
 
+#include <etl/array.h>
+
 namespace Gui {
 /**
  * @brief GUI work queue
@@ -45,6 +47,8 @@ class WorkQueue {
         constexpr static const size_t kQueueSize{5};
         /// Queue to hold work items
         static QueueHandle_t gQueue;
+        /// Storage for work queue
+        static etl::array<Item, kQueueSize> gQueueStorage;
 };
 }
 

@@ -4,6 +4,8 @@
 #include "Gfx/Framebuffer.h"
 #include "Gfx/Primitives.h"
 
+#include "Log/Logger.h"
+
 using namespace Gui::Components;
 
 /**
@@ -11,16 +13,18 @@ using namespace Gui::Components;
  *
  * We'll first draw the background (if desired) then render the text on top.
  */
-void StaticLabel::draw(Gfx::Framebuffer &fb) {
+void StaticLabel::Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
     using namespace Gfx;
 
+    const auto &info = data.staticLabel;
+
     // draw background
-    if(this->isInverted) {
-        FillRect(fb, this->bounds, 0xf);
+    if(data.isInverted) {
+        FillRect(fb, data.bounds, 0xf);
     } else {
-        FillRect(fb, this->bounds, 0x0);
+        FillRect(fb, data.bounds, 0x0);
     }
 
     // draw text
-    this->font->draw(this->string, fb, this->bounds, this->fontMode);
+    info.font->draw(info.string, fb, data.bounds, info.fontMode);
 }

@@ -10,16 +10,16 @@
 using namespace Gui;
 
 QueueHandle_t WorkQueue::gQueue{nullptr};
+etl::array<WorkQueue::Item, WorkQueue::kQueueSize> WorkQueue::gQueueStorage;
 
 /**
  * @brief Initialize the shared GUI work queue
  */
 void WorkQueue::Init() {
-    static etl::array<Item, kQueueSize> gStorage;
     static StaticQueue_t gBuf;
 
     gQueue = xQueueCreateStatic(kQueueSize, sizeof(Item),
-            reinterpret_cast<uint8_t *>(gStorage.data()), &gBuf);
+            reinterpret_cast<uint8_t *>(gQueueStorage.data()), &gBuf);
     REQUIRE(gQueue, "gui: %s", "failed to allocate work queue");
 }
 

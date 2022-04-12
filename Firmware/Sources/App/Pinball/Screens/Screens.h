@@ -12,7 +12,8 @@
 
 namespace App::Pinball {
 struct Screens {
-    static Gui::Screen *GetVersionSplash();
+    static const Gui::Screen *GetVersionSplash();
+    static const Gui::Screen *GetVersionSoftware();
 };
 }
 
