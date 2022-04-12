@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "Beeper.h"
 #include "Hardware.h"
 #include "FrontIo/Display.h"
 #include "FrontIo/HmiDriver.h"
@@ -69,6 +70,7 @@ void Task::main() {
      */
     Logger::Trace("pinball: %s", "reset hw");
     Hw::ResetFrontPanel();
+    Beeper::Init();
 
     // initialize display
     Logger::Trace("pinball: %s", "init display");
@@ -116,6 +118,13 @@ void Task::main() {
         if(note & TaskNotifyBits::EncoderChanged) {
             const auto delta = Hw::ReadEncoderDelta();
             Gui::InputManager::EncoderChanged(delta);
+        }
+
+        /*
+         * Update the melody (beeper) if requested.
+         */
+        if(note & TaskNotifyBits::ProcessMelody) {
+            Beeper::Process();
         }
 
         /*

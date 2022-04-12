@@ -3,6 +3,7 @@
 #include "EasingFunctions.h"
 #include "Screen.h"
 
+#include "App/Pinball/Beeper.h"
 #include "App/Pinball/Task.h"
 
 #include "Gfx/Types.h"
@@ -380,7 +381,7 @@ void ScreenManager::doMenuAction() {
     }
     // otherwise, pop this controller
     if(this->navStack.size() == 1) {
-        // TODO: angerey beep
+        App::Pinball::Beeper::Play(App::Pinball::Beeper::kInvalidButtonMelody);
         return;
     }
 

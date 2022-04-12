@@ -41,8 +41,9 @@ class Hw {
     friend void ::EIC_7_Handler();
     friend void ::EIC_8_Handler();
 
-    friend class Task;
+    friend class Beeper;
     friend class Display;
+    friend class Task;
 
     /**
      * @brief Front panel reset

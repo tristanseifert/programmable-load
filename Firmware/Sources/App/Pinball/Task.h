@@ -82,12 +82,20 @@ class Task {
             ProcessWorkQueue            = (1 << 6),
 
             /**
+             * @brief Process the beeper melody
+             *
+             * Call into the handler for the beeper to process the next event in the currently
+             * playing melody.
+             */
+            ProcessMelody               = (1 << 7),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
             All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged |
-                    RedrawUI | ShowHomeScreen | ProcessWorkQueue),
+                    RedrawUI | ShowHomeScreen | ProcessWorkQueue | ProcessMelody),
         };
 
     public:

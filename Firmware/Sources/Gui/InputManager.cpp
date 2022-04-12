@@ -68,7 +68,6 @@ void InputManager::updateKeys(const InputKey pressed, const InputKey released) {
         xTimerStop(this->menuLongPressTimer, 0);
 
         if(!TestFlags(this->longPressFired & InputKey::Menu)) {
-            Logger::Notice("gui: %s", "Regular press on menu!");
             ScreenManager::HandleMenuAction();
         }
         this->longPressFired &= ~InputKey::Menu;

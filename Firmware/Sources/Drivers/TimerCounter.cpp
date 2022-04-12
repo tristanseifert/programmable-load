@@ -293,8 +293,10 @@ bool TimerCounter::CalculateFrequency(const Unit unit, const uint32_t freq, uint
     // get the input clock
     const uint32_t inFreq = kTimerClocks[static_cast<size_t>(unit)];
     REQUIRE(inFreq, "don't know TC%u input clock", static_cast<unsigned int>(unit));
-    Logger::Trace("TC%u: desired freq %u Hz, input %u Hz", static_cast<unsigned int>(unit),
+    if(kExtraLogging) {
+        Logger::Trace("TC%u: desired freq %u Hz, input %u Hz", static_cast<unsigned int>(unit),
             freq, inFreq);
+    }
 
     constexpr static const size_t kNumPrescalers{8};
     constexpr static const uint16_t kPrescalers[kNumPrescalers]{
@@ -338,7 +340,7 @@ bool TimerCounter::CalculateFrequency(const Unit unit, const uint32_t freq, uint
     }
 
     // output the chosen frequency
-    if(found) {
+    if(found && kExtraLogging) {
         Logger::Debug("TC%u: freq %u Hz: %u Hz / %u, period %u = %u Hz",
                 static_cast<unsigned int>(unit), freq, inFreq, outPrescaler, outPeriod,
                 (inFreq / (outPrescaler * (outPeriod + 1))));

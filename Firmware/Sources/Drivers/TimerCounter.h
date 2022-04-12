@@ -197,6 +197,9 @@ class TimerCounter {
          */
         static uint8_t gInitialized;
 
+        /// Secrete some debug logs about register writes to TC peripherals
+        constexpr static const bool kExtraLogging{false};
+
     private:
         /// Unit this object corresponds to
         Unit unit;
