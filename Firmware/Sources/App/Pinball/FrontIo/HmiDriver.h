@@ -9,6 +9,7 @@
 #include "Drivers/I2CDevice/PCA9955B.h"
 #include "Drivers/I2CDevice/XRA1203.h"
 
+#include "Rtos/Rtos.h"
 #include "Util/Uuid.h"
 
 #include <etl/array.h>
@@ -290,6 +291,27 @@ class HmiDriver: public FrontIoDriver {
          * update every indicator on the board.
          */
         Indicator indicatorState{UINTPTR_MAX};
+
+        /**
+         * @brief IO state poll timer
+         *
+         * We'll periodically poll the front panel for input changes by injecting a fake front
+         * panel interrupt. This is used in case we miss an interrupt (due to noise on the line,
+         * or a really bouncy switch) to ensure interrupts keep coming in.
+         *
+         * The timer is restarted any time we receive an interrupt. So, as long as we keep getting
+         * events more frequently than our interval, it won't do anything.
+         */
+        TimerHandle_t ioPollTimer;
+        StaticTimer_t ioPollTimerStorage;
+
+        /**
+         * @brief Interval for IO state poll timer (msec)
+         *
+         * Select this as high as possible to reduce the performance impact of the timer, but not
+         * so high that it would cause too much lag when pressing buttons.
+         */
+        constexpr static const size_t kIoPollTimerInterval{250};
 };
 }
 

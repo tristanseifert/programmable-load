@@ -1,4 +1,5 @@
 #include "HmiDriver.h"
+#include "../Task.h"
 
 #include "Drivers/I2CBus.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
@@ -21,6 +22,13 @@ HmiDriver::HmiDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom)
     ledDriver(Drivers::I2CDevice::PCA9955B(bus, kLedDriverAddress, kLedDriverRefCurrent,
                 kLedConfig)),
     ioExpander(Drivers::I2CDevice::XRA1203(bus, kExpanderAddress, kPinConfigs)) {
+    this->ioPollTimer = xTimerCreateStatic("HMI poller",
+        // one-shot timer mode (we'll reload it as needed)
+        pdMS_TO_TICKS(kIoPollTimerInterval), pdFALSE,
+        this, [](auto timer) {
+            Task::NotifyTask(Task::TaskNotifyBits::FrontIrq);
+        }, &this->ioPollTimerStorage);
+    REQUIRE(this->ioPollTimer, "HmiDriver: %s", "failed to allocate timer");
 }
 
 /**
@@ -29,7 +37,7 @@ HmiDriver::HmiDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom)
  * Stops all of our background timers we created.
  */
 HmiDriver::~HmiDriver() {
-
+    xTimerDelete(this->ioPollTimer, 0);
 }
 
 /**
@@ -39,6 +47,9 @@ HmiDriver::~HmiDriver() {
  */
 void HmiDriver::handleIrq() {
     int err;
+
+    // reset the poll timer
+    xTimerReset(this->ioPollTimer, 0);
 
     // read the raw IO state
     uint16_t inputs;

@@ -42,13 +42,13 @@ I2C::I2C(const SercomBase::Unit unit, const Config &conf) : unit(unit),
      * master on bus (byte successfully transmitted)
      */
     NVIC_SetPriority(SercomBase::GetIrqVector(unit, 0),
-            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1);
     NVIC_SetPriority(SercomBase::GetIrqVector(unit, 1),
-            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1);
     NVIC_SetPriority(SercomBase::GetIrqVector(unit, 2),
-            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1);
     NVIC_SetPriority(SercomBase::GetIrqVector(unit, 3),
-            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 2);
+            configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY + 1);
 
     SercomBase::RegisterHandler(unit, 0, [](void *ctx) {
         reinterpret_cast<I2C *>(ctx)->irqMasterOnBus();
@@ -204,6 +204,8 @@ int I2C::perform(etl::span<const Transaction> transactions) {
     uint32_t note{0};
     BaseType_t ok;
 
+    const auto currentTask = xTaskGetCurrentTaskHandle();
+
     // ensure we're enabled
     if(!this->enabled) {
         return Errors::Disabled;
@@ -236,7 +238,7 @@ int I2C::perform(etl::span<const Transaction> transactions) {
      */
     taskENTER_CRITICAL();
 
-    this->waiting = xTaskGetCurrentTaskHandle();
+    this->waiting = currentTask;
     this->completion = -1;
     this->state = State::Idle;
     this->currentTxn = 0;
