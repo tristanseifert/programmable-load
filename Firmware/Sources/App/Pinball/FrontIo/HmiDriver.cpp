@@ -91,20 +91,20 @@ void HmiDriver::handleIrq() {
      * Forward button events to the GUI layer. Note that we only do this for the select and menu
      * buttons: the other buttons are under the control of the UI task directly.
      */
-    constexpr static const auto kGuiButtons{kIoButtonMenu | kIoButtonSelect};
+    constexpr static const auto kGuiButtons{Button::MenuBtn | Button::Select};
 
     if((newDown & kGuiButtons) || (newReleased & kGuiButtons)) {
         Gui::InputKey guiDown{0}, guiUp{0};
 
-        if(newDown & kIoButtonMenu) {
+        if(newDown & Button::MenuBtn) {
             guiDown |= Gui::InputKey::Menu;
-        } if(newReleased & kIoButtonMenu) {
+        } if(newReleased & Button::MenuBtn) {
             guiUp |= Gui::InputKey::Menu;
         }
 
-        if(newDown & kIoButtonSelect) {
+        if(newDown & Button::Select) {
             guiDown |= Gui::InputKey::Select;
-        } if(newReleased & kIoButtonSelect) {
+        } if(newReleased & Button::Select) {
             guiUp |= Gui::InputKey::Select;
         }
 

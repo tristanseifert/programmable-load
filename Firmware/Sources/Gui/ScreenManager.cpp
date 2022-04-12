@@ -73,15 +73,14 @@ void ScreenManager::draw() {
 
     // if an animation is in progress, render the controller to the back buffer and blit it
     if(this->isAnimating) {
-        // TODO: check if screen wants to be redrawn
-        this->drawScreen(gAnimationBuffer, screen);
-        this->drawAnimationFrame();
+        this->drawAnimationFrame(screen);
     }
     // otherwise, draw the screen to the front buffer
     else {
-        // clear backbuffer if we just finished an animation
-        if(!this->isAnimating && this->animationComplete) {
+        // clear display buffer if we just finished an animation
+        if(this->needsBufferClear) {
             Gfx::Framebuffer::gMainBuffer.clear();
+            this->needsBufferClear = false;
         }
 
         // TODO: check if screen wants to be redrawn
@@ -106,8 +105,10 @@ void ScreenManager::draw() {
  * contents, and the animation timer is armed.
  */
 void ScreenManager::prepareAnimation(const Animation animation) {
-    // clear the back buffer
-    gAnimationBuffer.clear();
+    // clear the back buffer (if it's an IN animation)
+    if(animation == Animation::SlideIn || animation == Animation::SlideUp) {
+        gAnimationBuffer.clear();
+    }
 
     // reset animation state
     this->isAnimating = true;
@@ -117,6 +118,7 @@ void ScreenManager::prepareAnimation(const Animation animation) {
 
     switch(animation) {
         case Animation::SlideIn:
+        case Animation::SlideOut:
             this->animationProgressStep = 0.025f;
             break;
 
@@ -139,9 +141,30 @@ void ScreenManager::prepareAnimation(const Animation animation) {
  * it will be transferred.
  *
  * It takes advantage of the fact that all our animations are just some sort of sliding.
+ *
+ * @param screen The screen that's currently the top of the nav stack
  */
-void ScreenManager::drawAnimationFrame() {
+void ScreenManager::drawAnimationFrame(Screen *screen) {
     float progress;
+
+    /*
+     * Render the screen to the appropriate buffer.
+     *
+     * If the animation is an OUT (SlideOut or SlideDown) we'll render the topmost screen to the
+     * main buffer, then blit the contents of the back buffer (which contain the old screen)
+     * without redrawing that.
+     *
+     * Otherwise, we draw the new screen onto the back buffer, then blit that on top of the display
+     * buffer (which is unchanged, and contains the previous top view.)
+     */
+    if(this->currentAnimation == Animation::SlideOut ||
+            this->currentAnimation == Animation::SlideDown) {
+        // TODO: check if screen wants to be redrawn
+        this->drawScreen(Gfx::Framebuffer::gMainBuffer, screen);
+    } else {
+        // TODO: check if screen wants to be redrawn
+        this->drawScreen(gAnimationBuffer, screen);
+    }
 
     // apply an easing function to the current animation progress
     switch(this->currentAnimation) {
@@ -175,7 +198,7 @@ void ScreenManager::drawAnimationFrame() {
             origin.x = 256 - (256.f * progress);
             break;
         case Animation::SlideOut:
-            origin.x = (-256.f * progress);
+            origin.x = (256.f * progress);
             break;
 
         default:
@@ -200,6 +223,7 @@ void ScreenManager::advanceAnimationFrame() {
     if(this->animationProgress >= 1.f) {
         this->isAnimating = false;
         this->animationComplete = true;
+        this->needsBufferClear = true;
     } else {
         auto err = xTimerReset(this->animationTimer, 0);
         REQUIRE(err == pdPASS, "gui: %s", "failed to re-arm timer");
@@ -285,6 +309,78 @@ void ScreenManager::push(Screen *screen, const Animation animation) {
 
     // force redraw
     this->requestDraw();
+}
+
+/**
+ * @brief Pop a screen off the navigation stack
+ *
+ * Make the topmost (currently visible) screen disappear.
+ */
+void ScreenManager::pop(const Animation animation) {
+    // ensure we have a screen to pop
+    if(this->navStack.size() < 2) {
+        return;
+    }
+
+    /*
+     * If we're using an animation, render the screen we're about to disappear into our back buffer
+     * so we can draw it on top of the new "top" of the navigation stack as it disappears.
+     */
+    Screen *top = this->navStack.top();
+
+    if(animation != Animation::None) {
+        gAnimationBuffer.clear();
+        this->drawScreen(gAnimationBuffer, top);
+        // XXX: call didDisappear
+    }
+
+    if(top->willDisappear) {
+        top->willDisappear(top, top->callbackContext);
+    }
+
+    // get the screen to show after
+    this->navStack.pop();
+    Screen *revealed = this->navStack.top();
+
+    // prepare the animation
+    if(animation != Animation::None) {
+        this->prepareAnimation(animation);
+    } else {
+        if(revealed->didDisappear) {
+            revealed->didDisappear(revealed, revealed->callbackContext);
+        }
+
+        this->needsBufferClear = true;
+    }
+
+    this->requestDraw();
+}
+
+/**
+ * @brief Process a screen's menu action
+ *
+ * If the screen has a menu action specified, we'll invoke that. Otherwise, pop a screen off the
+ * navigation stack (with animation) if there is one available. If no screens are available to pop
+ * (e.g. the current screen is the topmost) we do nothing.
+ */
+void ScreenManager::doMenuAction() {
+    // ensure we have a screen
+    if(this->navStack.empty()) {
+        return;
+    }
+    auto screen = this->navStack.top();
+
+    // invoke its menu action, if specified
+    if(screen->menuPressed) {
+        return screen->menuPressed(screen, screen->callbackContext);
+    }
+    // otherwise, pop this controller
+    if(this->navStack.size() == 1) {
+        return;
+    }
+
+    // TODO: use an animation
+    this->pop(Animation::SlideOut);
 }
 
 /**

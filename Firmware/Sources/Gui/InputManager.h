@@ -51,7 +51,7 @@ class InputManager {
 
     private:
         /// How long menu button should be held to trigger a long press, in msec
-        constexpr static const size_t kMenuHoldPeriod{1500};
+        constexpr static const size_t kMenuHoldPeriod{1250};
         /**
          * @brief Menu long press timer
          *

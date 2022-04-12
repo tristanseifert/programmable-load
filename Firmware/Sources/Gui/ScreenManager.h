@@ -68,6 +68,32 @@ class ScreenManager {
         }
 
         /**
+         * @brief Push the screen
+         *
+         * Add the screen to the top of the navigation stack.
+         */
+        inline static void Push(Screen *screen, const Animation animation = Animation::SlideIn) {
+            gShared->push(screen, animation);
+        }
+
+        /**
+         * @brief Pop the topmost screen off the navigation stack
+         */
+        inline static void Pop(const Animation animation = Animation::SlideOut) {
+            gShared->pop(animation);
+        }
+
+
+        /**
+         * @brief Process a screen menu action
+         *
+         * This is invoked when there is _not_ a currently selected component to take the focus
+         * from, and the screen is the only target for the menu action.
+         */
+        inline static void HandleMenuAction() {
+            gShared->doMenuAction();
+        }
+        /**
          * @brief Show the nav stack menu
          *
          * This will populate and display the navigation stack menu, which allows the user to
@@ -84,12 +110,14 @@ class ScreenManager {
         void drawScreen(Gfx::Framebuffer &fb, Screen *screen);
 
         void prepareAnimation(const Animation);
-        void drawAnimationFrame();
+        void drawAnimationFrame(Screen *);
         void advanceAnimationFrame();
 
-        void push(Screen *screen, const Animation animation);
         void present(Screen *screen, const Animation animation);
+        void push(Screen *screen, const Animation animation);
+        void pop(const Animation animation);
 
+        void doMenuAction();
         void openNavMenu();
 
         void requestDraw();
@@ -122,6 +150,8 @@ class ScreenManager {
         bool animationComplete{false};
         /// current animation
         Animation currentAnimation{Animation::None};
+        /// When set, clear the active buffer before drawing
+        bool needsBufferClear{false};
 
         /**
          * @brief Secondary (back) buffer
