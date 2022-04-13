@@ -111,6 +111,26 @@ class SercomBase {
         }
 
         /**
+         * @brief Get the DMA trigger for the unit's receive event
+         *
+         * @param unit SERCOM unit ([0, 5])
+         * @return Trigger value (for DMA CHCTRLA.TRIGSRC) for SERCOM RX trigger
+         */
+        constexpr static inline uint8_t GetDmaRxTrigger(const Unit unit) {
+            return kDmaRxTriggers[static_cast<size_t>(unit)];
+        }
+
+        /**
+         * @brief Get the DMA trigger for the unit's transmit event
+         *
+         * @param unit SERCOM unit ([0, 5])
+         * @return Trigger value (for DMA CHCTRLA.TRIGSRC) for SERCOM TX trigger
+         */
+        constexpr static inline uint8_t GetDmaTxTrigger(const Unit unit) {
+            return kDmaTxTriggers[static_cast<size_t>(unit)];
+        }
+
+        /**
          * @brief Get register base for unit
          *
          * @param unit SERCOM unit ([0, 5])
@@ -224,6 +244,20 @@ class SercomBase {
             SERCOM3_0_IRQn, SERCOM3_1_IRQn, SERCOM3_2_IRQn, SERCOM3_3_IRQn,
             SERCOM4_0_IRQn, SERCOM4_1_IRQn, SERCOM4_2_IRQn, SERCOM4_3_IRQn,
             SERCOM5_0_IRQn, SERCOM5_1_IRQn, SERCOM5_2_IRQn, SERCOM5_3_IRQn,
+        };
+
+        /**
+         * @brief DMA RX triggers
+         */
+        constexpr static const uint8_t kDmaRxTriggers[kNumUnits] {
+            0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e//, 0x10, 0x12
+        };
+
+        /**
+         * @brief DMA TX triggers
+         */
+        constexpr static const uint8_t kDmaTxTriggers[kNumUnits] {
+            0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f//, 0x11, 0x13
         };
 
         /**

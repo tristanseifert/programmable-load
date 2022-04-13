@@ -3,6 +3,8 @@
 
 #include "SercomBase.h"
 
+#include "Log/Logger.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -54,7 +56,7 @@ class Spi {
              * Defines which bit is set first in the output data: when set, the least significant
              * bit is sent first. Otherwise, it is the most significant bit.
              */
-            uint8_t lsbFirst:1{0};
+            uint32_t lsbFirst:1{0};
 
             /**
              * @brief Clock polarity
@@ -62,7 +64,7 @@ class Spi {
              * Sets the clock's idle level. 0 indicates low, with the leading edge of each clock
              * being the rising edge. 1 indicates high, where the leading edge is a falling edge.
              */
-            uint8_t cpol:1{1};
+            uint32_t cpol:1{1};
 
             /**
              * @brif Clock phase
@@ -70,7 +72,7 @@ class Spi {
              * Sets on which clock edge the data on the SPI lines is sampled. 0 indicates it's
              * sampled on a leading clock edge, and data changed on the trailing edge.
              */
-            uint8_t cpha:1{1};
+            uint32_t cpha:1{1};
 
             /**
              * @brief Enable receiver
@@ -78,7 +80,7 @@ class Spi {
              * When this is cleared, data will not be received, only transmitted. This is useful
              * for devices such as displays that don't support readback.
              */
-            uint8_t rxEnable:1{1};
+            uint32_t rxEnable:1{1};
 
             /**
              * @brief Hardware control for chip select
@@ -90,7 +92,7 @@ class Spi {
              * @remark When enabled, only a single SPI device is supported on the bus. You can
              *         disable this, and manually handle SPI chip selects if needed for more.
              */
-            uint8_t hwChipSelect:1{0};
+            uint32_t hwChipSelect:1{0};
 
             /**
              * @brief Enable DMA operation
@@ -98,8 +100,24 @@ class Spi {
              * It's possible to disable DMA operation, relying instead on polled MMIO accesses
              * for the entire transfer. This reduces performance quite significantly, however, and
              * is not suggested.
+             *
+             * @remark When enabled, you must configure the channel numbers for transmit and
+             *         receive channels.
              */
-            uint8_t useDma:1{1};
+            uint32_t useDma:1{1};
+
+            /**
+             * @brief Transmit DMA channel
+             *
+             * Channel number for the transmit DMA channel, if DMA is enabled.
+             */
+            uint32_t dmaChannelTx:5{0};
+            /**
+             * @brief Transmit DMA priority
+             *
+             * Set the priority level of DMA transfers to feed the transmit buffer of the SPI.
+             */
+            uint32_t dmaPriorityTx:2{0};
 
             /**
              * @brief Pad for data input
@@ -107,7 +125,7 @@ class Spi {
              * Specify which of the 4 pads on the SERCOM is used for the input signal, MISO in
              * master operation.
              */
-            uint8_t inputPin:2{3};
+            uint32_t inputPin:2{3};
 
             /**
              * @brief Use alternate output pinout
@@ -115,7 +133,7 @@ class Spi {
              * When set, the alternate output pinout is used, where the data output is at PAD3
              * rather than PAD0.
              */
-            uint8_t alternateOutput:1{0};
+            uint32_t alternateOutput:1{0};
 
             /**
              * @brief Baud rate
@@ -172,11 +190,68 @@ class Spi {
 
     private:
         int doPolledTransfer(const Transaction &txn);
+        int doDmaTransfer(const Transaction &txn);
 
         static void ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs,
                 const Config &conf);
         static void UpdateSckFreq(const SercomBase::Unit unit,
                 ::SercomSpi *regs, const uint32_t frequency);
+
+        /**
+         * @brief Transfer up to 32 bit of data
+         *
+         * Performs a single polled transfer that may read or write up to 32 bits of data in a
+         * single go.
+         *
+         * @param txPtr Buffer of transmit data
+         * @param rxPtr Buffer of receive data
+         * @param length Number of bytes to transfer ([0, 3])
+         * @param waitTxComplete Whether we should wait for the current SPI transmission to
+         *        complete before. This is used when the `length` is different between the
+         *        transactions.
+         */
+        inline void doPolledTransferSingle(const uint8_t* &txPtr, uint8_t* &rxPtr,
+                const size_t length, const bool waitTxComplete) {
+            // prepare the transmit data
+            uint32_t transmit{0};
+
+            if(txPtr) {
+                for(size_t i = 0; i < length; i++) {
+                    transmit |= static_cast<uint32_t>(*txPtr++) << (i * 8);
+                }
+            }
+
+            // ensure the previous block is transmitted, before we write the length register
+            if(waitTxComplete) {
+                while(!this->regs->INTFLAG.bit.TXC){}
+            }
+
+            // program length register
+            this->regs->LENGTH.reg = SERCOM_SPI_LENGTH_LENEN | SERCOM_SPI_LENGTH_LEN(length);
+
+            size_t timeout{kResetSyncTimeout};
+            do {
+                REQUIRE(--timeout, "SPI %s timed out", "enable length");
+            } while(!!this->regs->SYNCBUSY.bit.LENGTH);
+
+            // write transmit data
+            while(!this->regs->INTFLAG.bit.DRE){}
+            this->regs->DATA.reg = transmit;
+
+            // decode the receive data, if desired
+            if(this->rxEnabled) {
+                while(!this->regs->INTFLAG.bit.RXC){}
+
+                // TODO: validate this
+                uint32_t rxWord = this->regs->DATA.reg;
+                if(rxPtr) {
+                    for(size_t i = 0; i < length; i++) {
+                        *rxPtr++ = (rxWord & 0xFF);
+                        rxWord >>= 8;
+                    }
+                }
+            }
+        }
 
     private:
         /// Unit number
@@ -185,11 +260,33 @@ class Spi {
         bool enabled{false};
         /// is the receiver enabled?
         bool rxEnabled{false};
+
         /// is DMA enabled?
-        bool dmaCapable{false};
+        uint16_t dmaCapable:1{false};
+        /// use DMA for transmit
+        uint16_t dmaTx:1{false};
+        /// DMA channel for transmit
+        uint16_t dmaTxChannel:5{0};
+        /// Priority for DMA
+        uint16_t dmaTxPriority:2{0};
+        /// Use DMA for receive
+        uint16_t dmaRx:1{false};
+        /// DMA channel for receive
+        uint16_t dmaRxChannel:5{0};
 
         /// MMIO register base
         ::SercomSpi *regs;
+
+        /**
+         * @brief DMA transfer size threshold
+         *
+         * SPI transfers above this size (in bytes) will always be performed with DMA, if possible,
+         * to ease the processor overhead.
+         *
+         * This should be set so that the overhead of configuring the DMA channel is lower than the
+         * time it would have taken to do the transfer via polling mode.
+         */
+        constexpr static const size_t kDmaThreshold{128};
 
         /**
          * @brief Enable timeout
@@ -206,6 +303,9 @@ class Spi {
          * assume something is wrong with the peripheral.
          */
         constexpr static const size_t kResetSyncTimeout{1000};
+
+        /// Configure whether we desire extra debug logging
+        constexpr static const bool kExtraLogging{false};
 };
 }
 

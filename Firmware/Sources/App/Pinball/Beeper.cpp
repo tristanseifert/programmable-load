@@ -9,7 +9,7 @@
 using namespace App::Pinball;
 
 bool Beeper::gIsActive{false};
-float Beeper::gVolume{0.33f};
+float Beeper::gVolume{0.15f};
 etl::span<const Beeper::Note> Beeper::gCurrentMelody;
 size_t Beeper::gMelodyOffset{0};
 TimerHandle_t Beeper::gTimer{nullptr};

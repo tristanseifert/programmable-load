@@ -20,6 +20,11 @@ enum NotifyBits: uint32_t {
      * @brief I²C Master
      */
     I2CMaster                           = (1 << 0),
+
+    /**
+     * @brief DMA controller
+     */
+    DmaController                       = (1 << 1),
 };
 }
 

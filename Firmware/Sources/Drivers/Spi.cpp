@@ -1,5 +1,6 @@
 #include "Spi.h"
 #include "SercomBase.h"
+#include "Dma.h"
 #include "Gpio.h"
 
 #include "Log/Logger.h"
@@ -26,8 +27,12 @@ Spi::Spi(const SercomBase::Unit unit, const Config &conf) : unit(unit), rxEnable
 
     // configure DMA, interrupts, then the peripheral
     if(conf.useDma) {
-        // TODO: configure DMAC
         this->dmaCapable = true;
+        this->dmaTx = 1;
+        this->dmaTxChannel = conf.dmaChannelTx;
+        this->dmaTxPriority = conf.dmaPriorityTx;
+
+        REQUIRE(!conf.rxEnable, "SPI DMA receive not yet implemented");
     }
 
     // TODO: IRQ config
@@ -46,9 +51,13 @@ Spi::Spi(const SercomBase::Unit unit, const Config &conf) : unit(unit), rxEnable
  * @note Any in progress DMA transfers will also be canceled, so data loss may result.
  */
 void Spi::reset() {
-    // TODO: cancel DMA
-
-    // TODO: disable IRQs
+    // cancel DMA
+    if(this->dmaTx) {
+        Dma::ResetChannel(this->dmaTxChannel);
+    }
+    if(this->dmaRx) {
+        Dma::ResetChannel(this->dmaRxChannel);
+    }
 
     // reset the peripheral and wait
     taskENTER_CRITICAL();
@@ -70,6 +79,13 @@ void Spi::reset() {
  */
 void Spi::enable() {
     REQUIRE(!this->enabled, "SPI already enabled");
+
+    // enable DMA
+    if(this->dmaTx) {
+        Dma::ConfigureChannel(this->dmaTxChannel, Dma::FifoThreshold::x1, 0,
+                Dma::TriggerAction::Burst, SercomBase::GetDmaTxTrigger(this->unit),
+                this->dmaTxPriority);
+    }
 
     // set the bit
     taskENTER_CRITICAL();
@@ -104,8 +120,13 @@ int Spi::perform(etl::span<const Transaction> transactions) {
 
     // perform each transaction
     for(const auto &txn : transactions) {
-        // TODO: add DMA support
-        err = this->doPolledTransfer(txn);
+        if(this->dmaCapable && txn.length > kDmaThreshold) {
+            err = this->doDmaTransfer(txn);
+        } else {
+            err = this->doPolledTransfer(txn);
+        }
+
+        // abort if this transaction failed
         if(err) {
             goto beach;
         }
@@ -113,6 +134,87 @@ int Spi::perform(etl::span<const Transaction> transactions) {
 
     // clean up and return last error code
 beach:;
+    return err;
+}
+
+/**
+ * @brief Perform an SPI transfer using DMA
+ *
+ * @param txn Transaction to perform
+ *
+ * @return 0 on success, negative error code otherwise
+ */
+int Spi::doDmaTransfer(const Transaction &txn) {
+    int err{0};
+    bool tx{false};
+
+    // validate arguments
+    if(!txn.length || (!txn.rxBuf && !txn.txBuf)) {
+        return Errors::InvalidBuffer;
+    }
+
+    auto rxPtr = reinterpret_cast<uint8_t *>(txn.rxBuf);
+    auto txPtr = reinterpret_cast<const uint8_t *>(txn.txBuf);
+
+    const auto dmaLength = txn.length & ~3;
+    if(!dmaLength) {
+        return Errors::InvalidBuffer;
+    }
+
+    // disable length register (DMA always writes the whole 32 bits)
+    this->regs->LENGTH.reg = 0;
+
+    size_t timeout{kResetSyncTimeout};
+    do {
+        REQUIRE(--timeout, "SPI %s timed out", "disable length");
+    } while(!!this->regs->SYNCBUSY.bit.LENGTH);
+
+    // configure DMA channels
+    if(txPtr) {
+        err = Dma::ConfigureTransfer(this->dmaTxChannel, Dma::BeatSize::Word, txPtr, true,
+                const_cast<uint32_t *>(&this->regs->DATA.reg), false, dmaLength);
+        if(err) {
+            goto beach;
+        }
+        tx = true;
+    }
+    if(this->rxEnabled && rxPtr) {
+        // TODO: configure receive DMA
+        Logger::Panic("SPI: %s", "DMA receive not yet implemented");
+    }
+
+    // start DMA channels (and wait for them to complete)
+    if(tx) {
+        Dma::EnableChannel(this->dmaTxChannel);
+
+        Dma::WaitForCompletion(this->dmaTxChannel);
+    }
+
+    // transfer remaining bytes
+    if(txn.length != dmaLength) {
+        // update read/write pointers
+        const auto remaining = txn.length - dmaLength;
+
+        if(txPtr) {
+            txPtr += dmaLength;
+        }
+        if(rxPtr) {
+            rxPtr += dmaLength;
+        }
+
+        // perform a single polled mode transfer
+        taskENTER_CRITICAL();
+        this->doPolledTransferSingle(txPtr, rxPtr, remaining, true);
+        taskEXIT_CRITICAL();
+    }
+
+    // clean up
+beach:;
+    // disable DMA channels
+    if(tx) {
+        Dma::DisableChannel(this->dmaTxChannel);
+    }
+
     return err;
 }
 
@@ -128,9 +230,6 @@ beach:;
  *
  * @remark Chip select should be handled by higher level functions, unless hardware chip select is
  *         used.
- *
- * @TODO make this work with 32-bit mode (by writing a 32-bit value at a time, then a partial
- *       write for whatever remains)
  */
 int Spi::doPolledTransfer(const Transaction &txn) {
     // validate arguments
@@ -188,45 +287,7 @@ int Spi::doPolledTransfer(const Transaction &txn) {
     const auto remaining = txn.length - (blocks * 4);
 
     if(remaining) {
-        // prepare the transmit data
-        uint32_t transmit{0};
-
-        if(txPtr) {
-            for(size_t i = 0; i < remaining; i++) {
-                transmit |= static_cast<uint32_t>(*txPtr++) << (i * 8);
-            }
-        }
-
-        // ensure the previous block is transmitted, before we write the length register
-        if(blocks) {
-            while(!this->regs->INTFLAG.bit.TXC){}
-        }
-
-        // program length register
-        this->regs->LENGTH.reg = SERCOM_SPI_LENGTH_LENEN | SERCOM_SPI_LENGTH_LEN(remaining);
-
-        size_t timeout{kResetSyncTimeout};
-        do {
-            REQUIRE(--timeout, "SPI %s timed out", "enable length");
-        } while(!!this->regs->SYNCBUSY.bit.LENGTH);
-
-        // write transmit data
-        while(!this->regs->INTFLAG.bit.DRE){}
-        this->regs->DATA.reg = transmit;
-
-        // decode the receive data, if desired
-        if(this->rxEnabled) {
-            while(!this->regs->INTFLAG.bit.RXC){}
-
-            // TODO: validate this
-            uint32_t rxWord = this->regs->DATA.reg;
-            if(rxPtr) {
-                for(size_t i = 0; i < remaining; i++) {
-                    *rxPtr++ = (rxWord & 0xFF);
-                    rxWord >>= 8;
-                }
-            }
-        }
+        this->doPolledTransferSingle(txPtr, rxPtr, remaining, !!blocks);
     }
 
     // wait for last byte to finish transmitting
@@ -271,7 +332,8 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
 
     temp |= SERCOM_SPI_CTRLA_MODE(static_cast<uint8_t>(SercomBase::Mode::SpiMaster));
 
-    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLA", temp);
+    if(kExtraLogging) Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit),
+            "SPI", "CTRLA", temp);
     regs->CTRLA.reg = temp & SERCOM_SPI_CTRLA_MASK;
 
     /*
@@ -295,7 +357,8 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
 
     temp |= SERCOM_SPI_CTRLB_PLOADEN; // preload data register
 
-    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLB", temp);
+    if(kExtraLogging) Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit),
+            "SPI", "CTRLB", temp);
     regs->CTRLB.reg = temp & SERCOM_SPI_CTRLB_MASK;
 
     /**
@@ -306,7 +369,8 @@ void Spi::ApplyConfiguration(const SercomBase::Unit unit, ::SercomSpi *regs, con
      */
     temp = SERCOM_SPI_CTRLC_DATA32B | SERCOM_SPI_CTRLC_ICSPACE(0);
 
-    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "SPI", "CTRLC", temp);
+    if(kExtraLogging) Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit),
+            "SPI", "CTRLC", temp);
     regs->CTRLC.reg = temp & SERCOM_SPI_CTRLC_MASK;
 
     // then last, calculate the correct baud rate
@@ -332,8 +396,10 @@ void Spi::UpdateSckFreq(const SercomBase::Unit unit, ::SercomSpi *regs,
 
     REQUIRE(baud <= 0xFF, "SPI baud rate out of range (%u Hz = $%08x)", frequency, baud);
 
-    Logger::Debug("SERCOM%u SPI freq: request %u Hz, got %u Hz", static_cast<unsigned int>(unit),
-            frequency, actual);
+    if(kExtraLogging) {
+        Logger::Debug("SERCOM%u SPI freq: request %u Hz, got %u Hz",
+                static_cast<unsigned int>(unit), frequency, actual);
+    }
     regs->BAUD.reg = baud;
 }
 
