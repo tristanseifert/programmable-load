@@ -279,6 +279,9 @@ class I2C: public I2CBus {
          * Number of cycles to wait for the SYSOP bit to synchronize.
          */
         constexpr static const size_t kSysOpSyncTimeout{100};
+
+        /// Configure whether we desire extra debug logging
+        constexpr static const bool kExtraLogging{false};
 };
 }
 

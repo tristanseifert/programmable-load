@@ -282,7 +282,7 @@
 // <i> Indicates whether USB Clock Recovery Mode is enabled or not
 // <id> dfll_arch_usbcrm
 #ifndef CONF_DFLL_USBCRM
-#define CONF_DFLL_USBCRM 1
+#define CONF_DFLL_USBCRM 0
 #endif
 
 // <q> Wait Lock
@@ -350,7 +350,7 @@
 // <o> DFLL Multiply Factor <0x0-0xFFFF>
 //  <id> dfll_mul
 #ifndef CONF_DFLL_MUL
-#define CONF_DFLL_MUL 0x0
+#define CONF_DFLL_MUL 0x5b9
 #endif
 
 // <e> DFLL Calibration Overwrite
@@ -440,14 +440,14 @@
 // <i> Value of LDR is calculated using Fclk_dpll=Fckr*(LDR+1+LDRFRAC/32) formula as given in datasheet. This value is directly written in to DPLLRATIO register
 // <id> fdpll0_ldr
 #ifndef CONF_FDPLL0_LDR
-#define CONF_FDPLL0_LDR 0x27
+#define CONF_FDPLL0_LDR 0x8b
 #endif
 
 // <o> Clock Divider <0x0-0x7FF>
 // <i> This Clock divider is only for XOSC clock input to DPLL
 // <id> fdpll0_clock_div
 #ifndef CONF_FDPLL0_DIV
-#define CONF_FDPLL0_DIV 0x1
+#define CONF_FDPLL0_DIV 0x6
 #endif
 
 // <q> DCO Filter Enable

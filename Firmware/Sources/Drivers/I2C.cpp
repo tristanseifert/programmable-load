@@ -693,7 +693,8 @@ void I2C::ApplyConfiguration(const SercomBase::Unit unit, ::SercomI2cm *regs, co
 
     ctrla |= SERCOM_SPI_CTRLA_MODE(static_cast<uint8_t>(SercomBase::Mode::I2CMaster));
 
-    Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit), "I2C", "CTRLA", ctrla);
+    if(kExtraLogging) Logger::Debug("SERCOM%u %s %s: $%08x", static_cast<unsigned int>(unit),
+            "I2C", "CTRLA", ctrla);
     regs->CTRLA.reg = ctrla & SERCOM_I2CM_CTRLA_MASK;
 
     /*
@@ -731,8 +732,8 @@ void I2C::UpdateFreq(const SercomBase::Unit unit, ::SercomI2cm *regs,
 
     REQUIRE(baud <= 0xFF, "I2C baud rate out of range (%u Hz = $%08x)", frequency, baud);
 
-    Logger::Debug("SERCOM%u I2C freq: request %u Hz, got %u Hz", static_cast<unsigned int>(unit),
-            frequency, actual);
+    if(kExtraLogging) Logger::Debug("SERCOM%u I2C freq: request %u Hz, got %u Hz",
+            static_cast<unsigned int>(unit), frequency, actual);
 
     regs->BAUD.reg = baud;
 }

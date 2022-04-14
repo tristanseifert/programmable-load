@@ -3,8 +3,10 @@
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
+#include "Util/HwInfo.h"
 
 #include <tusb.h>
+#include <string.h>
 
 using namespace UsbStack;
 
@@ -64,10 +66,31 @@ extern "C" uint16_t const *tud_descriptor_string_cb(const uint8_t index, const u
          * The serial number is read out of the system configuration block, and converted to UTF-16
          * if this is the first time this call is made.
          */
-        case Descriptors::StringDescriptor::SerialNumber:
-            // TODO: implement
-            return reinterpret_cast<const uint16_t *>(u"\x0503shit");
-            break;
+        case Descriptors::StringDescriptor::SerialNumber: {
+            constexpr static const size_t kSerialDescriptorLen{24};
+            static uint16_t gSerialDescriptor[kSerialDescriptorLen];
+            static bool gSerialDescriptorValid{false};
+
+            if(!gSerialDescriptorValid) {
+                memset(gSerialDescriptor, 0, sizeof(gSerialDescriptor));
+
+                const auto serialStr = Util::HwInfo::GetSerial();
+                REQUIRE(serialStr, "failed to get serial");
+
+                const auto len = strlen(serialStr);
+                REQUIRE(len < (kSerialDescriptorLen-2), "serial too long");
+
+                gSerialDescriptor[0] = 0x0300 | (2 + (len * 2));
+
+                for(size_t i = 0; i < len; i++) {
+                    gSerialDescriptor[1+i] = serialStr[i];
+                }
+
+                gSerialDescriptorValid = true;
+            }
+
+            return gSerialDescriptor;
+        }
     }
 
     // bail if out of range

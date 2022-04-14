@@ -22,8 +22,10 @@ constexpr static const Drivers::Gpio::Pin kUsbDm{
 static void InitHardware();
 
 void UsbStack::Init() {
-    // enable the AHB and peripheral clocks
+    // enable the AHB, APB and peripheral clocks
     MCLK->AHBMASK.bit.USB_ = 1;
+    MCLK->APBBMASK.bit.USB_ = 1;
+
     Drivers::ClockMgmt::EnableClock(Drivers::ClockMgmt::Peripheral::Usb,
             Drivers::ClockMgmt::Clock::Usb);
 

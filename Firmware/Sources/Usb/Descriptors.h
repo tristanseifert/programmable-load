@@ -159,15 +159,15 @@ class Descriptors {
          */
         constexpr static const etl::u16string_view kStrings[kNumStringDescriptors]{
             // 0: Language index (English)
-            {u"\x0203""\x0904"},
+            {u"\x0302""\x0904"},
             // 1. Manufacturer name
-            {u"\x0603""Trist"},
+            {u"\x030C""Trist"},
             // 2. Product name
-            {u"\x1203""Programmable Load"},
+            {u"\x0324""Programmable Load"},
             // 3. CDC interface name
-            {u"\x0D03""Debug Console"},
+            {u"\x031A""Debug Console"},
             // 4. Vendor interface name
-            {u"\x0F03""Spicy Interface"},
+            {u"\x031E""Spicy Interface"},
         };
 
         /**
