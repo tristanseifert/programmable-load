@@ -70,6 +70,8 @@ struct ComponentData {
         } staticLabel;
     };
 
+    /// Is the control hidden?
+    uint8_t isHidden:1{0};
     /// Is the control drawn inverted?
     uint8_t isInverted:1{0};
 };

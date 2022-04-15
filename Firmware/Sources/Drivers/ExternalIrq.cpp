@@ -105,7 +105,7 @@ void ExternalIrq::ConfigureLine(const uint8_t line, const Config &conf) {
     temp &= ~(0xf << lineShift);
     temp |= config;
 
-    Logger::Trace("EIC CONFIG[%u] = $%08x", sense / 8, temp);
+    if(kExtraLogging) Logger::Trace("EIC CONFIG[%u] = $%08x", sense / 8, temp);
 
     EIC->CONFIG[sense / 8].reg = temp;
 
@@ -147,7 +147,7 @@ void ExternalIrq::Reset() {
  * This waits up to kEnableSyncTimeout loops before giving up.
  */
 void ExternalIrq::Enable() {
-    REQUIRE(!gEnabled, "SPI already enabled");
+    REQUIRE(!gEnabled, "EIC already enabled");
 
     // set the bit
     taskENTER_CRITICAL();
@@ -166,7 +166,7 @@ void ExternalIrq::Enable() {
  * @brief Disable the controller
  */
 void ExternalIrq::Disable() {
-    REQUIRE(gEnabled, "SPI already disabled");
+    REQUIRE(gEnabled, "EIC already disabled");
 
     // clear the bit
     taskENTER_CRITICAL();

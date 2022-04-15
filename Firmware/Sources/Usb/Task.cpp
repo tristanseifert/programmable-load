@@ -1,4 +1,5 @@
 #include "Task.h"
+#include "Vendor/VendorInterfaceTask.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -16,7 +17,7 @@ StackType_t Task::gStack[kStackSize];
  * Initialize the USB task class in the preallocated memory.
  */
 void Task::Start() {
-    static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(4)));
+    static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(alignof(Task))));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
     new (ptr) Task();
@@ -43,16 +44,35 @@ Task::Task() {
  * requests forever.
  */
 void Task::main() {
-    // TODO: get serial number for serial number descriptor
-    Logger::Trace("%s: start", "USB");
+    Logger::Trace("USB: %s", "start");
 
-    // init USB stack
+    // init USB stack and the endpoints
     tusb_init();
 
-    Logger::Trace("%s: main loop", "USB");
+    this->vendorInterface = Vendor::InterfaceTask::Start();
 
     // service requests
+    Logger::Trace("USB: %s", "main loop");
+
     while(1) {
         tud_task();
     }
+}
+
+
+
+/**
+ * @brief USB device configured callback
+ */
+void tud_mount_cb() {
+    Logger::Notice("USB: %s", "device mounted");
+    Vendor::InterfaceTask::HostConnected();
+}
+
+/**
+ * @brief USB device unmounted (disconnected)
+ */
+void tud_umount_cb() {
+    Logger::Notice("USB: %s", "device unmounted");
+    Vendor::InterfaceTask::HostDisconnected();
 }

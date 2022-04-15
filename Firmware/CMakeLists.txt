@@ -114,6 +114,7 @@ add_executable(firmware
     Sources/Usb/Descriptors.cpp
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp
+    Sources/Usb/Vendor/VendorInterfaceTask.cpp
     Sources/App/Main/Hardware.cpp
     Sources/App/Main/Task.cpp
     Sources/App/Pinball/Hardware.cpp
@@ -187,7 +188,7 @@ FetchContent_Declare(etl
     GIT_TAG 20.25.0
 )
 FetchContent_MakeAvailable(etl)
-target_compile_options(etl INTERFACE -DETL_NO_STL)
+target_compile_options(etl INTERFACE -DETL_NO_STL -DETL_NO_CPP_NAN_SUPPORT)
 
 target_link_libraries(firmware PRIVATE etl)
 

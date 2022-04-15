@@ -250,6 +250,8 @@ void ScreenManager::drawScreen(Gfx::Framebuffer &fb, const Screen *screen) {
     // draw each component in sequence
     for(size_t i = 0; i < screen->numComponents; i++) {
         const auto &cd = screen->components[i];
+        if(cd.isHidden) continue;
+
         Components::Draw(fb, cd);
     }
 }

@@ -139,6 +139,9 @@ class ExternalIrq {
          * the port is enabled.
          */
         static uint16_t gLinesEnabled;
+
+        /// Configure whether we desire extra debug logging
+        constexpr static const bool kExtraLogging{false};
 };
 }
 
