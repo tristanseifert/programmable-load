@@ -154,6 +154,7 @@ class Task {
         void main();
         void detectFrontPanel();
         void showVersionScreen();
+        void doChristmasTreeTest();
 
     private:
         /// Task handle

@@ -6,7 +6,7 @@
 * family: Bahnschrift
 * size: 20
 * style: Normal
-* included characters:  %,.0123456789AMVWkmsµΩ※
+* included characters:  %,.0123456789ACMVWkms°µΩ※
 * antialiasing: yes
 * type: proportional
 * encoding: UTF-16
@@ -862,6 +862,61 @@ static const etl::array<const uint8_t, 144> image_data_Numbers_L_0x0041{{
 }};
 
 //-----------------------
+// Character: C (codepoint 0043)
+// Size: 10 x 24
+// ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙░▒∙∙∙∙
+    // ∙∙░█████∙∙
+    // ∙░██▒░▓██∙
+    // ∙▒█░∙∙∙▓█░
+    // ∙▓█∙∙∙∙░█▒
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙∙∙∙
+    // ∙▓█∙∙∙∙░█▒
+    // ∙▒█▒∙∙∙▓█░
+    // ∙∙██▓▒██▓∙
+    // ∙∙∙████▓∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+    // ∙∙∙∙∙∙∙∙∙∙
+//-----------------------
+static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0043{{
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x46, 0x30, 0x00, 
+    0x00, 0x4f, 0xff, 0xfe, 0x20, 
+    0x03, 0xff, 0x63, 0xaf, 0xd1, 
+    0x07, 0xf4, 0x00, 0x0a, 0xf4, 
+    0x0c, 0xf2, 0x00, 0x04, 0xd7, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0c, 0xd1, 0x00, 0x00, 0x00, 
+    0x0a, 0xf2, 0x00, 0x04, 0xf7, 
+    0x07, 0xf7, 0x00, 0x0a, 0xf4, 
+    0x00, 0xef, 0xb6, 0xdf, 0xc0, 
+    0x00, 0x2d, 0xff, 0xfb, 0x10, 
+    0x00, 0x00, 0x03, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 0x00, 0x00
+}};
+
+//-----------------------
 // Character: M (codepoint 004d)
 // Size: 13 x 24
 // ∙∙∙∙∙∙∙∙∙∙∙∙∙
@@ -1192,6 +1247,61 @@ static const etl::array<const uint8_t, 96> image_data_Numbers_L_0x0073{{
 }};
 
 //-----------------------
+// Character: ° (codepoint 00b0)
+// Size: 6 x 24
+// ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙░░∙∙
+    // ∙▓███░
+    // ░█░∙▓▓
+    // ░█∙∙▒█
+    // ░█∙∙▓▓
+    // ∙████▒
+    // ∙∙░▒░∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+    // ∙∙∙∙∙∙
+//-----------------------
+static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x00b0{{
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x45, 0x10, 
+    0x0c, 0xff, 0xf4, 
+    0x4f, 0x40, 0xac, 
+    0x4d, 0x10, 0x7d, 
+    0x4f, 0x20, 0xac, 
+    0x0e, 0xfe, 0xf7, 
+    0x00, 0x56, 0x40, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00, 
+    0x00, 0x00, 0x00
+}};
+
+//-----------------------
 // Character: µ (codepoint 00b5)
 // Size: 10 x 24
 // ∙∙∙∙∙∙∙∙∙∙
@@ -1360,7 +1470,7 @@ static const etl::array<const uint8_t, 240> image_data_Numbers_L_0x203b{{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Character definitions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const etl::array<Gfx::Font::Character, 24> Numbers_L_Chars{{
+static const etl::array<Gfx::Font::Character, 26> Numbers_L_Chars{{
 
     // character: ' '
     {
@@ -1557,6 +1667,19 @@ static const etl::array<Gfx::Font::Character, 24> Numbers_L_Chars{{
         }
     },
 
+    // character: 'C'
+    {
+        .codepoint = 0x0043,
+        .glyph = {
+            .data = image_data_Numbers_L_0x0043,
+            .size = {
+                .width = 10,
+                .height = 24
+            },
+            .block = 8
+        }
+    },
+
     // character: 'M'
     {
         .codepoint = 0x004d,
@@ -1635,6 +1758,19 @@ static const etl::array<Gfx::Font::Character, 24> Numbers_L_Chars{{
         }
     },
 
+    // character: '°'
+    {
+        .codepoint = 0x00b0,
+        .glyph = {
+            .data = image_data_Numbers_L_0x00b0,
+            .size = {
+                .width = 6,
+                .height = 24
+            },
+            .block = 8
+        }
+    },
+
     // character: 'µ'
     {
         .codepoint = 0x00b5,
@@ -1682,10 +1818,11 @@ static const etl::array<Gfx::Font::Character, 24> Numbers_L_Chars{{
 
 const Gfx::Font Gfx::Font::gNumbers_L{
     .name = "Numbers_L",
-    // total of 24 characters
+    // total of 26 characters
     .characters = Numbers_L_Chars,
     // font metrics
     .fontSize = 20,
-    .lineHeight = 24
+    .lineHeight = 24,
+    // ascent: 53, descent 11
 };
 

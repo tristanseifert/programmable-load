@@ -74,6 +74,8 @@ class FrontIoDriver {
          * set the color of a multicolor indicator.
          */
         enum Indicator: uintptr_t {
+            None                        = 0,
+
             /**
              * @brief Overheat error
              *
