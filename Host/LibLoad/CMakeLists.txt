@@ -5,7 +5,7 @@
 find_package(LibUSB)
 
 # Define the library
-add_library(libload
+add_library(libload STATIC
     Sources/LibLoad.cpp
     Sources/Usb.cpp
 )

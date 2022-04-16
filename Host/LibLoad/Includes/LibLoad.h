@@ -6,10 +6,10 @@
 #ifndef LIBLOAD_H
 #define LIBLOAD_H
 
-#include <stddef.h>
-#include <stdint.h>
-
+#include <cstddef>
+#include <cstdint>
 #include <functional>
+#include <string>
 
 namespace LibLoad {
 /**
@@ -17,7 +17,7 @@ namespace LibLoad {
  *
  * This structure represents information about a single device, which may be connected to.
  */
-struct Device {
+struct DeviceInfo {
     enum class ConnectionMethod: uint8_t {
         Unknown                         = 0,
         Usb                             = 1,
@@ -27,13 +27,20 @@ struct Device {
     /// How is the device connected?
     ConnectionMethod method;
     /// Device serial number
-    const char *serial;
+    std::string serial;
 };
+
+struct Device;
 
 void Init();
 void DeInit();
 
-void EnumerateDevices(const std::function<bool(const Device &deviceInfo)> &callback);
+void EnumerateDevices(const std::function<bool(const DeviceInfo &info)> &callback);
+
+Device *Connect(const DeviceInfo &info);
+Device *Connect(const std::string_view &serial);
+
+void Disconnect(Device *device);
 }
 
 #endif

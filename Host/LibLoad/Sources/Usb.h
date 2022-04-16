@@ -1,10 +1,13 @@
 #ifndef USB_H
 #define USB_H
 
-#include <stdint.h>
+#include "DeviceTransport.h"
 
+#include <cstdint>
 #include <functional>
+#include <memory>
 #include <string>
+#include <string_view>
 
 struct libusb_context;
 struct libusb_device;
@@ -18,7 +21,7 @@ namespace LibLoad::Internal {
  * Encapsulates all the libusb shenanigans required to communicate with the USB device.
  */
 class Usb {
-    public:
+    private:
         /**
          * @brief Interface indices
          *
@@ -27,8 +30,97 @@ class Usb {
         enum class Interface: uint8_t {
             /// Vendor specific interface
             Vendor                      = 0,
+
+            MaxNumInterfaces,
         };
 
+        /**
+         * @brief USB device transport
+         *
+         * Handles sending/receiving messages with USB devices by means of the blocking libusb
+         * interface.
+         */
+        class Transport: public DeviceTransport {
+            private:
+                /**
+                 * @brief USB packet header
+                 *
+                 * This is a small 4 byte header prepended to all packets sent over the USB
+                 * interface to the device.
+                 */
+                struct PacketHeader {
+                    /**
+                     * @brief Message type
+                     *
+                     * Defines the format of the content of the message. Each type is associated
+                     * with a specific type of handler.
+                     */
+                    uint8_t type;
+
+                    /**
+                     * @brief Message tag
+                     *
+                     * The tag value is used to match up a request to corresponding response from
+                     * the device.
+                     */
+                    uint8_t tag;
+
+                    /**
+                     * @brief High 2 bits of length
+                     *
+                     * The low 2 bits of this field contain the high two bits of the length
+                     * counter. The remaining bits are reserved.
+                     *
+                     * @remark This can't be a bitfield as they are not portable.
+                     */
+                    uint8_t payloadLengthUpper;
+
+                    /**
+                     * @brief Payload length (bytes)
+                     *
+                     * If nonzero, this is the number of payload data bytes that follow immediately
+                     * after the packet header.
+                     */
+                    uint8_t payloadLength;
+
+                    PacketHeader() = default;
+                    PacketHeader(const uint8_t type, const size_t length) : type(type) {
+                        if(length > kMaxPacketSize) {
+                            throw std::invalid_argument("payload too large");
+                        }
+
+                        this->payloadLength = length & 0xff;
+                        this->payloadLengthUpper = (length >> 8) & 0b11;
+                    }
+
+                    /// Get the payload length
+                    constexpr inline size_t getPayloadLength() const {
+                        return static_cast<size_t>(this->payloadLength) +
+                            ((static_cast<size_t>(this->payloadLengthUpper) & 0b11) << 8);
+                    }
+                } __attribute__((packed));
+
+                /// Maximum packet size, in bytes
+                constexpr static const size_t kMaxPacketSize{512};
+
+            public:
+                Transport(libusb_device_handle *device);
+                ~Transport() noexcept(false);
+
+                void write(const uint8_t type, const std::span<uint8_t> payload,
+                        std::optional<std::chrono::milliseconds> timeout) override;
+
+            private:
+                /// Underlying USB device to communicate on
+                libusb_device_handle *device;
+
+                /// endpoint used to send data TO device
+                uint8_t epOut{0};
+                /// endpoint used to receive data FROM device
+                uint8_t epIn{0};
+        };
+
+    public:
         /**
          * @brief Represents a device connected to USB
          */
@@ -61,6 +153,8 @@ class Usb {
         }
 
         void getDevices(const DeviceFoundCallback &callback);
+
+        std::shared_ptr<DeviceTransport> connectBySerial(const std::string_view &serial);
 
     private:
         Usb();

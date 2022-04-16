@@ -38,7 +38,15 @@ static void PrintDeviceList() {
     LibLoad::EnumerateDevices([&](auto device) -> bool {
         std::string serial(device.serial);
 
-        devices.add_row({"USB", serial});
+        switch(device.method) {
+            case LibLoad::DeviceInfo::ConnectionMethod::Usb:
+                devices.add_row({"USB", serial});
+                break;
+
+            default:
+                devices.add_row({"(unknown)", serial});
+                break;
+        }
 
         return true;
     });

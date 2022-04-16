@@ -62,6 +62,8 @@ Usb::~Usb() {
 
 /**
  * @brief Enumerate all devices on the bus
+ *
+ * @TODO: Fix this so the device list is always deallocated, even if the probe function throws
  */
 void Usb::getDevices(const DeviceFoundCallback &callback) {
     int err;
@@ -81,6 +83,7 @@ void Usb::getDevices(const DeviceFoundCallback &callback) {
 
         err = libusb_get_device_descriptor(device, &desc);
         if(err) {
+            libusb_free_device_list(list, 1);
             throw LibUsbError(err, "libusb_get_device_descriptor");
         }
 
@@ -141,6 +144,71 @@ bool Usb::probeDevice(const DeviceFoundCallback &callback, const libusb_device_d
     return ret;
 }
 
+/**
+ * @brief Find a device, by its serial number, and open a transport to it
+ *
+ * This is in function similar to the enumeration method, in that it finds all devices with the
+ * matching pid/vid values; then compares the serial numbers.
+ *
+ * @param serial Serial number of the desired device
+ *
+ * @return Initialized device transport
+ *
+ * @remark If more than one device has the same serial, the first (in enumeration order) will win
+ */
+std::shared_ptr<DeviceTransport> Usb::connectBySerial(const std::string_view &serial) {
+    int err;
+    libusb_device **list;
+
+    std::shared_ptr<Transport> transport;
+
+    // query device list
+    const auto cnt = libusb_get_device_list(this->usbCtx, &list);
+
+    if(cnt < 0) {
+        throw LibUsbError(cnt, "libusb_get_device_list");
+    }
+
+    for(size_t i = 0; i < cnt; i++) {
+        // read device descriptor
+        struct libusb_device_descriptor desc;
+        auto device = list[i];
+
+        err = libusb_get_device_descriptor(device, &desc);
+        if(err) {
+            libusb_free_device_list(list, 1);
+            throw LibUsbError(err, "libusb_get_device_descriptor");
+        }
+
+        // ensure the vid/pid match
+        if(desc.idVendor != kUsbVid || desc.idProduct != kUsbPid) {
+            continue;
+        }
+
+        // open the device
+        libusb_device_handle *handle{nullptr};
+        err = libusb_open(device, &handle);
+        if(err) {
+            libusb_free_device_list(list, 1);
+            throw LibUsbError(err, "libusb_open");
+        }
+
+        // compare serial number
+        const auto readSerial = ReadStringDescriptor(handle, desc.iSerialNumber);
+        if(readSerial != serial) {
+            libusb_close(handle);
+        }
+
+        // initialize a transport
+        transport = std::make_shared<Transport>(handle);
+        goto beach;
+    }
+
+beach:;
+    libusb_free_device_list(list, 1);
+    return transport;
+}
+
 
 
 /**
@@ -173,3 +241,125 @@ std::string Usb::ReadStringDescriptor(libusb_device_handle *device, const uint8_
     // convert to UTF 8 (skipping the first byte, which is length)
     return conv.to_bytes(buffer.data() + 1);
 }
+
+
+
+/**
+ * @brief Initialize USB device transport
+ *
+ * This will claim the vendor interface so that we can communicate with it.
+ *
+ * @remark This assumes the device has been configured before the transport is constructed; this
+ *         should always be true as the current firmware exposes only one configuration.
+ */
+Usb::Transport::Transport(libusb_device_handle *handle) : device(handle) {
+    int err;
+    auto device = libusb_get_device(handle);
+
+    struct libusb_config_descriptor *cfgDescriptor{nullptr};
+
+    // claim the interface, so that we can perform IO against it
+    err = libusb_claim_interface(handle, static_cast<int>(Interface::Vendor));
+    if(err) {
+        throw LibUsbError(err, "libusb_claim_interface");
+    }
+
+    // then get the endpoints for the interface
+    err = libusb_get_active_config_descriptor(device, &cfgDescriptor);
+    if(err) {
+        throw LibUsbError(err, "libusb_get_active_config_descriptor");
+    }
+
+    if(cfgDescriptor->bNumInterfaces < static_cast<uint8_t>(Interface::MaxNumInterfaces)) {
+        throw std::runtime_error("Insufficient number of interfaces");
+    }
+
+    // select the first interface (out of the alternate settings)
+    const auto &vendorIntf = cfgDescriptor->interface[static_cast<uint8_t>(Interface::Vendor)]
+        .altsetting[0];
+    if(vendorIntf.bNumEndpoints < 2) {
+        throw std::runtime_error("Insufficient number of endpoints");
+    }
+
+    for(size_t i = 0; i < vendorIntf.bNumEndpoints; i++) {
+        const auto &ep = vendorIntf.endpoint[i];
+
+        // IN endpoint?
+        if(ep.bEndpointAddress & (1 << 7)) {
+            this->epIn = ep.bEndpointAddress;
+        }
+        // OUT endpoint
+        else {
+            this->epOut = ep.bEndpointAddress;
+        }
+    }
+
+    // clean up
+    libusb_free_config_descriptor(cfgDescriptor);
+}
+
+/**
+ * @brief Tear down USB device transport
+ *
+ * We'll release the vendor interface here and then close the device.
+ */
+Usb::Transport::~Transport() noexcept(false) {
+    int err;
+
+    err = libusb_release_interface(this->device, static_cast<int>(Interface::Vendor));
+    if(err) {
+        throw LibUsbError(err, "libusb_release_interface");
+    }
+
+    libusb_close(this->device);
+}
+
+/**
+ * @brief Write data to USB device
+ *
+ * Transmits the specified data to the device. We rely on libusb to split the data into more than
+ * one USB packet if needed.
+ *
+ * @throw std::invalid_argument In case parameters are invalid
+ * @throw LibUsbError Underlying IO error
+ */
+void Usb::Transport::write(const uint8_t type, const std::span<uint8_t> payload,
+        std::optional<std::chrono::milliseconds> timeout) {
+    int err, transferred{0};
+
+    // validate inputs
+    if(payload.empty()) {
+        throw std::invalid_argument("invalid payload");
+    }
+    else if(payload.size() > kMaxPacketSize) {
+        throw std::invalid_argument("payload too large");
+    }
+
+    // build the packet header and send
+    PacketHeader hdr(type, payload.size());
+
+    err = libusb_bulk_transfer(this->device, this->epOut,
+            reinterpret_cast<unsigned char *>(&hdr), sizeof(hdr), &transferred,
+            timeout ? (*timeout).count() : 0);
+    if(err) {
+        throw LibUsbError(err, "libusb_bulk_transfer (packet header)");
+    }
+
+    if(transferred != sizeof(hdr)) {
+        throw std::runtime_error(fmt::format("partial transfer: {}, expected {}", transferred,
+                    sizeof(hdr)));
+    }
+
+    // send the payload
+    err = libusb_bulk_transfer(this->device, this->epOut, payload.data(), payload.size(),
+            &transferred, timeout ? (*timeout).count() : 0);
+    if(err) {
+        throw LibUsbError(err, "libusb_bulk_transfer (payload)");
+    }
+
+    if(transferred != payload.size()) {
+        throw std::runtime_error(fmt::format("partial payload transfer: {}, expected {}",
+                    transferred, payload.size()));
+    }
+}
+
