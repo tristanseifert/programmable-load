@@ -9,6 +9,7 @@
 struct libusb_context;
 struct libusb_device;
 struct libusb_device_descriptor;
+struct libusb_device_handle;
 
 namespace LibLoad::Internal {
 /**
@@ -18,6 +19,16 @@ namespace LibLoad::Internal {
  */
 class Usb {
     public:
+        /**
+         * @brief Interface indices
+         *
+         * These are the indices of interfaces on the USB device.
+         */
+        enum class Interface: uint8_t {
+            /// Vendor specific interface
+            Vendor                      = 0,
+        };
+
         /**
          * @brief Represents a device connected to USB
          */
@@ -58,6 +69,9 @@ class Usb {
         bool probeDevice(const DeviceFoundCallback &, const libusb_device_descriptor &,
                 libusb_device *);
 
+        static std::string ReadStringDescriptor(libusb_device_handle *device,
+                const uint8_t index);
+
     private:
         /// LibUSB context
         libusb_context *usbCtx{nullptr};
@@ -67,6 +81,16 @@ class Usb {
         constexpr static const uint16_t kUsbVid{0x1209};
         /// USB device/product id
         constexpr static const uint16_t kUsbPid{0x0009};
+
+        /**
+         * @brief String descriptor language id
+         *
+         * This is the language id for string descriptors to look up. The current device firmware
+         * completely ignores this value, but we'll specify this default value rather than zero;
+         * technically we probably should read descriptor 0 to figure out what the supported
+         * languages are.
+         */
+        constexpr static const uint16_t kLanguageId{0x0409};
 
         static Usb *gShared;
 };

@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <codecvt>
+#include <iostream>
+#include <locale>
 
 #include <libusb.h>
 
@@ -117,19 +120,7 @@ bool Usb::probeDevice(const DeviceFoundCallback &callback, const libusb_device_d
     // open the device
     err = libusb_open(device, &handle);
     if(err) {
-        throw LibUsbError(err, "libusb_device_handle");
-    }
-
-    // read serial number
-    std::array<char, 32> serialBuf;
-    std::fill(serialBuf.begin(), serialBuf.end(), 0);
-
-    err = libusb_get_string_descriptor_ascii(handle, desc.iSerialNumber,
-            reinterpret_cast<unsigned char *>(serialBuf.data()), serialBuf.size());
-    if(err < 0) {
-        libusb_close(handle);
-
-        throw LibUsbError(err, "libusb_device_handle");
+        throw LibUsbError(err, "libusb_open");
     }
 
     // build an info struct and invoke callback
@@ -139,8 +130,46 @@ bool Usb::probeDevice(const DeviceFoundCallback &callback, const libusb_device_d
         .usbAddress = libusb_get_device_address(device),
         .bus = libusb_get_bus_number(device),
         .device = libusb_get_port_number(device),
-        .serial = std::string(serialBuf.data())
+        .serial = ReadStringDescriptor(handle, desc.iSerialNumber),
     };
 
-    return callback(dev);
+    const auto ret = callback(dev);
+
+    // clean up device
+    libusb_close(handle);
+
+    return ret;
+}
+
+
+
+/**
+ * @brief Read a device's string descriptor
+ *
+ * Read the string descriptor at the given index from the device, then convert it to UTF-8 and
+ * return the string.
+ *
+ * @param device Device to read the string descriptor from
+ * @param index String descriptor index to read
+ *
+ * @return The read string descriptor
+ *
+ * @throw LibUsbError If an error took place communicating with the device
+ */
+std::string Usb::ReadStringDescriptor(libusb_device_handle *device, const uint8_t index) {
+    int err;
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> conv;
+
+    // read the descriptor
+    std::array<char16_t, 256> buffer;
+    std::fill(buffer.begin(), buffer.end(), 0);
+
+    err = libusb_get_string_descriptor(device, index, kLanguageId,
+            reinterpret_cast<unsigned char *>(buffer.data()), buffer.size());
+    if(err < 0) {
+        throw LibUsbError(err, "libusb_get_string_descriptor");
+    }
+
+    // convert to UTF 8 (skipping the first byte, which is length)
+    return conv.to_bytes(buffer.data() + 1);
 }

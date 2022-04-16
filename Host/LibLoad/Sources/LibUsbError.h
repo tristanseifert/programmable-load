@@ -25,7 +25,7 @@ class LibUsbError: public std::runtime_error {
          * @param what Descriptive message string
          */
         LibUsbError(int error, const std::string_view &what) : std::runtime_error("libusb"),
-            whatStr(fmt::format("libusb failure ({}): {}", what, libusb_error_name(error))) {}
+            whatStr(fmt::format("libusb failure ({}): {}", what, libusb_strerror(error))) {}
 
         /// Get the useful descriptive string
         const char* what() const noexcept override {
