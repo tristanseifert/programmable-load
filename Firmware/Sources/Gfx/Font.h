@@ -208,7 +208,7 @@ struct Font {
          *
          * This is a small 10 point font.
          */
-        static const Font gFont_Small;
+        static const Font gSmall;
 
     private:
         bool processLine(Framebuffer &fb, const char* &str, Rect &bounds,

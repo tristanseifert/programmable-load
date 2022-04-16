@@ -52,7 +52,7 @@ const Gui::Screen *Screens::GetVersionSplash() {
             .bounds = {Gfx::MakePoint(0, 40), Gfx::MakeSize(58, 11)},
             .staticLabel = {
                 .string = "Hardware:",
-                .font = &Gfx::Font::gFont_Small,
+                .font = &Gfx::Font::gSmall,
                 .fontMode = Gfx::FontRenderFlags::HAlignRight,
             },
         },
@@ -61,7 +61,7 @@ const Gui::Screen *Screens::GetVersionSplash() {
             .bounds = {Gfx::MakePoint(60, 40), Gfx::MakeSize(190, 11)},
             .staticLabel = {
                 .string = gHwString,
-                .font = &Gfx::Font::gFont_Small,
+                .font = &Gfx::Font::gSmall,
                 .fontMode = Gfx::FontRenderFlags::HAlignLeft,
             },
         },
@@ -71,7 +71,7 @@ const Gui::Screen *Screens::GetVersionSplash() {
             .bounds = {Gfx::MakePoint(0, 52), Gfx::MakeSize(58, 11)},
             .staticLabel = {
                 .string = "Software:",
-                .font = &Gfx::Font::gFont_Small,
+                .font = &Gfx::Font::gSmall,
                 .fontMode = Gfx::FontRenderFlags::HAlignRight,
             },
         },
@@ -80,7 +80,7 @@ const Gui::Screen *Screens::GetVersionSplash() {
             .bounds = {Gfx::MakePoint(60, 52), Gfx::MakeSize(190, 11)},
             .staticLabel = {
                 .string = gSwString,
-                .font = &Gfx::Font::gFont_Small,
+                .font = &Gfx::Font::gSmall,
                 .fontMode = Gfx::FontRenderFlags::HAlignLeft,
             },
         },

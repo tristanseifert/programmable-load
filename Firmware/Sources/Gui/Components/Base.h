@@ -2,6 +2,7 @@
 #define GUI_COMPONENTS_BASE_H
 
 #include "../Screen.h"
+#include "Divider.h"
 #include "StaticLabel.h"
 
 #include "Gfx/Types.h"
@@ -23,6 +24,9 @@ namespace Gui::Components {
  */
 void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
     switch(data.type) {
+        case ComponentType::Divider:
+            Divider::Draw(fb, data);
+            break;
         case ComponentType::StaticLabel:
             StaticLabel::Draw(fb, data);
             break;

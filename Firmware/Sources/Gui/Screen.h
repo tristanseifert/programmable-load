@@ -35,6 +35,13 @@ enum class ComponentType: uint32_t {
      * A simple text label that displays a string.
      */
     StaticLabel                         = 1,
+
+    /**
+     * @brief Content divider
+     *
+     * A vertical or horizontal line
+     */
+    Divider                             = 2,
 };
 
 /**
@@ -60,6 +67,11 @@ struct ComponentData {
 
     /// Payload holder
     union {
+        /// Content divider
+        struct {
+            uint32_t color{0};
+        } divider;
+        /// Static text label
         struct {
             /// UTF-8 encoded string to display
             const char *string{nullptr};
@@ -149,6 +161,14 @@ struct Screen {
      * navigation stack) will apply.
      */
     void (*menuPressed)(const Screen *screen, void *context){nullptr};
+
+    /**
+     * @brief Pre-draw callback
+     *
+     * Invoked immediately before the screen is rendered. The screen can use this callback to
+     * update the state of the user interface.
+     */
+    void (*willDraw)(const Screen *screen, void *context){nullptr};
 };
 }
 

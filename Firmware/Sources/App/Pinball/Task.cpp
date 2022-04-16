@@ -86,6 +86,15 @@ void Task::main() {
     Gui::ScreenManager::Init();
     this->showVersionScreen();
 
+    // force display to update
+    Gui::ScreenManager::Draw();
+
+    err = Display::Transfer();
+    REQUIRE(!err, "pinball: %s (%d)", "failed to transfer display buffer", err);
+
+    // perform lights test
+    this->doChristmasTreeTest();
+
     /*
      * Start handling messages
      *
@@ -144,9 +153,8 @@ void Task::main() {
             // cancel timer (in case a button press got us here)
             xTimerStop(this->versionDismissTimer, 0);
 
-            // TODO: present it
-            Logger::Warning("XXX: this is where we'd present the home screen");
             uiDirty = true;
+            Gui::ScreenManager::Present(Screens::GetMainScreen());
         }
 
         /*
@@ -284,4 +292,41 @@ void Task::showVersionScreen() {
 
     ok = xTimerReset(this->versionDismissTimer, 0);
     REQUIRE(ok == pdTRUE, "pinball: %s", "failed to start version dismiss timer");
+}
+
+/**
+ * @brief Illuminate all indicators briefly.
+ *
+ * This will cycle through all of the supported HMI indicators and illuminate them briefly to
+ * ensure that they work.
+ *
+ * We start off with the illuminated buttons (mode + load on/off) and then the indicator LEDs.
+ */
+void Task::doChristmasTreeTest() {
+    int err;
+
+    // turn off all indicators first
+    err = this->frontDriver->setIndicatorState(FrontIoDriver::Indicator::None);
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    // set button lights
+    err = this->frontDriver->setIndicatorState(static_cast<FrontIoDriver::Indicator>(
+                FrontIoDriver::ModeCC | FrontIoDriver::ModeCV | FrontIoDriver::ModeCW |
+                FrontIoDriver::ModeExt | FrontIoDriver::Menu));
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    vTaskDelay(pdMS_TO_TICKS(420));
+
+    // now, the indicators
+    err = this->frontDriver->setIndicatorState(static_cast<FrontIoDriver::Indicator>(
+                FrontIoDriver::Overheat | FrontIoDriver::Overcurrent |
+                FrontIoDriver::GeneralError | FrontIoDriver::LimitingOn |
+                FrontIoDriver::InputEnabled));
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    vTaskDelay(pdMS_TO_TICKS(420));
+
+    // extinguish indicators
+    err = this->frontDriver->setIndicatorState(FrontIoDriver::Indicator::None);
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 }

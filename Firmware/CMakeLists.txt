@@ -122,6 +122,7 @@ add_executable(firmware
     Sources/App/Pinball/Beeper.cpp
     Sources/App/Pinball/FrontIo/Display.cpp
     Sources/App/Pinball/FrontIo/HmiDriver.cpp
+    Sources/App/Pinball/Screens/Main.cpp
     Sources/App/Pinball/Screens/Version.cpp
     Sources/App/Thermal/Hardware.cpp
     Sources/App/Thermal/Task.cpp

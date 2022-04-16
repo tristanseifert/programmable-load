@@ -247,6 +247,10 @@ void ScreenManager::drawScreen(Gfx::Framebuffer &fb, const Screen *screen) {
 
     // XXX: does the screen want the framebuffer clared first?
 
+    if(screen->willDraw) {
+        screen->willDraw(screen, screen->callbackContext);
+    }
+
     // draw each component in sequence
     for(size_t i = 0; i < screen->numComponents; i++) {
         const auto &cd = screen->components[i];
@@ -312,6 +316,8 @@ void ScreenManager::push(const Screen *screen, const Animation animation) {
         if(screen->didPresent) {
             screen->didPresent(screen, screen->callbackContext);
         }
+
+        this->needsBufferClear = true;
     }
 
     // force redraw
