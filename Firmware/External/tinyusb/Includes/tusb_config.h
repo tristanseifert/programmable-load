@@ -31,7 +31,7 @@
  */
 
 /// Enable USB CDC (simulate a serial port)
-#define CFG_TUD_CDC                     1
+#define CFG_TUD_CDC                     0
 // CDC FIFO size of TX and RX
 #define CFG_TUD_CDC_RX_BUFSIZE          64
 #define CFG_TUD_CDC_TX_BUFSIZE          64

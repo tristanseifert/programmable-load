@@ -15,11 +15,9 @@ const tusb_desc_device_t Descriptors::kDeviceDescriptor{
     .bDescriptorType    = TUSB_DESC_DEVICE,
     .bcdUSB             = 0x0200,
 
-    // Use Interface Association Descriptor (IAD) for CDC
-    // As required by USB Specs IAD's subclass must be common class (2) and protocol must be IAD (1)
-    .bDeviceClass       = TUSB_CLASS_MISC,
-    .bDeviceSubClass    = MISC_SUBCLASS_COMMON,
-    .bDeviceProtocol    = MISC_PROTOCOL_IAD,
+    .bDeviceClass       = TUSB_CLASS_VENDOR_SPECIFIC,
+    .bDeviceSubClass    = 0,
+    .bDeviceProtocol    = 0,
 
     .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
 
@@ -111,11 +109,10 @@ extern "C" uint16_t const *tud_descriptor_string_cb(const uint8_t index, const u
  *
  * This advertises the device itself, as well as the following services:
  *
- * - CDC (debug console)
  * - Vendor specific interface
  */
 constexpr static const size_t kDefaultCfgDescriptorLen{
-    TUD_CONFIG_DESC_LEN + TUD_CDC_DESC_LEN + TUD_VENDOR_DESC_LEN
+    TUD_CONFIG_DESC_LEN + TUD_VENDOR_DESC_LEN
 };
 
 const uint8_t Descriptors::kDefaultCfgDescriptor[]{
@@ -123,11 +120,6 @@ const uint8_t Descriptors::kDefaultCfgDescriptor[]{
     // Config number, interface count, string index, total length, attribute, power in mA
     TUD_CONFIG_DESCRIPTOR(1, Interfaces::Total, 0, kDefaultCfgDescriptorLen,
             TUSB_DESC_CONFIG_ATT_SELF_POWERED, 0),
-
-    // CDC: virtual serial port for debug console
-    // Interface number, string index, EP notification address and size, EP data address (out, in) and size.
-    TUD_CDC_DESCRIPTOR(Interfaces::CDC, StringDescriptor::CdcInterfaceName,
-            Endpoints::ConsoleNotifyIN, 8, Endpoints::ConsoleOUT, Endpoints::ConsoleIN, 64),
 
     // Vendor: Custom mailbox interface for binary protocol
     // Interface number, string index, EP Out & EP In address, EP size

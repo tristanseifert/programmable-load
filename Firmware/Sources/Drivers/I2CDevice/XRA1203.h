@@ -193,7 +193,43 @@ class XRA1203 {
         }
 
         int writeRegister(const Register reg, const uint16_t value);
-        int readRegister(const Register reg, uint16_t &outValue);
+
+        /**
+         * @brief Read the upper and lower part of a register
+         *
+         * This is done as two separate transactions to avoid some weird issue with the I2C
+         * hardware driver that really dislikes two byte reads.
+         *
+         * @param reg First (high) register to read
+         * @param outValue Variable to receive the resulting value. The byte halves will be
+         * swapped.
+         *
+         * @return 0 on success, or an error code
+         */
+        int readRegister(const Register reg, uint16_t &outValue) {
+            int err;
+            uint8_t temp;
+            uint16_t out{0};
+
+            // read low byte
+            err = this->readRegister(reg, temp);
+            if(err) {
+                return err;
+            }
+            out = (temp);
+
+            // read high byte
+            err = this->readRegister(static_cast<Register>((unsigned int)reg + 1), temp);
+            if(err) {
+                return err;
+            }
+
+            out |= static_cast<uint16_t>(temp) << 8;
+
+            // done
+            outValue = out;
+            return 0;
+        }
 
     private:
         /// Parent bus

@@ -66,24 +66,12 @@ class Descriptors {
          */
         enum Interfaces: uint8_t {
             /**
-             * @brief CDC console
-             *
-             * Signalling and notification for the console
-             */
-            CDC                         = 0,
-            /**
-             * @brief CDC data channel
-             *
-             * Carry the actual characters sent over the console port
-             */
-            CDCData                     = 1,
-            /**
              * @brief Vendor-specific interface
              *
              * This interface receives raw read/write packets, which are decoded according to our
              * custom binary protocol.
              */
-            Vendor                      = 2,
+            Vendor                      = 0,
             /// Total number of interfaces
             Total,
         };
@@ -145,7 +133,7 @@ class Descriptors {
          *
          * Defines the size of the string descriptor table.
          */
-        constexpr static const size_t kNumStringDescriptors{8};
+        constexpr static const size_t kNumStringDescriptors{5};
 
         /**
          * @brief String descriptor table
