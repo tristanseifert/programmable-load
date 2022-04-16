@@ -56,6 +56,92 @@ float cosf(float x);
 #define M_SQRT2		1.41421356237309504880
 #define M_SQRT1_2	0.70710678118654752440
 
+#ifndef HUGE_VAL
+#  define HUGE_VAL (__builtin_huge_val())
+#endif
+
+#ifndef HUGE_VALF
+#  define HUGE_VALF (__builtin_huge_valf())
+#endif
+
+#ifndef HUGE_VALL
+#  define HUGE_VALL (__builtin_huge_vall())
+#endif
+
+#ifndef INFINITY
+#  define INFINITY (__builtin_inff())
+#endif
+
+#ifndef NAN
+#  define NAN (__builtin_nanf(""))
+#endif
+
+/* fpclassify() and friends */
+#define FP_NAN         0
+#define FP_INFINITE    1
+#define FP_ZERO        2
+#define FP_SUBNORMAL   3
+#define FP_NORMAL      4
+
+
+extern int __isinff (float x);
+extern int __isinfd (double x);
+extern int __isnanf (float x);
+extern int __isnand (double x);
+extern int __fpclassifyf (float x);
+extern int __fpclassifyd (double x);
+extern int __signbitf (float x);
+extern int __signbitd (double x);
+
+#define fpclassify(__x) \
+	((sizeof(__x) == sizeof(float))  ? __fpclassifyf(__x) : \
+	__fpclassifyd(__x))
+
+#ifndef isfinite
+  #define isfinite(__y) \
+          (__extension__ ({int __cy = fpclassify(__y); \
+                           __cy != FP_INFINITE && __cy != FP_NAN;}))
+#endif
+
+/* Note: isinf and isnan were once functions in newlib that took double
+ *       arguments.  C99 specifies that these names are reserved for macros
+ *       supporting multiple floating point types.  Thus, they are
+ *       now defined as macros.  Implementations of the old functions
+ *       taking double arguments still exist for compatibility purposes
+ *       (prototypes for them are in <ieeefp.h>).  */
+#ifndef isinf
+  #define isinf(y) (fpclassify(y) == FP_INFINITE)
+#endif
+
+#ifndef isnan
+  #define isnan(y) (fpclassify(y) == FP_NAN)
+#endif
+
+#define isnormal(y) (fpclassify(y) == FP_NORMAL)
+#define signbit(__x) \
+	((sizeof(__x) == sizeof(float))  ?  __signbitf(__x) : \
+		__signbitd(__x))
+
+#define isgreater(x,y) \
+          (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); \
+                           !isunordered(__x,__y) && (__x > __y);}))
+#define isgreaterequal(x,y) \
+          (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); \
+                           !isunordered(__x,__y) && (__x >= __y);}))
+#define isless(x,y) \
+          (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); \
+                           !isunordered(__x,__y) && (__x < __y);}))
+#define islessequal(x,y) \
+          (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); \
+                           !isunordered(__x,__y) && (__x <= __y);}))
+#define islessgreater(x,y) \
+          (__extension__ ({__typeof__(x) __x = (x); __typeof__(y) __y = (y); \
+                           !isunordered(__x,__y) && (__x < __y || __x > __y);}))
+
+#define isunordered(a,b) \
+          (__extension__ ({__typeof__(a) __a = (a); __typeof__(b) __b = (b); \
+                           fpclassify(__a) == FP_NAN || fpclassify(__b) == FP_NAN;}))
+
 #ifdef __cplusplus
 }
 #endif

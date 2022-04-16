@@ -288,6 +288,13 @@ add_subdirectory(${DSP}/Source bin_dsp)
 target_link_libraries(libc PRIVATE CMSISDSP)
 
 ###############
+# TinyCBOR
+#
+# A C/C++ library to encode objects as CBOR (a binary object representation)
+add_subdirectory(External/tinycbor)
+target_link_libraries(libc PRIVATE tinycbor)
+
+###############
 # Produce a firmware image from the primary target, ready to be flashed into the microcontroller;
 # this just pulls out the .text segment out of the executable.
 
