@@ -3,11 +3,14 @@
 
 #include "DeviceTransport.h"
 
+#include <arpa/inet.h>
+
 #include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>
 #include <string_view>
+#include <vector>
 
 struct libusb_context;
 struct libusb_device;
@@ -47,6 +50,8 @@ class Usb {
                  *
                  * This is a small 4 byte header prepended to all packets sent over the USB
                  * interface to the device.
+                 *
+                 * @remark All multibyte values are sent in network (big endian) byte order.
                  */
                 struct PacketHeader {
                     /**
@@ -66,22 +71,12 @@ class Usb {
                     uint8_t tag;
 
                     /**
-                     * @brief High 2 bits of length
-                     *
-                     * The low 2 bits of this field contain the high two bits of the length
-                     * counter. The remaining bits are reserved.
-                     *
-                     * @remark This can't be a bitfield as they are not portable.
-                     */
-                    uint8_t payloadLengthUpper;
-
-                    /**
                      * @brief Payload length (bytes)
                      *
                      * If nonzero, this is the number of payload data bytes that follow immediately
                      * after the packet header.
                      */
-                    uint8_t payloadLength;
+                    uint16_t payloadLength;
 
                     PacketHeader() = default;
                     PacketHeader(const uint8_t type, const size_t length) : type(type) {
@@ -89,14 +84,12 @@ class Usb {
                             throw std::invalid_argument("payload too large");
                         }
 
-                        this->payloadLength = length & 0xff;
-                        this->payloadLengthUpper = (length >> 8) & 0b11;
+                        this->payloadLength = htons(length & 0x3ff);
                     }
 
                     /// Get the payload length
                     constexpr inline size_t getPayloadLength() const {
-                        return static_cast<size_t>(this->payloadLength) +
-                            ((static_cast<size_t>(this->payloadLengthUpper) & 0b11) << 8);
+                        return ntohs(this->payloadLength);
                     }
                 } __attribute__((packed));
 
@@ -111,6 +104,9 @@ class Usb {
                         std::optional<std::chrono::milliseconds> timeout) override;
 
             private:
+                /// packet send buffer
+                std::vector<uint8_t> buffer;
+
                 /// Underlying USB device to communicate on
                 libusb_device_handle *device;
 

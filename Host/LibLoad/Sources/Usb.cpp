@@ -197,6 +197,7 @@ std::shared_ptr<DeviceTransport> Usb::connectBySerial(const std::string_view &se
         const auto readSerial = ReadStringDescriptor(handle, desc.iSerialNumber);
         if(readSerial != serial) {
             libusb_close(handle);
+            continue;
         }
 
         // initialize a transport
@@ -335,31 +336,28 @@ void Usb::Transport::write(const uint8_t type, const std::span<uint8_t> payload,
         throw std::invalid_argument("payload too large");
     }
 
-    // build the packet header and send
+    // combine the packet header and payload in the transmit buffer
     PacketHeader hdr(type, payload.size());
+    const auto bytesRequired = sizeof(hdr) + payload.size();
 
-    err = libusb_bulk_transfer(this->device, this->epOut,
-            reinterpret_cast<unsigned char *>(&hdr), sizeof(hdr), &transferred,
-            timeout ? (*timeout).count() : 0);
+    this->buffer.resize(bytesRequired, 0);
+
+    memcpy(this->buffer.data(), &hdr, sizeof(hdr));
+
+    if(!payload.empty()) { // XXX: do we need to support empty payloads?
+        std::copy(this->buffer.begin() + sizeof(hdr), this->buffer.end(), payload.begin());
+    }
+
+    // transmit the whole thing
+    err = libusb_bulk_transfer(this->device, this->epOut, buffer.data(), bytesRequired,
+            &transferred, timeout ? (*timeout).count() : 0);
     if(err) {
-        throw LibUsbError(err, "libusb_bulk_transfer (packet header)");
+        throw LibUsbError(err, "libusb_bulk_transfer (write)");
     }
 
     if(transferred != sizeof(hdr)) {
         throw std::runtime_error(fmt::format("partial transfer: {}, expected {}", transferred,
-                    sizeof(hdr)));
-    }
-
-    // send the payload
-    err = libusb_bulk_transfer(this->device, this->epOut, payload.data(), payload.size(),
-            &transferred, timeout ? (*timeout).count() : 0);
-    if(err) {
-        throw LibUsbError(err, "libusb_bulk_transfer (payload)");
-    }
-
-    if(transferred != payload.size()) {
-        throw std::runtime_error(fmt::format("partial payload transfer: {}, expected {}",
-                    transferred, payload.size()));
+                    bytesRequired));
     }
 }
 

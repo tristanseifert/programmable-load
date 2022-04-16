@@ -4,9 +4,13 @@
 #include "CLI/App.hpp"
 #include "CLI/Formatter.hpp"
 #include "CLI/Config.hpp"
+#include <fmt/format.h>
+#include <rang.hpp>
 #include <tabulate/table.hpp>
 
 #include <LibLoad.h>
+
+extern void GetInfo(LibLoad::Device *device);
 
 /**
  * @brief Initialize the load library
@@ -51,7 +55,8 @@ static void PrintDeviceList() {
         return true;
     });
 
-    std::cout << "Connected programmable load devices:" << std::endl << devices << std::endl;
+    std::cout << rang::style::bold << "Connected programmable load devices:"
+        << rang::style::reset << std::endl << devices << std::endl;
 }
 
 /**
@@ -61,19 +66,37 @@ static void PrintDeviceList() {
  * device to connect to, and what actions to perform.
  */
 int main(int argc, const char **argv) {
-    bool listDevices{false};
+    std::string serial;
 
+    // initialize
     InitLib();
 
-    // parse arguments
     CLI::App app{"Utility for interfacing with programmable load"};
 
-    app.add_flag("--list-devices", listDevices, "Print a list of all connected programmable loads");
+    // options for connecting to a device
+    auto connectGroup = app.add_option_group("device", "Define what device to connect to");
 
-    CLI11_PARSE(app, argc, argv);
+    connectGroup->add_option("--device-sn,-S", serial, "Device serial number");
 
-    // do the needful
-    if(listDevices) {
+    // informational commands
+    app.add_subcommand("list-devices", "Print a list of all connected programmable loads")
+        ->callback([](){
         PrintDeviceList();
-    }
+    })->excludes(connectGroup);
+
+    app.add_subcommand("info", "Print detailed information about a single device")
+        ->callback([&](){
+        auto dev = LibLoad::Connect(serial);
+        if(dev) {
+            GetInfo(dev);
+        } else {
+            std::cerr << rang::fg::red
+                << fmt::format("Failed to connect to device S/N '{}'", serial)
+                << rang::style::reset << std::endl;
+        }
+    })->needs(connectGroup);
+
+    // perform parsing
+    app.require_subcommand(1);
+    CLI11_PARSE(app, argc, argv);
 }
