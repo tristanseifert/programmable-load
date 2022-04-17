@@ -1,6 +1,7 @@
 #ifndef GUI_COMPONENTS_LIST_H
 #define GUI_COMPONENTS_LIST_H
 
+#include "Scrollbar.h"
 #include "../Screen.h"
 #include "Log/Logger.h"
 #include "Gfx/Primitives.h"
@@ -40,42 +41,14 @@ class List {
             const auto numRows = d.getNumRows(d.context);
 
             auto contentBounds = data.bounds;
-            contentBounds.size.width -= 10; // TODO: scrollbar width not hardcoded
+            contentBounds.size.width -= Scrollbar::kBarWidth;
 
             auto scrollbarBounds = contentBounds;
-            scrollbarBounds.size.width = 10;
+            scrollbarBounds.size.width = Scrollbar::kBarWidth;
             scrollbarBounds.origin.x += contentBounds.size.width;
 
-            auto scrollTrackBounds = scrollbarBounds;
-            scrollTrackBounds.size.width -= 1;
-            scrollTrackBounds.origin.x += 1;
-
             // draw the scrollbar
-            Gfx::DrawLine(fb, scrollbarBounds.origin, Gfx::MakePoint<int>(scrollbarBounds.origin.x,
-                        scrollbarBounds.origin.y + scrollbarBounds.size.height), 0x9);
-
-            Gfx::FillRect(fb, scrollTrackBounds, 0x1);
-
-            if(numRows) {
-                // calculate the knob height
-                auto knobHeight = scrollbarBounds.size.height / numRows;
-                if(knobHeight < 4) {
-                    knobHeight = 4;
-                }
-
-                // calculate knob's position and draw
-                const auto knobRange = scrollTrackBounds.size.height - knobHeight;
-                const uint16_t yOffset = static_cast<float>(knobRange) *
-                    (static_cast<float>(d.state->selectedRow) / static_cast<float>(numRows));
-
-                const Gfx::Rect knobBounds{
-                    Gfx::MakePoint<int>(scrollTrackBounds.origin.x,
-                            scrollTrackBounds.origin.y + yOffset),
-                    Gfx::MakeSize<int>(scrollTrackBounds.size.width, knobHeight),
-                };
-
-                Gfx::FillRect(fb, knobBounds, 0xD);
-            }
+            Scrollbar::Draw(fb, scrollbarBounds, d.state->selectedRow, numRows);
 
             /*
              * Figure out which rows to draw. This is very basic and tries to center the currently
