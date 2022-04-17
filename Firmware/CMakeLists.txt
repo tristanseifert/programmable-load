@@ -37,6 +37,7 @@ set(BuildInfoFile "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp")
 
 ###############
 # Set warning levels and language version
+set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -115,6 +116,7 @@ add_executable(firmware
     Sources/Usb/Init.cpp
     Sources/Usb/Task.cpp
     Sources/Usb/Vendor/VendorInterfaceTask.cpp
+    Sources/Usb/Vendor/PropertyRequest.cpp
     Sources/App/Main/Hardware.cpp
     Sources/App/Main/Task.cpp
     Sources/App/Pinball/Hardware.cpp
@@ -292,7 +294,9 @@ target_link_libraries(libc PRIVATE CMSISDSP)
 #
 # A C/C++ library to encode objects as CBOR (a binary object representation)
 add_subdirectory(External/tinycbor)
-target_link_libraries(libc PRIVATE tinycbor)
+target_link_libraries(tinycbor PRIVATE libc)
+
+target_link_libraries(firmware PRIVATE tinycbor)
 
 ###############
 # Produce a firmware image from the primary target, ready to be flashed into the microcontroller;

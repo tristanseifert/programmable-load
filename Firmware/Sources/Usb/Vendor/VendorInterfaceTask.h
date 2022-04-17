@@ -32,12 +32,28 @@ class InterfaceTask {
         };
 
         /**
+         * @brief Message endpoints
+         */
+        enum class Endpoint: uint8_t {
+            /// Read and write properties
+            PropertyRequest             = 0x01,
+        };
+
+        /**
          * @brief USB packet header
          *
          * All vendor packets are prefixed with this simple 4 byte header. All multibyte values
          * should be stored in big endian order.
          */
         struct PacketHeader {
+            /**
+             * @brief Message type
+             *
+             * Defines the format of the content of the message. Each type is associated with a
+             * specific type of handler.
+             */
+            uint8_t type;
+
             /**
              * @brief Message tag
              *
@@ -47,22 +63,12 @@ class InterfaceTask {
             uint8_t tag;
 
             /**
-             * @brief Message type
-             *
-             * Defines the format of the content of the message. Each type is associated with a
-             * specific type of handler.
-             */
-            uint8_t type;
-
-            uint8_t reserved{0};
-
-            /**
              * @brief Payload length (bytes)
              *
              * If nonzero, this is the number of payload data bytes that follow immediately after
              * the packet header.
              */
-            uint8_t payloadLength;
+            uint16_t payloadLength;
         } __attribute__((packed));
 
     public:
@@ -122,7 +128,7 @@ class InterfaceTask {
         /// USB vendor interface index
         static const constexpr size_t kInterfaceIndex{0};
         /// Maximum packet payload size
-        static const constexpr size_t kMaxPayload{64 - sizeof(PacketHeader)};
+        static const constexpr size_t kMaxPayload{512};
 
         /// Static task instance
         static InterfaceTask *gShared;

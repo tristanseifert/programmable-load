@@ -10,6 +10,7 @@ add_library(libc STATIC
     Sources/string/memset.c
 
     Sources/string/strcmp.c
+    Sources/string/strncmp.c
     Sources/string/strcpy.c
     Sources/string/strcspn.c
     Sources/string/strlen.c

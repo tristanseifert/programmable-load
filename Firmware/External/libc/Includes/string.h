@@ -20,6 +20,7 @@ void *memset(void *b, int c, size_t len);
 
 char *strchr(const char *p, int ch);
 int strcmp(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, size_t n);
 size_t strcspn(const char *s1, const char *s2);
 size_t strlen(const char *str);
 size_t strspn(const char *s1, const char *s2);

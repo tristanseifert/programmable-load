@@ -1,4 +1,5 @@
 #include "VendorInterfaceTask.h"
+#include "PropertyRequest.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -69,6 +70,12 @@ void InterfaceTask::main() {
 
             this->processMessage();
         }
+
+        /*
+         * We no longer wish to process USB messages. Reset any previously read data, and also
+         * clear the state of any internal state.
+         */
+        tud_vendor_n_read_flush(kInterfaceIndex);
     }
 }
 
@@ -76,10 +83,11 @@ void InterfaceTask::main() {
  * @brief Process a single message
  */
 void InterfaceTask::processMessage() {
-    uint32_t read;
+    uint32_t read, written;
 
     PacketHeader hdr;
     static etl::array<uint8_t, kMaxPayload> payload;
+    static etl::array<uint8_t, kMaxPayload> response;
 
     // read packet header
     read = tud_vendor_n_read(kInterfaceIndex, &hdr, sizeof(hdr));
@@ -88,14 +96,19 @@ void InterfaceTask::processMessage() {
         return;
     }
 
+    hdr.payloadLength = __builtin_bswap16(hdr.payloadLength);
+
     // read packet payload
     if(hdr.payloadLength) {
         // validate length
         if(hdr.payloadLength > kMaxPayload) {
+            // too much; discard remaining data
             Logger::Warning("USB: %s (%d)", "invalid payload length", hdr.payloadLength);
+            tud_vendor_n_read_flush(kInterfaceIndex);
             return;
         }
 
+        // read payload into payload buffer
         read = tud_vendor_n_read(kInterfaceIndex, payload.data(), hdr.payloadLength);
         if(read != hdr.payloadLength) {
             Logger::Warning("USB: %s (%d)", "failed to read vendor payload", read);
@@ -104,6 +117,36 @@ void InterfaceTask::processMessage() {
     }
 
     // run type specific handler
-    // TODO: implement
-    Logger::Trace("USB packet: type %02x tag %02x len %u", hdr.type, hdr.tag, hdr.payloadLength);
+    size_t replyBytes{0};
+
+    switch(hdr.type) {
+        case static_cast<uint8_t>(Endpoint::PropertyRequest):
+            replyBytes = PropertyRequest::Handle(hdr, {payload.data(), hdr.payloadLength},
+                    {response.data() + sizeof(hdr), response.size() - sizeof(hdr)});
+            break;
+
+        default:
+            Logger::Warning("USB: received unknown packet (type %02x, tag %02x, len %u)",
+                    hdr.type, hdr.tag, hdr.payloadLength);
+            break;
+    }
+
+    // send response
+    REQUIRE(replyBytes <= response.size()-sizeof(hdr), "reply too large (%u)", replyBytes);
+
+    if(replyBytes) {
+        // format the reply's header
+        auto replyHdr = reinterpret_cast<PacketHeader *>(response.data());
+        replyHdr->type = hdr.type;
+        replyHdr->tag = hdr.tag;
+
+        replyHdr->payloadLength = __builtin_bswap16(replyBytes);
+        const auto responseSize = sizeof(*replyHdr) + replyBytes;
+
+        // write it to host
+        written = tud_vendor_n_write(kInterfaceIndex, response.data(), responseSize);
+        if(written != responseSize) {
+            Logger::Warning("*** Failed to send response: %u", written);
+        }
+    }
 }
