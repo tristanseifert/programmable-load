@@ -6,6 +6,7 @@
  * Provide all the methods exported by the library.
  */
 #include "LibLoad.h"
+#include "Device.h"
 
 #include "DeviceTransport.h"
 #include "Usb.h"
@@ -15,27 +16,6 @@
 
 using namespace LibLoad;
 
-/**
- * @brief Device info wrapper
- *
- * This contains information about a connected device, including the transport used to
- * communicate with it.
- */
-struct LibLoad::Device {
-    /// How is the device connected?
-    DeviceInfo::ConnectionMethod method;
-    /// serial number of device
-    std::string serial;
-
-    /// Transport used to communicate with device
-    std::shared_ptr<Internal::DeviceTransport> transport;
-
-    Device(const DeviceInfo &info, std::shared_ptr<Internal::DeviceTransport> &transport) :
-        method(info.method), serial(info.serial), transport(std::move(transport)) {}
-    Device(const DeviceInfo::ConnectionMethod method, const std::string_view &serial,
-            std::shared_ptr<Internal::DeviceTransport> &transport) : method(method),
-            serial(serial), transport(std::move(transport)) {}
-};
 
 
 /**
@@ -107,7 +87,7 @@ Device *LibLoad::Connect(const DeviceInfo &info) {
     }
 
     // prepare the device wrapper
-    auto dev = new Device(info, transport);
+    auto dev = new Internal::DeviceImpl(info, transport);
 
     return dev;
 }
@@ -128,7 +108,7 @@ Device *LibLoad::Connect(const std::string_view &serial) {
         return nullptr;
     }
 
-    auto dev = new Device(DeviceInfo::ConnectionMethod::Usb, serial, transport);
+    auto dev = new Internal::DeviceImpl(DeviceInfo::ConnectionMethod::Usb, serial, transport);
     return dev;
 }
 

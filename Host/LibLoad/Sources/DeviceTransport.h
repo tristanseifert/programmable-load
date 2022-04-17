@@ -32,7 +32,22 @@ class DeviceTransport {
          * @param payload Data to send as part of message payload
          * @param timeout How long we should wait before giving up
          */
-        virtual void write(const uint8_t type, const std::span<uint8_t> payload,
+        virtual void write(const uint8_t type, const std::span<const uint8_t> payload,
+                std::optional<std::chrono::milliseconds> timeout = std::nullopt) = 0;
+
+        /**
+         * @brief Receive a packet from the device
+         *
+         * Receive data from the device. It's valid for the device to return less than the total
+         * size of the buffer.
+         *
+         * @param buffer Buffer to receive the data
+         * @param length Number of bytes to receive, or 0 to receive the full buffer
+         * @param timeout How long we should wait before giving up
+         *
+         * @return Total number of bytes received
+         */
+        virtual size_t read(std::span<uint8_t> buffer, const size_t length = 0,
                 std::optional<std::chrono::milliseconds> timeout = std::nullopt) = 0;
 };
 }

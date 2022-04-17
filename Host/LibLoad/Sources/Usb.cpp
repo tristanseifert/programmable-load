@@ -324,7 +324,7 @@ Usb::Transport::~Transport() noexcept(false) {
  * @throw std::invalid_argument In case parameters are invalid
  * @throw LibUsbError Underlying IO error
  */
-void Usb::Transport::write(const uint8_t type, const std::span<uint8_t> payload,
+void Usb::Transport::write(const uint8_t type, const std::span<const uint8_t> payload,
         std::optional<std::chrono::milliseconds> timeout) {
     int err, transferred{0};
 
@@ -345,19 +345,72 @@ void Usb::Transport::write(const uint8_t type, const std::span<uint8_t> payload,
     memcpy(this->buffer.data(), &hdr, sizeof(hdr));
 
     if(!payload.empty()) { // XXX: do we need to support empty payloads?
-        std::copy(this->buffer.begin() + sizeof(hdr), this->buffer.end(), payload.begin());
+        std::copy(payload.begin(), payload.end(), this->buffer.begin() + 4);
     }
 
     // transmit the whole thing
-    err = libusb_bulk_transfer(this->device, this->epOut, buffer.data(), bytesRequired,
+    err = libusb_bulk_transfer(this->device, this->epOut, this->buffer.data(), bytesRequired,
             &transferred, timeout ? (*timeout).count() : 0);
     if(err) {
         throw LibUsbError(err, "libusb_bulk_transfer (write)");
     }
 
-    if(transferred != sizeof(hdr)) {
+    if(transferred != bytesRequired) {
         throw std::runtime_error(fmt::format("partial transfer: {}, expected {}", transferred,
                     bytesRequired));
     }
+}
+
+/**
+ * @brief Receive data from USB device
+ *
+ * This sets up a request to read the total number of bytes requested, plus the size of a packet
+ * header.
+ *
+ * @param outBuffer Buffer to receive the payload of the message
+ * @param length Total number of bytes to read
+ *
+ * @throw std::invalid_argument In case parameters are invalid
+ * @throw LibUsbError Underlying IO error
+ */
+size_t Usb::Transport::read(std::span<uint8_t> outBuffer, const size_t length,
+        std::optional<std::chrono::milliseconds> timeout) {
+    int err, transferred{0};
+
+    // validate inputs and prepare receive buffer
+    if(buffer.empty()) {
+        throw std::invalid_argument("invalid payload");
+    }
+    else if(this->buffer.size() > kMaxPacketSize || length > this->buffer.size()) {
+        throw std::invalid_argument("payload too large");
+    }
+
+    const auto receivePayloadLength = length ? length : outBuffer.size();
+    const auto totalReceiveLength = sizeof(PacketHeader) + receivePayloadLength;
+
+    this->buffer.resize(totalReceiveLength);
+
+    // perform read
+    err = libusb_bulk_transfer(this->device, this->epIn, this->buffer.data(), totalReceiveLength,
+            &transferred, timeout ? (*timeout).count() : 0);
+    if(err) {
+        throw LibUsbError(err, "libusb_bulk_transfer (read)");
+    }
+
+    if(transferred < sizeof(PacketHeader)) {
+        throw std::runtime_error(fmt::format("received incomplete packet ({} bytes)", transferred));
+        return 0;
+    }
+
+    // copy out payload
+    const auto hdr = reinterpret_cast<const PacketHeader *>(this->buffer.data());
+    const auto payloadBytes = std::max(hdr->getPayloadLength(),
+            static_cast<size_t>(transferred) - sizeof(*hdr));
+
+    auto payloadStart = this->buffer.begin() + sizeof(*hdr);
+
+    std::copy(payloadStart, payloadStart + payloadBytes, outBuffer.begin());
+
+    return payloadBytes;
 }
 

@@ -68,7 +68,7 @@ class Usb {
                      * The tag value is used to match up a request to corresponding response from
                      * the device.
                      */
-                    uint8_t tag;
+                    uint8_t tag{0};
 
                     /**
                      * @brief Payload length (bytes)
@@ -100,11 +100,13 @@ class Usb {
                 Transport(libusb_device_handle *device);
                 ~Transport() noexcept(false);
 
-                void write(const uint8_t type, const std::span<uint8_t> payload,
+                void write(const uint8_t type, const std::span<const uint8_t> payload,
                         std::optional<std::chrono::milliseconds> timeout) override;
+                size_t read(std::span<uint8_t> buffer, const size_t length = 0,
+                        std::optional<std::chrono::milliseconds> timeout = std::nullopt) override;
 
             private:
-                /// packet send buffer
+                /// packet buffer (for receive and transmit)
                 std::vector<uint8_t> buffer;
 
                 /// Underlying USB device to communicate on

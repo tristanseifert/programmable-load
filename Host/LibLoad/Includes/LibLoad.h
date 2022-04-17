@@ -30,7 +30,44 @@ struct DeviceInfo {
     std::string serial;
 };
 
-struct Device;
+/**
+ * @brief Device interface
+ *
+ * Provides a generic interface to a programmable load device.
+ */
+struct Device {
+    /**
+     * @brief Property keys
+     *
+     * All properties supported by the device.
+     */
+    enum class Property {
+        HwSerial                        = 0x01,
+        HwVersion                       = 0x02,
+        HwInventory                     = 0x03,
+        SwVersion                       = 0x04,
+    };
+
+    virtual ~Device() = default;
+
+    /**
+     * @brief Get the device's serial number
+     */
+    virtual const std::string &getSerialNumber() const = 0;
+    /**
+     * @brief Get how the device is connected
+     */
+    virtual DeviceInfo::ConnectionMethod getConnectionMethod() const = 0;
+
+    /// Read a property (as a string value)
+    virtual bool propertyRead(const Property id, std::string &outValue) = 0;
+    /// Read a property (as a signed integer value)
+    //virtual bool propertyRead(const Property id, int &outValue) = 0;
+    /// Read a property (as an unsigned integer value)
+    //virtual bool propertyRead(const Property id, unsigned int &outValue) = 0;
+    /// Read a property (as a floating point)
+    //virtual bool propertyRead(const Property id, double &outValue) = 0;
+};
 
 void Init();
 void DeInit();
