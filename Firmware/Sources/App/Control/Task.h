@@ -97,6 +97,15 @@ class Task {
             return gShared->inputCurrent;
         }
 
+        /**
+         * @brief Determine whether the external or integrated voltage sense is used
+         *
+         * @return If external voltage sense is active
+         */
+        inline static auto GetIsExternalSenseActive() {
+            return gShared->isUsingExternalSense;
+        }
+
     private:
         void main();
 
@@ -118,6 +127,8 @@ class Task {
         uint32_t inputVoltage{0};
         /// Last input current reading (µA)
         uint32_t inputCurrent{0};
+        /// Are we using external voltage sense?
+        bool isUsingExternalSense{false};
 
         /// Driver handling the load
         LoadDriver *driver{nullptr};

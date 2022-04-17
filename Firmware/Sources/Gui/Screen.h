@@ -8,8 +8,9 @@
 #include <etl/span.h>
 #include <etl/string_view.h>
 
-#include "Gfx/Font.h"
 #include "Gfx/Types.h"
+#include "Gfx/Font.h"
+#include "Gfx/Icon.h"
 
 namespace Gui {
 namespace Components {
@@ -42,6 +43,14 @@ enum class ComponentType: uint32_t {
      * A vertical or horizontal line
      */
     Divider                             = 2,
+
+    /**
+     * @brief Static image/icon
+     *
+     * Renders a single static icon (a thin wrapper around a raw bitmap) at a fixed location on
+     * the screen.
+     */
+    StaticIcon                          = 3,
 };
 
 /**
@@ -80,6 +89,13 @@ struct ComponentData {
             /// Render flags for the font
             Gfx::FontRenderFlags fontMode;
         } staticLabel;
+        /// Static icon
+        struct {
+            /// The icon to draw
+            const Gfx::Icon *icon{nullptr};
+            /// Set to fill the area of the icon with transparent instead
+            bool hideIcon;
+        } staticIcon;
     };
 
     /// Is the control hidden?

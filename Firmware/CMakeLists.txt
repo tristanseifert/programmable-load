@@ -99,15 +99,9 @@ add_executable(firmware
     Sources/Drivers/I2CDevice/PI4IOE5V9536.cpp
     Sources/Drivers/I2CDevice/XRA1203.cpp
     Sources/Gfx/Font.cpp
+    Sources/Gfx/Icon.cpp
     Sources/Gfx/Framebuffer.cpp
     Sources/Gfx/Primitives.cpp
-    Sources/Gfx/Fonts/General_14.cpp
-    Sources/Gfx/Fonts/General_16_Condensed.cpp
-    Sources/Gfx/Fonts/General_16_Bold.cpp
-    Sources/Gfx/Fonts/General_16_BoldCondensed.cpp
-    Sources/Gfx/Fonts/Numbers_L.cpp
-    Sources/Gfx/Fonts/Numbers_XL.cpp
-    Sources/Gfx/Fonts/Font_Small.cpp
     Sources/Gui/WorkQueue.cpp
     Sources/Gui/InputManager.cpp
     Sources/Gui/ScreenManager.cpp
@@ -154,6 +148,25 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_options(firmware PRIVATE "-Wl,-T${CMAKE_CURRENT_LIST_DIR}/same51j20a_flash.ld")
 endif()
 
+###############
+# Build GUI resources (fonts, icons) separately
+add_library(gui-rsrc STATIC
+    Sources/Gfx/Fonts/General_14.cpp
+    Sources/Gfx/Fonts/General_16_Condensed.cpp
+    Sources/Gfx/Fonts/General_16_Bold.cpp
+    Sources/Gfx/Fonts/General_16_BoldCondensed.cpp
+    Sources/Gfx/Fonts/Numbers_L.cpp
+    Sources/Gfx/Fonts/Numbers_XL.cpp
+    Sources/Gfx/Fonts/Font_Small.cpp
+
+    Sources/Gfx/Icons/MainBadgeUsb.cpp
+    Sources/Gfx/Icons/MainBadgeVExt.cpp
+)
+target_include_directories(gui-rsrc PRIVATE Includes)
+target_include_directories(gui-rsrc PRIVATE Sources)
+
+target_link_libraries(firmware PRIVATE gui-rsrc)
+
 ####################################################################################################
 # Build various external components and libraries
 #
@@ -194,6 +207,7 @@ FetchContent_MakeAvailable(etl)
 target_compile_options(etl INTERFACE -DETL_NO_STL -DETL_NO_CPP_NAN_SUPPORT)
 
 target_link_libraries(firmware PRIVATE etl)
+target_link_libraries(gui-rsrc PRIVATE etl)
 
 # Atmel-provided vendor code: headers and low level drivers
 add_subdirectory(External/atmel)

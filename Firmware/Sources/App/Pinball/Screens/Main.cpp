@@ -9,8 +9,10 @@
 #include "../Task.h"
 
 #include "App/Control/Task.h"
+#include "Usb/Task.h"
 
 #include "Gfx/Font.h"
+#include "Gfx/Icon.h"
 #include "Gui/Components/StaticLabel.h"
 #include "Rtos/Rtos.h"
 
@@ -24,6 +26,80 @@ static char gVoltageBuffer[16];
 static char gCurrentBuffer[16];
 
 /**
+ * @brief Main screen components
+ *
+ * This defines the components on the main screen of the instrument.
+ */
+static Gui::ComponentData gMainComponents[]{
+    // input voltage
+    {
+        .type = Gui::ComponentType::StaticLabel,
+        .bounds = {Gfx::MakePoint(20, 4), Gfx::MakeSize(120, 31)},
+        .staticLabel = {
+            .string = gVoltageBuffer,
+            .font = &Gfx::Font::gNumbers_XL,
+            .fontMode = Gfx::FontRenderFlags::HAlignRight,
+        },
+    },
+    // input current
+    {
+        .type = Gui::ComponentType::StaticLabel,
+        .bounds = {Gfx::MakePoint(20, 34), Gfx::MakeSize(120, 31)},
+        .staticLabel = {
+            .string = gCurrentBuffer,
+            .font = &Gfx::Font::gNumbers_XL,
+            .fontMode = Gfx::FontRenderFlags::HAlignRight,
+        },
+    },
+    // temperature
+    {
+        .type = Gui::ComponentType::StaticLabel,
+        .bounds = {Gfx::MakePoint(205, 40), Gfx::MakeSize(50, 24)},
+        .staticLabel = {
+            .string = "24 °C",
+            .font = &Gfx::Font::gNumbers_L,
+            .fontMode = Gfx::FontRenderFlags::HAlignRight,
+        },
+    },
+    // divider for badge/mode area on left
+    {
+        .type = Gui::ComponentType::Divider,
+        .bounds = {Gfx::MakePoint(18, 0), Gfx::MakeSize(1, 64)},
+        .divider = {
+            .color = 0x2,
+        },
+    },
+    // sample indicator (toggles for each alternating sampling time)
+    {
+        .type = Gui::ComponentType::StaticLabel,
+        .bounds = {Gfx::MakePoint(188, 40), Gfx::MakeSize(24, 24)},
+        .staticLabel = {
+            .string = "※",
+            .font = &Gfx::Font::gNumbers_L,
+            .fontMode = Gfx::FontRenderFlags::HAlignLeft,
+        },
+    },
+    // USB connectivity icon
+    {
+        .type = Gui::ComponentType::StaticIcon,
+        .bounds = {Gfx::MakePoint(0, 48), Gfx::MakeSize(16, 16)},
+        .staticIcon = {
+            .icon = &Gfx::Icon::gMainBadgeUsb,
+            .hideIcon = true,
+        },
+    },
+    // external sense
+    {
+        .type = Gui::ComponentType::StaticIcon,
+        .bounds = {Gfx::MakePoint(0, 32), Gfx::MakeSize(16, 16)},
+        .staticIcon = {
+            .icon = &Gfx::Icon::gMainBadgeVExt,
+            .hideIcon = true,
+        },
+    },
+};
+
+/**
  * @brief Screen update timer
  *
  * This timer fires periodically in order to force the screen to get redrawn, and thus the display
@@ -31,7 +107,9 @@ static char gCurrentBuffer[16];
  */
 static TimerHandle_t gUpdateTimer{nullptr};
 /// Interval for update timer (milliseconds)
-static const constexpr size_t kUpdateTimerInterval{100};
+static const constexpr size_t kUpdateTimerInterval{74};
+/// Sampling flag, toggled every time the timer is invoked
+static bool gSamplingFlag{false};
 
 /**
  * @brief Update the contents of the main screen
@@ -55,12 +133,20 @@ static void UpdateMainScreen(const Gui::Screen *screen) {
         snprintf(gCurrentBuffer, sizeof(gCurrentBuffer), "%d.%03d A", ma / 1000,
                 (ma % 1000));
     }
+
+    // toggle the sample indicator every time we update
+    auto &sampleIndicator = gMainComponents[4];
+    sampleIndicator.staticLabel.string = gSamplingFlag ? "※" : " ";
+
+    // icons (on the left side)
+    auto &usbIcon = gMainComponents[5], &extSenseIcon = gMainComponents[6];
+
+    usbIcon.staticIcon.hideIcon = !UsbStack::Task::GetIsConnected();
+    extSenseIcon.staticIcon.hideIcon = !App::Control::Task::GetIsExternalSenseActive();
 }
 
 /**
  * @brief Get the unit main screen
- *
- * @TODO get data from actual sources; this is just a mockup right now
  */
 const Gui::Screen *Screens::GetMainScreen() {
     // perform one-time initialization
@@ -70,57 +156,18 @@ const Gui::Screen *Screens::GetMainScreen() {
         gUpdateTimer = xTimerCreateStatic("Main screen update timer",
             pdMS_TO_TICKS(kUpdateTimerInterval), pdTRUE,
             nullptr, [](auto timer) {
+                gSamplingFlag = !gSamplingFlag;
                 App::Pinball::Task::NotifyTask(App::Pinball::Task::TaskNotifyBits::RedrawUI);
             }, &gTimerBuf);
         REQUIRE(gUpdateTimer, "failed to allocate timer");
 
     }
 
-    // define screen
-    static const Gui::ComponentData gComponents[]{
-        // divider for mode
-        {
-            .type = Gui::ComponentType::Divider,
-            .bounds = {Gfx::MakePoint(18, 0), Gfx::MakeSize(1, 64)},
-            .divider = {
-                .color = 0x2,
-            },
-        },
-        // input voltage
-        {
-            .type = Gui::ComponentType::StaticLabel,
-            .bounds = {Gfx::MakePoint(20, 4), Gfx::MakeSize(120, 31)},
-            .staticLabel = {
-                .string = gVoltageBuffer,
-                .font = &Gfx::Font::gNumbers_XL,
-                .fontMode = Gfx::FontRenderFlags::HAlignRight,
-            },
-        },
-        // input current
-        {
-            .type = Gui::ComponentType::StaticLabel,
-            .bounds = {Gfx::MakePoint(20, 34), Gfx::MakeSize(120, 31)},
-            .staticLabel = {
-                .string = gCurrentBuffer,
-                .font = &Gfx::Font::gNumbers_XL,
-                .fontMode = Gfx::FontRenderFlags::HAlignRight,
-            },
-        },
-        // temperature
-        {
-            .type = Gui::ComponentType::StaticLabel,
-            .bounds = {Gfx::MakePoint(205, 40), Gfx::MakeSize(50, 24)},
-            .staticLabel = {
-                .string = "24 °C",
-                .font = &Gfx::Font::gNumbers_L,
-                .fontMode = Gfx::FontRenderFlags::HAlignRight,
-            },
-        },
-    };
+    // return the screen structure
     static const Gui::Screen gScreen{
         .title = "Main",
-        .numComponents = 4,
-        .components = gComponents,
+        .numComponents = (sizeof(gMainComponents) / sizeof(gMainComponents[0])),
+        .components = gMainComponents,
         // when we're about to appear, start the update timer
         .willPresent = [](auto screen, auto ctx) {
             xTimerReset(gUpdateTimer, portMAX_DELAY);

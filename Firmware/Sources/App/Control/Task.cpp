@@ -201,6 +201,7 @@ void Task::identifyDriver() {
     this->driver = new (ptr) DumbLoadDriver(Hw::gBus, idprom);
 
     this->driver->setExternalVSense(true);
+    this->isUsingExternalSense = true;
 }
 
 

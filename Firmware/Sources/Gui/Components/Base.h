@@ -3,6 +3,7 @@
 
 #include "../Screen.h"
 #include "Divider.h"
+#include "StaticIcon.h"
 #include "StaticLabel.h"
 
 #include "Gfx/Types.h"
@@ -29,6 +30,9 @@ void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
             break;
         case ComponentType::StaticLabel:
             StaticLabel::Draw(fb, data);
+            break;
+        case ComponentType::StaticIcon:
+            StaticIcon::Draw(fb, data);
             break;
 
         default:

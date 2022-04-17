@@ -95,8 +95,8 @@ void Gfx::FillRect(Framebuffer &fb, const Rect bounds, const uint32_t fillColor)
     const auto p1 = bounds.origin;
     const auto p2 = MakePoint<int>(p1.x + bounds.size.width, p1.y + bounds.size.height);
 
-    for(uint16_t y = p1.y; y <= p2.y; y++) {
-        for(uint16_t x = p1.x; x <= p2.x; x++) {
+    for(uint16_t y = p1.y; y < p2.y; y++) {
+        for(uint16_t x = p1.x; x < p2.x; x++) {
             fb.setPixel(MakePoint(x, y), fillColor);
         }
     }
