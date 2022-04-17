@@ -83,8 +83,6 @@ int MCP3421::read(int32_t &out) {
         }
     }
 
-    Logger::Trace("Read %02x %02x %02x", buffer[0], buffer[1], buffer[2]);
-
     out = static_cast<int32_t>(temp);
     return 0;
 }

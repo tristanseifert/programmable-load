@@ -16,9 +16,6 @@
 
 using namespace App::Control;
 
-StaticTask_t Task::gTcb;
-StackType_t Task::gStack[kStackSize];
-
 Task *Task::gShared{nullptr};
 
 /**
@@ -37,10 +34,20 @@ void App::Control::Start() {
  * @brief Initialize the control task
  */
 Task::Task() {
+    // create the task
     this->task = xTaskCreateStatic([](void *ctx) {
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
-    }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
+    }, kName.data(), kStackSize, this, kPriority, this->stack, &this->tcb);
+
+    // also, create the timer (to force sampling of data)
+    this->sampleTimer = xTimerCreateStatic("Control sample timer",
+        // automagically reload
+        pdMS_TO_TICKS(kMeasureInterval), pdTRUE,
+        this, [](auto timer) {
+            Task::NotifyTask(Task::TaskNotifyBits::SampleData);
+        }, &this->sampleTimerBuf);
+    REQUIRE(this->sampleTimer, "control: %s", "failed to allocate timer");
 }
 
 /**
@@ -70,16 +77,21 @@ void Task::main() {
      */
     Logger::Trace("control: %s", "start message loop");
 
+    xTimerStart(this->sampleTimer, portMAX_DELAY);
+
     while(1) {
         ok = xTaskNotifyWaitIndexed(kNotificationIndex, 0, TaskNotifyBits::All, &note,
                 portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
         // handle interrupt and triggers
-        Logger::Warning("control notify: $%08x", note);
-
         if(note & TaskNotifyBits::IrqAsserted) {
             this->driver->handleIrq();
+        }
+
+        // sample sensors
+        if(note & TaskNotifyBits::SampleData) {
+            this->readSensors();
         }
     }
 }
@@ -187,4 +199,21 @@ void Task::identifyDriver() {
     auto ptr = reinterpret_cast<DumbLoadDriver *>(gDriverBuf);
 
     this->driver = new (ptr) DumbLoadDriver(Hw::gBus, idprom);
+
+    this->driver->setExternalVSense(true);
+}
+
+
+
+/**
+ * @brief Read analog board sensors
+ *
+ * This updates the cached current and voltage readings.
+ */
+void Task::readSensors() {
+    int err;
+
+    // read input voltage
+    err = this->driver->readInputVoltage(this->inputVoltage);
+    REQUIRE(!err, "control: %s (%d)", "failed to read input voltage", err);
 }

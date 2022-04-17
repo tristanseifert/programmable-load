@@ -8,6 +8,11 @@
 
 #include <etl/string_view.h>
 
+extern "C" {
+void tud_mount_cb();
+void tud_umount_cb();
+}
+
 namespace UsbStack {
 namespace Vendor {
 class InterfaceTask;
@@ -24,8 +29,16 @@ class InterfaceTask;
  * "wake up" when the relevant interface is opened by a host.
  */
 class Task {
+    friend void ::tud_mount_cb();
+    friend void ::tud_umount_cb();
+
     public:
         static void Start();
+
+        /// Is a host connected to our USB device?
+        static inline bool GetIsConnected() {
+            return gShared->isConnected;
+        }
 
     private:
         Task();
@@ -38,6 +51,9 @@ class Task {
         /// Vendor interface
         Vendor::InterfaceTask *vendorInterface{nullptr};
 
+        /// Are we connected to an USB host?
+        bool isConnected{false};
+
         /// Priority level for the task
         static const constexpr uint8_t kPriority{Rtos::TaskPriority::Middleware};
         /// Size of the USB stack, in words
@@ -45,10 +61,12 @@ class Task {
         /// Task name (for display purposes)
         static const constexpr etl::string_view kName{"USBStack"};
 
+        static Task *gShared;
+
         /// Task information structure
-        static StaticTask_t gTcb;
+        StaticTask_t tcb;
         /// Preallocated stack for the task
-        static StackType_t gStack[kStackSize];
+        StackType_t stack[kStackSize];
 };
 }
 

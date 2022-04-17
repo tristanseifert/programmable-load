@@ -34,6 +34,16 @@ class Task {
             IrqAsserted                 = (1 << 1),
 
             /**
+             * @brief Update control data
+             *
+             * Updates the locally read data from the analog driver board (that is, its input
+             * voltage, current, and any error state).
+             *
+             * This would be fired by a background timer.
+             */
+            SampleData                  = (1 << 2),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
@@ -69,15 +79,45 @@ class Task {
                     eSetBits);
         }
 
+        /**
+         * @brief Get the current input voltage
+         *
+         * @return Voltage at input terminals, in millivolts
+         */
+        inline static auto GetInputVoltage() {
+            return gShared->inputVoltage;
+        }
+
+        /**
+         * @brief Get input current
+         *
+         * @return Current through the load, in microamps
+         */
+        inline static auto GetInputCurrent() {
+            return gShared->inputCurrent;
+        }
 
     private:
         void main();
 
         void identifyDriver();
 
+        void readSensors();
+
     private:
         /// Task handle
         TaskHandle_t task;
+        /// Task information structure
+        StaticTask_t tcb;
+        /// Measurement update timer
+        TimerHandle_t sampleTimer;
+        /// Storage for sampling timer
+        StaticTimer_t sampleTimerBuf;
+
+        /// Last input voltage reading (mV)
+        uint32_t inputVoltage{0};
+        /// Last input current reading (µA)
+        uint32_t inputCurrent{0};
 
         /// Driver handling the load
         LoadDriver *driver{nullptr};
@@ -97,10 +137,15 @@ class Task {
         /// Notification index
         static const constexpr size_t kNotificationIndex{Rtos::TaskNotifyIndex::TaskSpecific};
 
-        /// Task information structure
-        static StaticTask_t gTcb;
+        /**
+         * @brief Measurement sample interval (msec)
+         *
+         * Interval at which the data from the analog board is read.
+         */
+        constexpr static const size_t kMeasureInterval{10};
+
         /// Preallocated stack for the task
-        static StackType_t gStack[kStackSize];
+        StackType_t stack[kStackSize];
 
         /// Shared task instance
         static Task *gShared;

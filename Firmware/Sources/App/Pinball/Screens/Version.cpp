@@ -118,7 +118,3 @@ const Gui::Screen *Screens::GetVersionSoftware() {
 
     return &gScreen;
 }
-
-    return &gScreen;
-}
-

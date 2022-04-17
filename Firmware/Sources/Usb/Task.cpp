@@ -8,8 +8,7 @@
 
 using namespace UsbStack;
 
-StaticTask_t Task::gTcb;
-StackType_t Task::gStack[kStackSize];
+Task *Task::gShared{nullptr};
 
 /**
  * @brief Set up USB stack task
@@ -20,7 +19,7 @@ void Task::Start() {
     static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(alignof(Task))));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
-    new (ptr) Task();
+    gShared = new (ptr) Task();
 }
 
 /**
@@ -34,7 +33,7 @@ Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
-    }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
+    }, kName.data(), kStackSize, this, kPriority, this->stack, &this->tcb);
 }
 
 /**
@@ -66,6 +65,8 @@ void Task::main() {
  */
 void tud_mount_cb() {
     Logger::Notice("USB: %s", "device mounted");
+    Task::gShared->isConnected = true;
+
     Vendor::InterfaceTask::HostConnected();
 }
 
@@ -74,5 +75,7 @@ void tud_mount_cb() {
  */
 void tud_umount_cb() {
     Logger::Notice("USB: %s", "device unmounted");
+    Task::gShared->isConnected = false;
+
     Vendor::InterfaceTask::HostDisconnected();
 }
