@@ -43,12 +43,16 @@ class Task {
              */
             SampleData                  = (1 << 2),
 
+            /// Update the external sense input relay
+            UpdateSenseRelay            = (1 << 3),
+
             /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
-            All                         = (ExternalTrigger | IrqAsserted),
+            All                         = (ExternalTrigger | IrqAsserted | SampleData |
+                    UpdateSenseRelay),
         };
 
     public:
@@ -104,6 +108,14 @@ class Task {
          */
         inline static auto GetIsExternalSenseActive() {
             return gShared->isUsingExternalSense;
+        }
+
+        /**
+         * @brief Select if we want to use external sense
+         */
+        inline static void SetExternalSenseActive(const bool isActive) {
+            gShared->isUsingExternalSense = isActive;
+            NotifyTask(TaskNotifyBits::UpdateSenseRelay);
         }
 
     private:

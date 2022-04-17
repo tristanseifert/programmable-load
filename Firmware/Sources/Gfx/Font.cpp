@@ -266,6 +266,13 @@ void Font::renderLine(Framebuffer &fb, const char *str, const Rect bounds,
     uint32_t utfState{Util::Unicode::kStateAccept}, utfCodepoint;
     const Glyph *glyph{nullptr};
 
+    // handle flags
+    auto blitFlags = Framebuffer::BlitFlags::HasTransparency;
+
+    if(TestFlags(flags & FontRenderFlags::Invert)) {
+        blitFlags = static_cast<Framebuffer::BlitFlags>(blitFlags | Framebuffer::BlitFlags::Invert);
+    }
+
     // set up for drawing
     Point current{bounds.origin};
     current.x += xOffset;
@@ -286,7 +293,7 @@ void Font::renderLine(Framebuffer &fb, const char *str, const Rect bounds,
             glyphSize.height = bounds.size.height;
         }
 
-        fb.blit4Bpp(glyph->data, glyphSize, current, Framebuffer::BlitFlags::HasTransparency);
+        fb.blit4Bpp(glyph->data, glyphSize, current, blitFlags);
         drawn++;
 
         current.x += glyph->size.width;

@@ -61,6 +61,7 @@ Task::Task() {
 void Task::main() {
     BaseType_t ok;
     uint32_t note;
+    int err;
 
     /*
      * Initialize the driver board. This will probe the board's identification EEPROM, and attempt
@@ -92,6 +93,12 @@ void Task::main() {
         // sample sensors
         if(note & TaskNotifyBits::SampleData) {
             this->readSensors();
+        }
+
+        // update sense input relay
+        if(note & TaskNotifyBits::UpdateSenseRelay) {
+            err = this->driver->setExternalVSense(this->isUsingExternalSense);
+            REQUIRE(!err, "control: %s (%d)", "failed to change sense relay", err);
         }
     }
 }
@@ -199,9 +206,6 @@ void Task::identifyDriver() {
     auto ptr = reinterpret_cast<DumbLoadDriver *>(gDriverBuf);
 
     this->driver = new (ptr) DumbLoadDriver(Hw::gBus, idprom);
-
-    this->driver->setExternalVSense(true);
-    this->isUsingExternalSense = true;
 }
 
 

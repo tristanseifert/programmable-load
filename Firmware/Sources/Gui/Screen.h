@@ -15,6 +15,7 @@
 namespace Gui {
 namespace Components {
 class Base;
+struct ListState;
 }
 /**
  * @brief Component type value
@@ -51,6 +52,14 @@ enum class ComponentType: uint32_t {
      * the screen.
      */
     StaticIcon                          = 3,
+
+    /**
+     * @brief Table/list view
+     *
+     * Presents a scrollable list of items. Callbacks are used to determine the number of items,
+     * and to draw each item.
+     */
+    List                                = 4,
 };
 
 /**
@@ -96,6 +105,44 @@ struct ComponentData {
             /// Set to fill the area of the icon with transparent instead
             bool hideIcon;
         } staticIcon;
+        /// List view
+        struct {
+            /// List state buffer
+            Components::ListState *state{nullptr};
+            /// Height of a row, in pixels
+            uint16_t rowHeight{21};
+
+            /// Context for callbacks
+            void *context{nullptr};
+            /**
+             * @brief Callback to retrieve number of rows in list
+             *
+             * This should return the total number of rows to be displayed in this list.
+             *
+             * @param context The value in the `context` variable in this struct
+             */
+            size_t (*getNumRows)(void *context);
+            /**
+             * @brief Callback to draw a row
+             *
+             * Invoked to draw the row at the specified index, in the bounds specified.
+             *
+             * @param fb Framebuffer to draw the row into
+             * @param bounds Where on screen to draw the row
+             * @param index Row index to draw
+             * @param isSelected Whether the row is selected
+             * @param context The value of the `context` variable in this struct
+             */
+            void (*drawRow)(Gfx::Framebuffer &fb, const Gfx::Rect bounds, const size_t index,
+                    const bool isSelected, void *context);
+            /**
+             * @brief Callback invoked when row is selected
+             *
+             * @param index Row index that was selected
+             * @param context The value of the `context` variable
+             */
+            void (*rowSelected)(const size_t index, void *context);
+        } list;
     };
 
     /// Is the control hidden?

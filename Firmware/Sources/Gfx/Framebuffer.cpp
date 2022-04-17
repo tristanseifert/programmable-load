@@ -34,6 +34,7 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
             this->size.height : (destPoint.y + sourceSize.height)
     );
 
+    const auto inverted = (flags & BlitFlags::Invert);
     size_t bitmapStride = (sourceSize.width / 2) + (sourceSize.width & 1); // round odd up
 
     // iterate over each pixel of the framebuffer
@@ -54,6 +55,10 @@ void Framebuffer::blit4Bpp(etl::span<const uint8_t> source, const Size sourceSiz
 
             if((flags & BlitFlags::HasTransparency) && !srcTemp) {
                 continue;
+            }
+
+            if(inverted) {
+                srcTemp = 0xf - srcTemp;
             }
 
             this->setPixel(MakePoint(x, y), srcTemp);

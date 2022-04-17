@@ -1,6 +1,7 @@
 #include "InputManager.h"
 #include "ScreenManager.h"
 #include "WorkQueue.h"
+#include "Components/Base.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
@@ -73,7 +74,11 @@ void InputManager::updateKeys(const InputKey pressed, const InputKey released) {
         this->longPressFired &= ~InputKey::Menu;
     }
     if(TestFlags(released & InputKey::Select)) {
+        if(this->selectedComponent) {
+            auto &cd = this->screen->components[*this->selectedComponent];
 
+            this->isMoveMode = !Components::HandleSelection(this->screen, cd);
+        }
     }
 }
 
@@ -108,4 +113,33 @@ void InputManager::handleMenuLongPress() {
 void InputManager::updateEncoder(const int delta) {
     // TODO: implement
     Logger::Notice("gui: encoder delta = %d", delta);
+}
+
+
+
+/**
+ * @brief Select the first selectable component
+ *
+ * Iterate through all of the components on the screen, then mark the first selectable one as
+ * the selection.
+ */
+void InputManager::selectFirst(const Screen *newScreen) {
+    for(size_t i = 0; i < newScreen->numComponents; i++) {
+        const auto &data = newScreen->components[i];
+        if(!Components::IsSelectable(data)) {
+            continue;
+        }
+
+        // mark it as selected
+        this->selectedComponent = i;
+
+        // if it's a list, give it focus (so it gets encoder events)
+        if(data.type == ComponentType::List) {
+            this->isMoveMode = false;
+        }
+        return;
+    }
+
+    // if we get here, no component was selectable
+    this->selectedComponent = etl::nullopt;
 }

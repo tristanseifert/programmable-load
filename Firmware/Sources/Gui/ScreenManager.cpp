@@ -1,6 +1,7 @@
 #include "ScreenManager.h"
 #include "Components/Base.h"
 #include "EasingFunctions.h"
+#include "InputManager.h"
 #include "Screen.h"
 
 #include "App/Pinball/Beeper.h"
@@ -320,8 +321,10 @@ void ScreenManager::push(const Screen *screen, const Animation animation) {
         this->needsBufferClear = true;
     }
 
-    // force redraw
+    // force redraw and reset selection
     this->requestDraw();
+
+    InputManager::ResetSelection(screen);
 }
 
 /**
@@ -355,14 +358,15 @@ void ScreenManager::pop(const Animation animation) {
     this->navStack.pop();
     const Screen *revealed = this->navStack.top();
 
+    if(revealed->willPresent) {
+        revealed->willPresent(revealed, revealed->callbackContext);
+    }
+    InputManager::ResetSelection(revealed);
+
     // prepare the animation
     if(animation != Animation::None) {
         this->prepareAnimation(animation);
     } else {
-        if(revealed->didDisappear) {
-            revealed->didDisappear(revealed, revealed->callbackContext);
-        }
-
         this->needsBufferClear = true;
     }
 

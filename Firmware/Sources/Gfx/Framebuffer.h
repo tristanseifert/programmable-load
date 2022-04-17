@@ -36,6 +36,9 @@ class Framebuffer {
              * an explicit alpha channel, a pixel value of 0 is considered transparent.
              */
             HasTransparency             = (1 << 0),
+
+            /// Invert the copied data
+            Invert                      = (1 << 1),
         };
 
         /// Framebuffer format

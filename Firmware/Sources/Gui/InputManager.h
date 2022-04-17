@@ -5,9 +5,13 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <etl/optional.h>
+
 #include "Rtos/Rtos.h"
 
 namespace Gui {
+struct Screen;
+
 /**
  * @brief Physical GUI keys
  *
@@ -40,6 +44,13 @@ class InputManager {
             gShared->updateEncoder(delta);
         }
 
+        /// Reset selection state to the first selectable component on this screen
+        static void ResetSelection(const Screen *screen) {
+            gShared->isMoveMode = true;
+            gShared->screen = screen;
+            gShared->selectFirst(screen);
+        }
+
     private:
         InputManager();
         ~InputManager();
@@ -48,6 +59,8 @@ class InputManager {
         void handleMenuLongPress();
 
         void updateEncoder(const int delta);
+
+        void selectFirst(const Screen *screen);
 
     private:
         /// How long menu button should be held to trigger a long press, in msec
@@ -63,6 +76,14 @@ class InputManager {
 
         /// Buttons for which a long press timer fired
         InputKey longPressFired{0};
+
+        /// Whether selection is in the "move" mode
+        bool isMoveMode{true};
+
+        /// Currently displayed screen
+        const Screen *screen{nullptr};
+        /// Selected component index
+        etl::optional<size_t> selectedComponent;
 
     private:
         static InputManager *gShared;

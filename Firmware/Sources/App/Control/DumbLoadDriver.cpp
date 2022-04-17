@@ -212,6 +212,7 @@ int DumbLoadDriver::setExternalVSense(const bool isExternal) {
         err = -1;
         goto beach;
     }
+    err = 0;
 
 beach:;
     // return status code

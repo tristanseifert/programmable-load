@@ -46,6 +46,9 @@ enum class FontRenderFlags: uintptr_t {
      * be drawn. Otherwise, the space is left empty.
      */
     DrawPartialLine             = (1 << 9),
+
+    /// Invert the bitmaps for each glyph
+    Invert                      = (1 << 10),
 };
 ENUM_FLAGS_EX(FontRenderFlags, uintptr_t);
 
