@@ -36,7 +36,8 @@ ENTRY(Reset_Handler)
 /* Memory Spaces Definitions */
 MEMORY
 {
-  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x00100000
+  rom      (rx)  : ORIGIN = 0x00000000, LENGTH = 0x000f0000
+  gfxrom   (rx)  : ORIGIN = 0x000f0000, LENGTH = 0x00010000
   ram      (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00040000
   bkupram  (rwx) : ORIGIN = 0x47000000, LENGTH = 0x00002000
 }
@@ -112,6 +113,15 @@ SECTIONS
         . = ALIGN(4);
         _erelocate = .;
     } > ram
+
+    /* graphics data */
+    .gfxdata : {
+        . = ALIGN(8);
+        _sgfxdata = .;
+        *(.gfxdata .gfxdata.*);
+        _egfxdata = .;
+        . = ALIGN(4);
+    } > gfxrom
 
     /* variables in backup RAM */
     .bkupram (NOLOAD):

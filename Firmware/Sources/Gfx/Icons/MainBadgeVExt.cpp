@@ -24,6 +24,10 @@
 #include "Gfx/Icon.h"
 
 
+// Storage and visibility attributes for bitmap data 
+#define BITMAP_STORAGE __attribute__((section(".gfxdata.bitmap")))\
+    __attribute__((visibility("hidden")))
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Bitmap data
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +51,7 @@
     // ▓∙∙∙∙∙∙∙∙∙∙∙∙∙∙▓
     // ░▓▓▓▓▓▓▓▓▓▓▓▓▓▓░
 //-----------------------
-static const etl::array<const uint8_t, 128> image_data_MainBadgeVExt{{
+static const etl::array<const uint8_t, 128> image_data_MainBadgeVExt BITMAP_STORAGE{{
     0x4a, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xaa, 0xa4, 
     0xa0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a, 
     0xa0, 0x00, 0x00, 0xe0, 0x00, 0xe0, 0x00, 0x0a, 

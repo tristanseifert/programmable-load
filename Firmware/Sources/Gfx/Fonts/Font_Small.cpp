@@ -32,6 +32,13 @@
 
 
 
+// Storage and visibility attributes for glyphs
+#define GLYPH_STORAGE __attribute__((section(".gfxdata.glyphs")))\
+    __attribute__((visibility("hidden")))
+// Storage and visibility attributes for character descriptors
+#define CHARDEF_STORAGE __attribute__((section(".gfxdata.chardef")))\
+    __attribute__((visibility("hidden")))
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Character data
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +58,8 @@
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0020{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0020 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -80,7 +88,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0020{{
     // ∙∙∙
     // ∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x0021{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x0021 GLYPH_STORAGE {{
     0x00, 0x00, 
     0x3e, 0x40, 
     0x0d, 0x20, 
@@ -109,7 +118,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x0021{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0022{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0022 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x0d, 0x3d, 0x20, 
     0x0c, 0x1b, 0x20, 
@@ -138,7 +148,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0022{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0023{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0023 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x38, 0x09, 0x20, 
     0x00, 0x74, 0x0a, 0x10, 
@@ -167,7 +178,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0023{{
     // ∙∙∙▓∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0024{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0024 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x0a, 0x50, 0x00, 
     0x07, 0x89, 0x5c, 0x10, 
@@ -196,7 +208,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0024{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x0025{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x0025 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x0c, 0xe2, 0x00, 0xa4, 0x00, 
     0x77, 0x4c, 0x04, 0x90, 0x00, 
@@ -225,7 +238,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x0025{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0026{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0026 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x03, 0xff, 0x40, 0x00, 
     0x07, 0x93, 0xb0, 0x00, 
@@ -254,7 +268,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0026{{
     // ∙∙∙
     // ∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x0027{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x0027 GLYPH_STORAGE {{
     0x00, 0x00, 
     0x3e, 0x40, 
     0x0d, 0x20, 
@@ -283,7 +298,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x0027{{
     // ∙∙▓∙∙
     // ∙∙░▒∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0028{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0028 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x48, 0x00, 
     0x00, 0xc1, 0x00, 
@@ -312,7 +328,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0028{{
     // ∙∙▓∙∙
     // ∙▓░∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0029{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0029 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x09, 0x40, 0x00, 
     0x00, 0xb2, 0x00, 
@@ -341,7 +358,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0029{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x002a{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x002a GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0xa1, 0x00, 
     0x77, 0xa6, 0x80, 
@@ -370,7 +388,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x002a{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x002b{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x002b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -399,7 +418,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x002b{{
     // ∙▓░
     // ░▒∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x002c{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x002c GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -428,7 +448,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x002c{{
     // ∙∙∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x002d{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x002d GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -457,7 +478,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x002d{{
     // ∙∙∙
     // ∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x002e{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x002e GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -486,7 +508,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x002e{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x002f{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x002f GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x03, 0xb0, 
     0x00, 0x0a, 0x40, 
@@ -515,7 +538,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x002f{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0030{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0030 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x02, 0xdf, 0xe4, 0x00, 
     0x0c, 0x70, 0x6d, 0x10, 
@@ -544,7 +568,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0030{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0031{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0031 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0xaf, 0x20, 0x00, 
     0x07, 0x8b, 0x20, 0x00, 
@@ -573,7 +598,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0031{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0032{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0032 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x04, 0xff, 0xe4, 0x00, 
     0x0a, 0x40, 0x6d, 0x10, 
@@ -602,7 +628,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0032{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0033{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0033 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x04, 0xff, 0xb1, 0x00, 
     0x0b, 0x20, 0xa9, 0x00, 
@@ -631,7 +658,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0033{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0034{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0034 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0xe7, 0x00, 
     0x00, 0x0a, 0xf7, 0x00, 
@@ -660,7 +688,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0034{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0035{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0035 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x07, 0xff, 0xfc, 0x00, 
     0x07, 0x70, 0x00, 0x00, 
@@ -689,7 +718,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0035{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0036{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0036 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x7f, 0xf8, 0x00, 
     0x04, 0xb1, 0x0c, 0x20, 
@@ -718,7 +748,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0036{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0037{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0037 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x3f, 0xff, 0xff, 0x20, 
     0x00, 0x00, 0x4b, 0x00, 
@@ -747,7 +778,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0037{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0038{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0038 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x02, 0xdf, 0xe4, 0x00, 
     0x0c, 0x70, 0x6d, 0x10, 
@@ -776,7 +808,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0038{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0039{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0039 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x03, 0xdf, 0xb1, 0x00, 
     0x0c, 0x40, 0x89, 0x00, 
@@ -805,7 +838,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0039{{
     // ∙∙∙
     // ∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x003a{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x003a GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -834,7 +868,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x003a{{
     // ∙▓░
     // ░▒∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x003b{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x003b GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -863,7 +898,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x003b{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x003c{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x003c GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -892,7 +928,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x003c{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x003d{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x003d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -921,7 +958,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x003d{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x003e{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x003e GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -950,7 +988,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x003e{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x003f{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x003f GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x0c, 0xff, 0x90, 
     0x3b, 0x03, 0xe2, 
@@ -979,7 +1018,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x003f{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x0040{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x0040 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x3d, 0xff, 0x70, 0x00, 
     0x04, 0x91, 0x00, 0x7b, 0x00, 
@@ -1008,7 +1048,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x0040{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0041{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0041 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x0e, 0x70, 0x00, 
     0x00, 0x7f, 0xc0, 0x00, 
@@ -1037,7 +1078,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0041{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0042{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0042 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x4f, 0xff, 0xb0, 
     0x4c, 0x02, 0xe4, 
@@ -1066,7 +1108,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0042{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0043{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0043 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x7f, 0xfd, 0x10, 
     0x07, 0xb1, 0x08, 0x90, 
@@ -1095,7 +1138,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0043{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0044{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0044 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x4f, 0xff, 0xe4, 0x00, 
     0x4c, 0x00, 0x6e, 0x20, 
@@ -1124,7 +1168,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0044{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0045{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0045 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x3f, 0xff, 0xf4, 
     0x3c, 0x10, 0x00, 
@@ -1153,7 +1198,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0045{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0046{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0046 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x3f, 0xff, 0xf4, 
     0x3c, 0x10, 0x00, 
@@ -1182,7 +1228,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0046{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0047{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0047 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0xaf, 0xfb, 0x00, 
     0x0c, 0x70, 0x0c, 0x70, 
@@ -1211,7 +1258,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0047{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0048{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0048 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x3c, 0x10, 0x0a, 0x70, 
     0x3c, 0x10, 0x0a, 0x70, 
@@ -1240,7 +1288,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0048{{
     // ∙∙
     // ∙∙
 //-----------------------
-static const etl::array<const uint8_t, 11> image_data_Small_0x0049{{
+static const etl::array<const uint8_t, 11>
+    image_data_Small_0x0049 GLYPH_STORAGE {{
     0x00, 
     0x79, 
     0x79, 
@@ -1269,7 +1318,8 @@ static const etl::array<const uint8_t, 11> image_data_Small_0x0049{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x004a{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x004a GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x0a, 0x70, 
     0x00, 0x0a, 0x70, 
@@ -1298,7 +1348,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x004a{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x004b{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x004b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x3c, 0x10, 0x4b, 0x10, 
     0x3c, 0x13, 0xc1, 0x00, 
@@ -1327,7 +1378,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x004b{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x004c{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x004c GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x3c, 0x10, 0x00, 
     0x3c, 0x10, 0x00, 
@@ -1356,7 +1408,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x004c{{
     // ∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x004d{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x004d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x4d, 0x10, 0x00, 0xc7, 
     0x4f, 0x70, 0x03, 0xf7, 
@@ -1385,7 +1438,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x004d{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x004e{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x004e GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x4f, 0x20, 0x0a, 0x70, 
     0x4f, 0xc0, 0x0a, 0x70, 
@@ -1414,7 +1468,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x004e{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x004f{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x004f GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x06, 0xff, 0xe4, 0x00, 
     0x4f, 0x40, 0x6f, 0x20, 
@@ -1443,7 +1498,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x004f{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0050{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0050 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x3f, 0xff, 0xd1, 
     0x3c, 0x10, 0xa9, 
@@ -1472,7 +1528,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0050{{
     // ∙∙∙░█░∙∙
     // ∙∙∙∙░██▓
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0051{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0051 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0xdf, 0xe4, 0x00, 
     0x0c, 0x70, 0x6c, 0x10, 
@@ -1501,7 +1558,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0051{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0052{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0052 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x4f, 0xff, 0x80, 
     0x4c, 0x02, 0xd2, 
@@ -1530,7 +1588,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0052{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0053{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0053 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x06, 0xff, 0xb1, 
     0x3e, 0x40, 0xa7, 
@@ -1559,7 +1618,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0053{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0054{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0054 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0xff, 0xff, 0xff, 0x20, 
     0x00, 0x79, 0x00, 0x00, 
@@ -1588,7 +1648,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0054{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0055{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0055 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x4c, 0x00, 0x0a, 0x70, 
     0x4c, 0x00, 0x0a, 0x70, 
@@ -1617,7 +1678,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0055{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0056{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0056 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0xc7, 0x00, 0x03, 0xc0, 
     0x7c, 0x00, 0x07, 0x90, 
@@ -1646,7 +1708,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0056{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x0057{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x0057 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x4c, 0x00, 0x7c, 0x00, 0x77, 
     0x0c, 0x10, 0xac, 0x10, 0xb2, 
@@ -1675,7 +1738,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x0057{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0058{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0058 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x7b, 0x00, 0x4b, 
     0x0c, 0x40, 0xc2, 
@@ -1704,7 +1768,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0058{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0059{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0059 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0xa9, 0x00, 0x4b, 
     0x0e, 0x40, 0xc4, 
@@ -1733,7 +1798,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0059{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x005a{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x005a GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x4f, 0xff, 0xf7, 
     0x00, 0x00, 0xd2, 
@@ -1762,7 +1828,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x005a{{
     // ∙▓░∙∙
     // ∙▓██∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x005b{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x005b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x0a, 0xfd, 0x10, 
     0x0a, 0x40, 0x00, 
@@ -1791,7 +1858,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x005b{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x005c{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x005c GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0xc4, 0x00, 0x00, 
     0x4b, 0x00, 0x00, 
@@ -1820,7 +1888,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x005c{{
     // ∙∙░▓∙
     // ∙▓█▓∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x005d{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x005d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x0c, 0xfc, 0x00, 
     0x00, 0x3b, 0x00, 
@@ -1849,7 +1918,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x005d{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x005e{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x005e GLYPH_STORAGE {{
     0x07, 0xba, 0xc0, 
     0x0b, 0x20, 0xa2, 
     0x00, 0x00, 0x00, 
@@ -1878,7 +1948,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x005e{{
     // ▒█████▓
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x005f{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x005f GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -1907,7 +1978,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x005f{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0060{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0060 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x02, 0xc2, 0x00, 
     0x00, 0x3b, 0x00, 
@@ -1936,7 +2008,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0060{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0061{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0061 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -1965,7 +2038,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0061{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0062{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0062 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x4c, 0x00, 0x00, 
     0x4c, 0x00, 0x00, 
@@ -1994,7 +2068,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0062{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0063{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0063 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2023,7 +2098,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0063{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0064{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0064 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x77, 
     0x00, 0x00, 0x77, 
@@ -2052,7 +2128,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0064{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0065{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0065 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2081,7 +2158,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0065{{
     // ∙∙∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x0066{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x0066 GLYPH_STORAGE {{
     0x00, 0x00, 
     0x03, 0xdd, 
     0x0c, 0x40, 
@@ -2110,7 +2188,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x0066{{
     // ∙▒∙∙▓∙
     // ∙▓██▒∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0067{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0067 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2139,7 +2218,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0067{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0068{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0068 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x3b, 0x00, 0x00, 
     0x3b, 0x00, 0x00, 
@@ -2168,7 +2248,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0068{{
     // ∙∙
     // ∙∙
 //-----------------------
-static const etl::array<const uint8_t, 11> image_data_Small_0x0069{{
+static const etl::array<const uint8_t, 11>
+    image_data_Small_0x0069 GLYPH_STORAGE {{
     0x00, 
     0x79, 
     0x00, 
@@ -2197,7 +2278,8 @@ static const etl::array<const uint8_t, 11> image_data_Small_0x0069{{
     // ∙█░
     // █▓∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x006a{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x006a GLYPH_STORAGE {{
     0x00, 0x00, 
     0x0c, 0x40, 
     0x00, 0x00, 
@@ -2226,7 +2308,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x006a{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x006b{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x006b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x4c, 0x00, 0x00, 
     0x4c, 0x00, 0x00, 
@@ -2255,7 +2338,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x006b{{
     // ∙∙
     // ∙∙
 //-----------------------
-static const etl::array<const uint8_t, 11> image_data_Small_0x006c{{
+static const etl::array<const uint8_t, 11>
+    image_data_Small_0x006c GLYPH_STORAGE {{
     0x00, 
     0x79, 
     0x79, 
@@ -2284,7 +2368,8 @@ static const etl::array<const uint8_t, 11> image_data_Small_0x006c{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x006d{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x006d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -2313,7 +2398,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x006d{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x006e{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x006e GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2342,7 +2428,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x006e{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x006f{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x006f GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2371,7 +2458,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x006f{{
     // ░▓∙∙∙∙
     // ░▓∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0070{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0070 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2400,7 +2488,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0070{{
     // ∙∙∙∙▒▒
     // ∙∙∙∙▒▒
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0071{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0071 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2429,7 +2518,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0071{{
     // ∙∙∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x0072{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x0072 GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -2458,7 +2548,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x0072{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0073{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0073 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2487,7 +2578,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0073{{
     // ∙∙∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 22> image_data_Small_0x0074{{
+static const etl::array<const uint8_t, 22>
+    image_data_Small_0x0074 GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x0b, 0x20, 
@@ -2516,7 +2608,8 @@ static const etl::array<const uint8_t, 22> image_data_Small_0x0074{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0075{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0075 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2545,7 +2638,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0075{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0076{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0076 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2574,7 +2668,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0076{{
     // ∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x0077{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x0077 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -2603,7 +2698,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x0077{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0078{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0078 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2632,7 +2728,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0078{{
     // ∙∙▓░∙∙
     // ▓█▓∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x0079{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x0079 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2661,7 +2758,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x0079{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x007a{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x007a GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2690,7 +2788,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x007a{{
     // ∙∙▓∙∙
     // ∙∙▒▓∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x007b{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x007b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0xcc, 0x00, 
     0x00, 0xc1, 0x00, 
@@ -2719,7 +2818,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x007b{{
     // ∙∙
     // ∙∙
 //-----------------------
-static const etl::array<const uint8_t, 11> image_data_Small_0x007c{{
+static const etl::array<const uint8_t, 11>
+    image_data_Small_0x007c GLYPH_STORAGE {{
     0x00, 
     0x49, 
     0x49, 
@@ -2748,7 +2848,8 @@ static const etl::array<const uint8_t, 11> image_data_Small_0x007c{{
     // ∙∙▓∙∙
     // ∙▓▓∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x007d{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x007d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x0a, 0xd1, 0x00, 
     0x00, 0xb2, 0x00, 
@@ -2777,7 +2878,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x007d{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x007e{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x007e GLYPH_STORAGE {{
     0x3f, 0xd4, 0x08, 
     0x00, 0x0a, 0xf2, 
     0x00, 0x00, 0x00, 
@@ -2806,7 +2908,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x007e{{
     // ∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 44> image_data_Small_0x2022{{
+static const etl::array<const uint8_t, 44>
+    image_data_Small_0x2022 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -2835,7 +2938,8 @@ static const etl::array<const uint8_t, 44> image_data_Small_0x2022{{
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x2023{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x2023 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -2864,7 +2968,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x2023{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x2190{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x2190 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -2893,7 +2998,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x2190{{
     // ∙∙▓∙∙
     // ∙∙▓∙∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x2191{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x2191 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x04, 0xf7, 0x00, 
@@ -2922,7 +3028,8 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x2191{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 55> image_data_Small_0x2192{{
+static const etl::array<const uint8_t, 55>
+    image_data_Small_0x2192 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -2951,7 +3058,8 @@ static const etl::array<const uint8_t, 55> image_data_Small_0x2192{{
     // ░▓▓▓▒
     // ∙░█▒∙
 //-----------------------
-static const etl::array<const uint8_t, 33> image_data_Small_0x2193{{
+static const etl::array<const uint8_t, 33>
+    image_data_Small_0x2193 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0xa1, 0x00, 
@@ -2969,7 +3077,7 @@ static const etl::array<const uint8_t, 33> image_data_Small_0x2193{{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Character definitions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const etl::array<Gfx::Font::Character, 101> Small_Chars{{
+static const etl::array<Gfx::Font::Character, 101> Small_Chars CHARDEF_STORAGE{{
 
     // character: ' '
     {

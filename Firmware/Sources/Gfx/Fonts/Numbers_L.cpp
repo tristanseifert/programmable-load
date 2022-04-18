@@ -32,6 +32,13 @@
 
 
 
+// Storage and visibility attributes for glyphs
+#define GLYPH_STORAGE __attribute__((section(".gfxdata.glyphs")))\
+    __attribute__((visibility("hidden")))
+// Storage and visibility attributes for character descriptors
+#define CHARDEF_STORAGE __attribute__((section(".gfxdata.chardef")))\
+    __attribute__((visibility("hidden")))
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Character data
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +71,8 @@
     // ∙∙∙∙∙
     // ∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x0020{{
+static const etl::array<const uint8_t, 72>
+    image_data_Numbers_L_0x0020 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -119,7 +127,8 @@ static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x0020{{
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x0025{{
+static const etl::array<const uint8_t, 168>
+    image_data_Numbers_L_0x0025 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -174,7 +183,8 @@ static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x0025{{
     // ∙▒∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 48> image_data_Numbers_L_0x002c{{
+static const etl::array<const uint8_t, 48>
+    image_data_Numbers_L_0x002c GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -229,7 +239,8 @@ static const etl::array<const uint8_t, 48> image_data_Numbers_L_0x002c{{
     // ∙∙∙∙
     // ∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 48> image_data_Numbers_L_0x002e{{
+static const etl::array<const uint8_t, 48>
+    image_data_Numbers_L_0x002e GLYPH_STORAGE {{
     0x00, 0x00, 
     0x00, 0x00, 
     0x00, 0x00, 
@@ -284,7 +295,8 @@ static const etl::array<const uint8_t, 48> image_data_Numbers_L_0x002e{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0030{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0030 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -339,7 +351,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0030{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x0031{{
+static const etl::array<const uint8_t, 72>
+    image_data_Numbers_L_0x0031 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -394,7 +407,8 @@ static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x0031{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0032{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0032 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -449,7 +463,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0032{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0033{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0033 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -504,7 +519,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0033{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0034{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0034 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -559,7 +575,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0034{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0035{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0035 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -614,7 +631,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0035{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0036{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0036 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -669,7 +687,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0036{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0037{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0037 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -724,7 +743,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0037{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0038{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0038 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -779,7 +799,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0038{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0039{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0039 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -834,7 +855,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0039{{
     // ∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 144> image_data_Numbers_L_0x0041{{
+static const etl::array<const uint8_t, 144>
+    image_data_Numbers_L_0x0041 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -889,7 +911,8 @@ static const etl::array<const uint8_t, 144> image_data_Numbers_L_0x0041{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0043{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0043 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -944,7 +967,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0043{{
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x004d{{
+static const etl::array<const uint8_t, 168>
+    image_data_Numbers_L_0x004d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -999,7 +1023,8 @@ static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x004d{{
     // ∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0056{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x0056 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1054,7 +1079,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x0056{{
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x0057{{
+static const etl::array<const uint8_t, 168>
+    image_data_Numbers_L_0x0057 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1109,7 +1135,8 @@ static const etl::array<const uint8_t, 168> image_data_Numbers_L_0x0057{{
     // ∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x006b{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x006b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1164,7 +1191,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x006b{{
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 192> image_data_Numbers_L_0x006d{{
+static const etl::array<const uint8_t, 192>
+    image_data_Numbers_L_0x006d GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1219,7 +1247,8 @@ static const etl::array<const uint8_t, 192> image_data_Numbers_L_0x006d{{
     // ∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 96> image_data_Numbers_L_0x0073{{
+static const etl::array<const uint8_t, 96>
+    image_data_Numbers_L_0x0073 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 
@@ -1274,7 +1303,8 @@ static const etl::array<const uint8_t, 96> image_data_Numbers_L_0x0073{{
     // ∙∙∙∙∙∙
     // ∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x00b0{{
+static const etl::array<const uint8_t, 72>
+    image_data_Numbers_L_0x00b0 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 
@@ -1329,7 +1359,8 @@ static const etl::array<const uint8_t, 72> image_data_Numbers_L_0x00b0{{
     // ∙▓█∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x00b5{{
+static const etl::array<const uint8_t, 120>
+    image_data_Numbers_L_0x00b5 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1384,7 +1415,8 @@ static const etl::array<const uint8_t, 120> image_data_Numbers_L_0x00b5{{
     // ∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 144> image_data_Numbers_L_0x03a9{{
+static const etl::array<const uint8_t, 144>
+    image_data_Numbers_L_0x03a9 GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1439,7 +1471,8 @@ static const etl::array<const uint8_t, 144> image_data_Numbers_L_0x03a9{{
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙
     // ∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙∙
 //-----------------------
-static const etl::array<const uint8_t, 240> image_data_Numbers_L_0x203b{{
+static const etl::array<const uint8_t, 240>
+    image_data_Numbers_L_0x203b GLYPH_STORAGE {{
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1470,7 +1503,7 @@ static const etl::array<const uint8_t, 240> image_data_Numbers_L_0x203b{{
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Character definitions
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-static const etl::array<Gfx::Font::Character, 26> Numbers_L_Chars{{
+static const etl::array<Gfx::Font::Character, 26> Numbers_L_Chars CHARDEF_STORAGE{{
 
     // character: ' '
     {
