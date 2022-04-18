@@ -23,9 +23,11 @@ enum class WatchdogCheckin: uintptr_t {
     Control                             = (1 << 0),
     /// User interface task
     Pinball                             = (1 << 1),
+    /// Temperature/fan control loop
+    Thermal                             = (1 << 2),
 
     /// All mandatory checkin bits
-    Mandatory                           = (Control | Pinball),
+    Mandatory                           = (Control | Pinball | Thermal),
 };
 ENUM_FLAGS_EX(WatchdogCheckin, uintptr_t);
 
@@ -140,6 +142,8 @@ class Task {
 
         /// Watchdog checkin bits
         WatchdogCheckin wdgCheckin{WatchdogCheckin::None};
+        /// Total number of successful watchdog checkins
+        size_t checkins{0};
 
     private:
         /**

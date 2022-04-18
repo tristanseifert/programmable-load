@@ -1,6 +1,7 @@
 #include "Task.h"
 #include "Hardware.h"
 
+#include "App/Main/Task.h"
 #include "Drivers/I2CBus.h"
 #include "Drivers/I2CDevice/EMC2101.h"
 #include "Log/Logger.h"
@@ -87,6 +88,8 @@ Task::~Task() {
 void Task::main() {
     BaseType_t ok;
     int err;
+
+    Logger::Trace("thermal: %s", "start message loop");
 
     /*
      * Process the main loop.
@@ -205,18 +208,8 @@ void Task::main() {
             xSemaphoreGive(this->fansLock);
         }
 
-        // XXX: testing
-        int speed;
-        if(this->readFanSpeed(0, speed)) {
-            Logger::Notice("Mean temp: %d C, fan 0 %d", static_cast<int>(meanTemp), speed);
-        }
-
-        float temp;
-        if(this->readTemperatureSensor(0, temp)) {
-            Logger::Notice("Temp 0: %d", (int) temp);
-        }
-
         // finished this iteration, wait for next
+        App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Thermal);
         vTaskDelay(pdMS_TO_TICKS(kLoopInterval));
     }
 }

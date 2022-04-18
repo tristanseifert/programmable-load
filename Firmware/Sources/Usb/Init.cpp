@@ -30,11 +30,11 @@ void UsbStack::Init() {
             Drivers::ClockMgmt::Clock::Usb);
 
     // set up hardware first
-    Logger::Trace("USB init %s", "hardware");
+    Logger::Trace("USB: %s", "init hardware");
     InitHardware();
 
     // then set up the driver task
-    Logger::Trace("USB init %s", "task");
+    Logger::Trace("USB: %s", "init task");
     Task::Start();
 }
 

@@ -103,6 +103,19 @@ class Hw {
         Drivers::Gpio::Port::PortB, 10
     };
 
+    /// Status LED, red color
+    constexpr static const Drivers::Gpio::Pin kStatusLedR{
+        Drivers::Gpio::Port::PortB, 5
+    };
+    /// Status LED, green color
+    constexpr static const Drivers::Gpio::Pin kStatusLedG{
+        Drivers::Gpio::Port::PortB, 4
+    };
+    /// Status LED, blue color
+    constexpr static const Drivers::Gpio::Pin kStatusLedB{
+        Drivers::Gpio::Port::PortA, 3
+    };
+
     /// Constants used by the encoder state machine
     enum EncoderState: uint8_t {
         Initial                         = 0,
@@ -181,12 +194,15 @@ class Hw {
 
         static void SetPowerLight(const PowerLightMode mode);
 
+        static void SetStatusLed(const uint8_t color);
+
     private:
         static void InitDisplaySpi();
         static void InitPowerButton();
         static void InitEncoder();
         static void InitBeeper();
         static void InitMisc();
+        static void InitStatus();
 
         static void AdvanceEncoderState(long *);
 

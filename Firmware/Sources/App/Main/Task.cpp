@@ -49,11 +49,11 @@ void Task::main() {
     this->initHardware();
     this->initNorFs();
 
-    // configure communication interfaces
-    UsbStack::Init();
-
     // start additional app components
     this->startApp();
+
+    // configure communication interfaces
+    UsbStack::Init();
 
     // start processing messages
     vTaskPrioritySet(nullptr, kRuntimePriority);
@@ -130,10 +130,8 @@ void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init io i2c bus mux");
     Hw::InitIoBusMux(ioBusses);
 
-    Logger::Trace("IO busses: %p %p", ioBusses[0], ioBusses[1]);
-
     // initialize user interface IO: display SPI, power button, encoder, beeper
-    Logger::Debug("MainTask: %s", "init io spi");
+    Logger::Debug("MainTask: %s", "init pinball hw");
     Pinball::Hw::Init(ioBusses);
 
     // TODO: initialize NOR flash SPI
@@ -226,6 +224,12 @@ void Task::handleWatchdog() {
     // check it
     if((current & WatchdogCheckin::Mandatory) == WatchdogCheckin::Mandatory) {
         Drivers::Watchdog::Pet();
+
+        if((this->checkins++) & 1) {
+            App::Pinball::Hw::SetStatusLed(0b010);
+        } else {
+            App::Pinball::Hw::SetStatusLed(0b100);
+        }
     } else {
         Logger::Panic("!!! WATCHDOG CHECKIN FAILURE: %08x (expected %08x)", current,
                 WatchdogCheckin::Mandatory);

@@ -58,8 +58,8 @@ void Hw::Init(const etl::span<Drivers::I2CBus *, 2> &busses) {
     gRearI2C = busses[1];
 
     InitDisplaySpi();
+    InitStatus();
     InitPowerButton();
-    InitMisc();
     InitEncoder();
     InitBeeper();
     InitMisc();
@@ -143,6 +143,8 @@ void Hw::InitDisplaySpi() {
  *
  * - Switch input: PB31 (active low)
  * -   Switch LED: PA27
+ *
+ * @TODO Update this for the rev2 pcb (the LED was changed)
  */
 void Hw::InitPowerButton() {
     /*
@@ -266,6 +268,41 @@ void Hw::InitMisc() {
     });
 }
 
+/**
+ * @brief Initialize the on-board RGB status LED
+ *
+ * The following IOs are configured:
+ *
+ * - STATUS_R: PB05
+ * - STATUS_G: PB04
+ * - STATUS_B: PA03
+ *
+ * Pulling them low will illuminate the LED.
+ */
+void Hw::InitStatus() {
+    static const Drivers::Gpio::PinConfig kLedOutput{
+        .mode = Drivers::Gpio::Mode::DigitalOut,
+        .initialOutput = 1,
+    };
+
+    Drivers::Gpio::ConfigurePin(kStatusLedR, kLedOutput);
+    Drivers::Gpio::ConfigurePin(kStatusLedG, kLedOutput);
+    Drivers::Gpio::ConfigurePin(kStatusLedB, kLedOutput);
+}
+
+/**
+ * @brief Sets the status LED indicator
+ *
+ * This is an RGB LED on the processor board. It's intended as a quick diagnostic aid; therefore
+ * no effort has gone towards making this work with PWM, for example.
+ *
+ * @param color Color to set the status indicator; bit order is 0b0000'0RGB
+ */
+void Hw::SetStatusLed(const uint8_t color) {
+    Drivers::Gpio::SetOutputState(kStatusLedR, !(color & 0b100));
+    Drivers::Gpio::SetOutputState(kStatusLedG, !(color & 0b010));
+    Drivers::Gpio::SetOutputState(kStatusLedB, !(color & 0b001));
+}
 
 
 /**

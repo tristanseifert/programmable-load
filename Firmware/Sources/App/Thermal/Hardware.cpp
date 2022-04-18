@@ -37,12 +37,4 @@ void Hw::InitFanController(Drivers::I2CBus *bus) {
 
     // apply configuration
     gFanController->setFanMode(EMC2101::FanMode::Manual);
-
-    float temp;
-    int err = gFanController->getInternalTemp(temp);
-    if(!err) {
-        Logger::Debug("Internal temp: %u °C", (unsigned int) temp);
-    } else {
-        Logger::Warning("Failed to read internal temp: %d", err);
-    }
 }

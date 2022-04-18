@@ -235,7 +235,7 @@ static void DrawMenuRow(Gfx::Framebuffer &fb, const Gfx::Rect bounds, const size
             // Voltage sense mode
             case 0: {
                 const auto text = App::Control::Task::GetIsExternalSenseActive() ? "External" :
-                    "Internal";
+                    "Load Input";
                 Gfx::Font::gGeneral_16_Condensed.draw(text, fb, titleBounds,
                         FontRenderFlags::HAlignRight | baseFlags);
                 break;
