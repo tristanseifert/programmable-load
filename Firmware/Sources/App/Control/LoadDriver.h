@@ -79,6 +79,33 @@ class LoadDriver {
         virtual int setEnabled(const bool isEnabled) = 0;
 
 
+
+        /**
+         * @brief Get maximum input voltage
+         *
+         * Query the driver for the maximum input voltage. This may vary based on the configuration
+         * of the load.
+         *
+         * @param outVoltage Variable to receive maximum voltage (in mV)
+         *
+         * @return 0 on success, error code otherwise
+         */
+        virtual int getMaxInputVoltage(uint32_t &outVoltage) = 0;
+
+        /**
+         * @brief Get maximum current
+         *
+         * Query the driver for the maximum allowed current. This may vary based on the
+         * configuration of the load.
+         *
+         * @param outCurrent Variable to receive maximum current (in mA)
+         *
+         * @return 0 on success, error code otherwise
+         */
+        virtual int getMaxInputCurrent(uint32_t &outCurrent) = 0;
+
+
+
         /**
          * @brief Read input voltage
          *

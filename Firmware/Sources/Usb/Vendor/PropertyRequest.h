@@ -25,6 +25,8 @@ class PropertyRequest {
             HwVersion                   = 0x02,
             HwInventory                 = 0x03,
             SwVersion                   = 0x04,
+            MaxVoltage                  = 0x05,
+            MaxCurrent                  = 0x06,
 
             /// Highest value for an invalid property id
             MaxPropertyId,

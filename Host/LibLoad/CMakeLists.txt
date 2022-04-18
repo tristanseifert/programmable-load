@@ -13,7 +13,7 @@ add_library(libload STATIC
 target_include_directories(libload PUBLIC Includes)
 target_include_directories(libload PRIVATE Sources)
 
-target_link_libraries(libload PRIVATE nlohmann_json::nlohmann_json fmt::fmt-header-only)
+target_link_libraries(libload PRIVATE fmt::fmt-header-only)
 
 target_include_directories(libload PRIVATE ${LIBUSB_1_INCLUDE_DIRS})
 target_link_libraries(libload PRIVATE ${LIBUSB_1_LIBRARIES})

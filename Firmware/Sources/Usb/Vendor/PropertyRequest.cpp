@@ -4,6 +4,8 @@
 #include "Log/Logger.h"
 #include "Util/HwInfo.h"
 
+#include "App/Control/Task.h"
+
 #include <cbor.h>
 #include <string.h>
 #include <etl/algorithm.h>
@@ -254,6 +256,21 @@ int PropertyRequest::GetSingleProperty(const Property what, CborEncoder *valueMa
             snprintf(gStringBuf, sizeof(gStringBuf), "%s/%s (%s)", gBuildInfo.gitBranch,
                     gBuildInfo.gitHash, gBuildInfo.buildType);
             return cbor_encode_text_stringz(valueMap, gStringBuf);
+
+        case Property::MaxVoltage: {
+            const auto voltage = App::Control::Task::GetMaxInputVoltage();
+            if(voltage != -1) {
+                return cbor_encode_uint(valueMap, voltage);
+            }
+            break;
+        }
+        case Property::MaxCurrent: {
+            const auto current = App::Control::Task::GetMaxInputCurrent();
+            if(current != -1) {
+                return cbor_encode_uint(valueMap, current);
+            }
+            break;
+        }
 
         // if we don't know the type, encode an 'undefined' value
         default:

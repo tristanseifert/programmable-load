@@ -6,10 +6,10 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <mutex>
 
-#include <nlohmann/json.hpp>
 #include <cborg/Cbor.h>
 
 namespace LibLoad::Internal {
@@ -53,24 +53,43 @@ class DeviceImpl: public LibLoad::Device {
         }
 
         /**
-         * @brief Read a single property as a string
+         * @brief Read a single property as an unsigned integer
          */
-        bool propertyRead(const Property key, std::string &outValue) override {
-            nlohmann::json value;
-            this->propertyGet(key, value);
-
-            if(!value.is_null()) {
-                value.get_to(outValue);
+        bool propertyRead(const Property key, unsigned int &outValue) override {
+            uint32_t temp{0};
+            auto val = this->propertyGet(key);
+            if(val.getUnsigned(&temp)) {
+                outValue = temp;
                 return true;
             }
-
             return false;
         }
 
-    private:
-        bool propertyGet(const Property key, nlohmann::json &outValue);
+        /**
+         * @brief Read a single property as a signed integer
+         */
+        bool propertyRead(const Property key, int &outValue) override {
+            int32_t temp{0};
+            auto val = this->propertyGet(key);
+            if(val.getNegative(&temp)) {
+                outValue = temp;
+                return true;
+            }
+            return false;
+        }
 
-        void writeCborMessage(const Endpoint type, const nlohmann::json &payload);
+        /**
+         * @brief Read a single property as a string
+         */
+        bool propertyRead(const Property key, std::string &outValue) override {
+            auto val = this->propertyGet(key);
+            return val.getString(outValue);
+        }
+
+    private:
+        Cborg propertyGet(const Property key);
+
+        void writeCborMessage(const Endpoint type, const std::function<Cbore(Cbore)> &encoder);
         void readCborMessage(Cborg &message);
 
     private:
@@ -95,7 +114,9 @@ class DeviceImpl: public LibLoad::Device {
         std::shared_ptr<Internal::DeviceTransport> transport;
 
         /// Receive message buffer
-        std::array<uint8_t, kMaxPacketSize> buffer;
+        std::array<uint8_t, kMaxPacketSize> rxBuffer;
+        /// Send message (payload) buffer (used for CBOR serialization)
+        std::array<uint8_t, kMaxPacketSize> txBuffer;
 };
 }
 

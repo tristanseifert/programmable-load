@@ -54,6 +54,17 @@ class DumbLoadDriver: public LoadDriver {
         int readInputVoltage(uint32_t &outVoltage) override;
         int setExternalVSense(const bool isExternal) override;
 
+        /// Return the maximum input voltage we read from EEPROM during initialization
+        int getMaxInputVoltage(uint32_t &outVoltage) override {
+            outVoltage = this->maxVoltage;
+            return 0;
+        }
+        /// Return the maximum input current we read from EEPROM during initialization
+        int getMaxInputCurrent(uint32_t &outCurrent) override {
+            outCurrent = this->maxCurrent;
+            return 0;
+        }
+
     private:
         /**
          * @brief Set the state of the LED indicator

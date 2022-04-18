@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include <fmt/format.h>
-#include <nlohmann/json.hpp>
 
 using namespace LibLoad::Internal;
 
@@ -15,39 +14,26 @@ using namespace LibLoad::Internal;
  * the caller.
  *
  * @param key Property id to query
- * @param outValue JSON object to receive the property value
  *
  * @return Whether the property was read (true) or not
  */
-bool DeviceImpl::propertyGet(const Property key, nlohmann::json &outValue) {
-    // send the request
-    nlohmann::json req{
-        {"get", {static_cast<unsigned int>(key)}}
-    };
+Cborg DeviceImpl::propertyGet(const Property key) {
+    std::lock_guard lg(this->lock);
 
-    this->writeCborMessage(Endpoint::PropertyRequest, req);
+    // send the request
+    this->writeCborMessage(Endpoint::PropertyRequest, [key](auto encoder) {
+        return encoder.map()
+            .key("get").array()
+                .item(static_cast<unsigned int>(key))
+            .end()
+        .end();
+    });
 
     // read response
     Cborg response;
     this->readCborMessage(response);
 
-    auto value = response.find("get").find(static_cast<int32_t>(key));
-    switch(value.getType()) {
-        case CborBase::TypeString: {
-            std::string str;
-            if(value.getString(str)) {
-                outValue = str;
-                return true;
-            }
-            break;
-        }
-
-        default:
-            throw std::runtime_error(fmt::format("unhandled property type {}", value.getType()));
-    }
-
-    // failed to decode or read the property
-    return false;
+    return response.find("get").find(static_cast<int32_t>(key));
 }
 
 /**
@@ -57,12 +43,20 @@ bool DeviceImpl::propertyGet(const Property key, nlohmann::json &outValue) {
  * value.
  *
  * @param type Endpoint type to receive the message
- * @param payload A JSON object to encode as the payload of the message
+ * @param encoder Function to invoke to encode the message payload. This should return the
+ *        finalized CBOR encoder when done.
  *
  * @remark You should be holding the device lock when invoking this
  */
-void DeviceImpl::writeCborMessage(const Endpoint type, const nlohmann::json &payload) {
-    std::vector<uint8_t> encoded = nlohmann::json::to_cbor(payload);
+void DeviceImpl::writeCborMessage(const Endpoint type,
+        const std::function<Cbore(Cbore)> &encoder) {
+    // set up CBOR encoder and invoke the user function to encode into it
+    Cbore cbor(this->txBuffer.data(), this->txBuffer.size());
+    cbor = encoder(cbor);
+
+    // send it
+    std::span<const uint8_t> encoded(this->txBuffer.begin(),
+            this->txBuffer.begin() + cbor.getLength());
     this->transport->write(static_cast<uint8_t>(type), encoded);
 }
 
@@ -78,14 +72,13 @@ void DeviceImpl::writeCborMessage(const Endpoint type, const nlohmann::json &pay
  */
 void DeviceImpl::readCborMessage(Cborg &message) {
     // receive a message
-    const auto received = this->transport->read(this->buffer);
+    const auto received = this->transport->read(this->rxBuffer);
     if(!received) {
         return;
     }
 
     // try to decode it
-    //message = nlohmann::json::from_cbor(payload);
-    message = Cborg(this->buffer.data(), received);
+    message = Cborg(this->rxBuffer.data(), received);
 }
 
 

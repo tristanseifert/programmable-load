@@ -9,9 +9,9 @@
 
 #include <etl/string_view.h>
 
-namespace App::Control {
-class LoadDriver;
+#include "LoadDriver.h"
 
+namespace App::Control {
 class Task {
     friend void Start();
 
@@ -99,6 +99,46 @@ class Task {
          */
         inline static auto GetInputCurrent() {
             return gShared->inputCurrent;
+        }
+
+        /**
+         * @brief Get maximum input voltage
+         *
+         * @return Maximum allowed input voltage (mV) or -1 if error
+         */
+        inline static uint32_t GetMaxInputVoltage() {
+            uint32_t value{0};
+
+            if(!gShared->driver) {
+                return -1;
+            }
+
+            const auto err = gShared->driver->getMaxInputVoltage(value);
+            if(!err) {
+                return value;
+            }
+
+            return -1;
+        }
+
+        /**
+         * @brief Get maximum input current
+         *
+         * @return Maximum allowed load current (mA) or -1 if error
+         */
+        inline static uint32_t GetMaxInputCurrent() {
+            uint32_t value{0};
+
+            if(!gShared->driver) {
+                return -1;
+            }
+
+            const auto err = gShared->driver->getMaxInputCurrent(value);
+            if(!err) {
+                return value;
+            }
+
+            return -1;
         }
 
         /**

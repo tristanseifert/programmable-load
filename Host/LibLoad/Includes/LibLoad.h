@@ -46,6 +46,8 @@ struct Device {
         HwVersion                       = 0x02,
         HwInventory                     = 0x03,
         SwVersion                       = 0x04,
+        MaxVoltage                      = 0x05,
+        MaxCurrent                      = 0x06,
     };
 
     virtual ~Device() = default;
@@ -62,9 +64,9 @@ struct Device {
     /// Read a property (as a string value)
     virtual bool propertyRead(const Property id, std::string &outValue) = 0;
     /// Read a property (as a signed integer value)
-    //virtual bool propertyRead(const Property id, int &outValue) = 0;
+    virtual bool propertyRead(const Property id, int &outValue) = 0;
     /// Read a property (as an unsigned integer value)
-    //virtual bool propertyRead(const Property id, unsigned int &outValue) = 0;
+    virtual bool propertyRead(const Property id, unsigned int &outValue) = 0;
     /// Read a property (as a floating point)
     //virtual bool propertyRead(const Property id, double &outValue) = 0;
 };
