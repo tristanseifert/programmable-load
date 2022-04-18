@@ -5,6 +5,7 @@
 #include "FrontIo/HmiDriver.h"
 #include "Screens/Screens.h"
 
+#include "App/Main/Task.h"
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
 #include "Drivers/Spi.h"
@@ -22,9 +23,6 @@
 #include <vendor/sam.h>
 
 using namespace App::Pinball;
-
-StaticTask_t Task::gTcb;
-StackType_t Task::gStack[kStackSize];
 
 Task *Task::gShared{nullptr};
 
@@ -47,7 +45,7 @@ Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
-    }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
+    }, kName.data(), kStackSize, this, kPriority, this->stack, &this->tcb);
 }
 
 /**
@@ -60,6 +58,17 @@ void Task::main() {
     int err;
     BaseType_t ok;
     uint32_t note;
+
+    // check in with watchdog and set up our redraw timer
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
+
+    this->redrawTimer = xTimerCreateStatic("Forced Redraw",
+        // one-shot timer mode (we'll reload it as needed)
+        pdMS_TO_TICKS(kRedrawTimerInterval), pdFALSE,
+        this, [](auto timer) {
+            Task::NotifyTask(Task::TaskNotifyBits::RedrawUI);
+        }, &this->redrawTimerStorage);
+    REQUIRE(this->redrawTimer, "pinball: %s", "failed to allocate timer");
 
     /*
      * Initialize front panel hardware
@@ -165,7 +174,13 @@ void Task::main() {
 
             err = Display::Transfer();
             REQUIRE(!err, "pinball: %s (%d)", "failed to transfer display buffer", err);
+
+            // reset redraw timer, but don't block on it
+            xTimerReset(this->redrawTimer, 0);
         }
+
+        // check in with the watchdog
+        App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
     }
 }
 
@@ -316,6 +331,7 @@ void Task::doChristmasTreeTest() {
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // now, the indicators
     err = this->frontDriver->setIndicatorState(static_cast<FrontIoDriver::Indicator>(
@@ -325,6 +341,7 @@ void Task::doChristmasTreeTest() {
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // extinguish indicators
     err = this->frontDriver->setIndicatorState(FrontIoDriver::Indicator::None);

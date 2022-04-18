@@ -311,7 +311,7 @@ class HmiDriver: public FrontIoDriver {
          * Select this as high as possible to reduce the performance impact of the timer, but not
          * so high that it would cause too much lag when pressing buttons.
          */
-        constexpr static const size_t kIoPollTimerInterval{250};
+        constexpr static const size_t kIoPollTimerInterval{500};
 };
 }
 

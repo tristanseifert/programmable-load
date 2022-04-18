@@ -90,6 +90,7 @@ add_executable(firmware
     Sources/Drivers/SercomBase.cpp
     Sources/Drivers/Spi.cpp
     Sources/Drivers/TimerCounter.cpp
+    Sources/Drivers/Watchdog.cpp
     Sources/Drivers/I2CDevice/Common.cpp
     Sources/Drivers/I2CDevice/AT24CS32.cpp
     Sources/Drivers/I2CDevice/EMC2101.cpp

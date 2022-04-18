@@ -1,6 +1,7 @@
 #ifndef APP_MAIN_TASK_H
 #define APP_MAIN_TASK_H
 
+#include <bitflags.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -10,6 +11,24 @@
 
 /// Main app task
 namespace App::Main {
+/**
+ * @brief Watchdog checkin bits
+ *
+ * Indicates one of several tasks that check in with the watchdog task.
+ */
+enum class WatchdogCheckin: uintptr_t {
+    None                                = 0,
+
+    /// Control loop and monitoring
+    Control                             = (1 << 0),
+    /// User interface task
+    Pinball                             = (1 << 1),
+
+    /// All mandatory checkin bits
+    Mandatory                           = (Control | Pinball),
+};
+ENUM_FLAGS_EX(WatchdogCheckin, uintptr_t);
+
 /**
  * @brief Main app task
  *
@@ -39,12 +58,21 @@ class Task {
             IoBusInterrupt              = (1 << 0),
 
             /**
+             * @brief Watchdog early warning interrupt
+             *
+             * Indicates the watchdog's early warning interrupt has fired. We'll see if all
+             * required tasks have checked in, and if so, pet the watchdog to avoid a system
+             * reset.
+             */
+            WatchdogWarning             = (1 << 1),
+
+            /**
              * @brief All valid notifications
              *
              * Bitwise OR of all notification values defined. These are in turn all bits that are
              * cleared after waiting for a notification.
              */
-            All                         = (IoBusInterrupt),
+            All                         = (IoBusInterrupt | WatchdogWarning),
         };
 
         /**
@@ -75,6 +103,18 @@ class Task {
                     static_cast<uint32_t>(bits), eSetBits, higherPriorityWoken);
         }
 
+        /**
+         * @brief Perform a watchdog checkin
+         *
+         * Updates the state of the watchdog checkin bitfield to indicate the specified task is
+         * reasonably alive and in control of things.
+         */
+        inline static void CheckIn(const WatchdogCheckin whomst) {
+            __atomic_or_fetch(reinterpret_cast<uintptr_t *>(&gShared->wdgCheckin),
+                    static_cast<uintptr_t>(whomst), __ATOMIC_RELAXED);
+            __DSB();
+        }
+
     private:
         Task();
 
@@ -82,9 +122,10 @@ class Task {
 
         void initHardware();
         void initNorFs();
-        void discoverIoHardware();
-        void discoverDriverHardware();
         void startApp();
+
+        void initWatchdog();
+        void handleWatchdog();
 
     private:
         /**
@@ -96,6 +137,9 @@ class Task {
          * that indicates various events have taken place.
          */
         TaskHandle_t task;
+
+        /// Watchdog checkin bits
+        WatchdogCheckin wdgCheckin{WatchdogCheckin::None};
 
     private:
         /**
@@ -117,9 +161,9 @@ class Task {
         static const constexpr size_t kNotificationIndex{Rtos::TaskNotifyIndex::TaskSpecific};
 
         /// Task information structure
-        static StaticTask_t gTcb;
+        StaticTask_t tcb;
         /// Preallocated stack for the task
-        static StackType_t gStack[kStackSize];
+        StackType_t stack[kStackSize];
         /// Instance of the task class
         static Task *gShared;
 };

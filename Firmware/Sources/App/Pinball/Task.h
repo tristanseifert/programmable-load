@@ -159,6 +159,8 @@ class Task {
     private:
         /// Task handle
         TaskHandle_t task;
+        /// Periodic redraw timer
+        TimerHandle_t redrawTimer;
 
         /// Front IO board driver instance
         FrontIoDriver *frontDriver{nullptr};
@@ -184,11 +186,29 @@ class Task {
         /// Duration to show the version/information screen, in milliseconds
         static const constexpr size_t kShowVersionDuration{5*1000};
 
+        /**
+         * @brief Interval of forced redraws, in milliseconds
+         *
+         * Sets the interval of a timer which forces the display to be redrawn. This guards against
+         * situations where some display controllers might corrupt the graphics memory if sitting
+         * idle for a long time.
+         *
+         * This also ensures that the task gets periodic events, even with no user or display
+         * activity, which in turn ensures the watchdog is kicked.
+         *
+         * @remark This timer is reset any time the screen is redrawn. This means we won't insert
+         *         spurious redraws in the middle of animations or UI, for example.
+         */
+        constexpr static const size_t kRedrawTimerInterval{800};
+
 
         /// Task information structure
-        static StaticTask_t gTcb;
+        StaticTask_t tcb;
         /// Preallocated stack for the task
-        static StackType_t gStack[kStackSize];
+        StackType_t stack[kStackSize];
+
+        /// Redraw timer
+        StaticTimer_t redrawTimerStorage;
 
         /// Shared task instance
         static Task *gShared;

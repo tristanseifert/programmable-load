@@ -100,6 +100,9 @@ DumbLoadDriver::DumbLoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS3
     if(err) {
         Logger::Error("DumbLoadDriver: %s (%d)", "failed to set indicator", err);
     }
+
+    // use internal sense
+    this->setExternalVSense(false);
 }
 
 /**

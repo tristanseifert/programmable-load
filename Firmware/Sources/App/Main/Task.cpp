@@ -7,20 +7,19 @@
 #include "../Thermal/Hardware.h"
 #include "../Thermal/Task.h"
 
+#include "Drivers/Watchdog.h"
 #include "Log/Logger.h"
 #include "Usb/Usb.h"
 
 using namespace App::Main;
 
-StaticTask_t Task::gTcb;
-StackType_t Task::gStack[kStackSize];
 Task *Task::gShared{nullptr};
 
 /**
  * @brief Initialize the app main task.
  */
 void App::Main::Start() {
-    static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(4)));
+    static uint8_t gTaskBuf[sizeof(Task)] __attribute__((aligned(alignof(Task))));
     auto ptr = reinterpret_cast<Task *>(gTaskBuf);
 
     Task::gShared = new (ptr) Task();
@@ -33,7 +32,7 @@ Task::Task() {
     this->task = xTaskCreateStatic([](void *ctx) {
         reinterpret_cast<Task *>(ctx)->main();
         Logger::Panic("what the fuck");
-    }, kName.data(), kStackSize, this, kPriority, gStack, &gTcb);
+    }, kName.data(), kStackSize, this, kPriority, this->stack, &this->tcb);
 }
 
 /**
@@ -49,9 +48,6 @@ void Task::main() {
     // initialize onboard hardware, associated busses, and devices connected thereto
     this->initHardware();
     this->initNorFs();
-
-    this->discoverIoHardware();
-    this->discoverDriverHardware();
 
     // configure communication interfaces
     UsbStack::Init();
@@ -78,6 +74,10 @@ void Task::main() {
                 static_cast<uint32_t>(TaskNotifyBits::All), &note, portMAX_DELAY);
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
+        // feed the watchdog
+        if(note & TaskNotifyBits::WatchdogWarning) {
+            this->handleWatchdog();
+        }
         // service IO bus interrupt
         if(note & TaskNotifyBits::IoBusInterrupt) {
             bool frontIrq{false}, rearIrq{false};
@@ -108,6 +108,9 @@ void Task::main() {
  */
 void Task::initHardware() {
     Logger::Debug("MainTask: %s", "init hw");
+
+    // initialize watchdog
+    this->initWatchdog();
 
     // initialize the driver control bus
     Logger::Debug("MainTask: %s", "init driver i2c");
@@ -161,33 +164,6 @@ void Task::initNorFs() {
 }
 
 /**
- * @brief Discover connected front/rear IO hardware
- *
- * Scan both the front and rear IO I2C bus for devices. This is accomplished by searching for a
- * serial number EEPROM (AT24CS32 type) and attempting to read out its contents, which hold a
- * board id that we can then look up in a table to figure out what drivers are needed.
- */
-void Task::discoverIoHardware() {
-    Logger::Debug("MainTask: %s", "discover io hw");
-    // TODO: implement
-}
-
-/**
- * @brief Discover connected drivers
- *
- * Scan the driver board bus for a configuration EEPROM (AT24CS32 type) and parse its contents the
- * same way as the front/rear IO boards. Based on the board ID discovered, we'll launch the
- * appropriate driver.
- *
- * @remark Currently, only a single driver board is supported; this may change at some point in
- *         the future.
- */
-void Task::discoverDriverHardware() {
-    Logger::Debug("MainTask: %s", "discover driver hw");
-    // TODO: implement
-}
-
-/**
  * @brief Start application tasks
  *
  * Called once all hardware and drivers have been initialized, and all services are available. It
@@ -203,4 +179,57 @@ void Task::startApp() {
     Thermal::Start();
     Pinball::Start();
     Control::Start();
+}
+
+/**
+ * @brief Set up watchdog
+ *
+ * Configure the system watchdog timer. The watchdog operates in windowed mode, and in turn the
+ * early warning interrupt is used to validate all requested tasks checked in.
+ */
+void Task::initWatchdog() {
+    Logger::Debug("MainTask: %s", "init watchdog");
+
+    Drivers::Watchdog::Configure({
+        // 1.024kHz / 2048 = 2 sec
+        .timeout = Drivers::Watchdog::ClockDivider::Div2048,
+        // 1.024kHz / 1024 = 1 sec
+        .secondary = Drivers::Watchdog::ClockDivider::Div1024,
+        .windowMode = true,
+        .earlyWarningIrq = true,
+        .notifyTask = this->task,
+        .notifyIndex = kNotificationIndex,
+        .notifyBits = TaskNotifyBits::WatchdogWarning,
+    });
+    Drivers::Watchdog::Enable();
+}
+
+/**
+ * @brief Handle and pet watchdog
+ *
+ * Checks that all mandatory tasks have checked in since the last time the watchdog has been
+ * petted.
+ *
+ * The following tasks must check in on every iteration of the watchdog:
+ *
+ * - Control loop
+ * - User interface
+ */
+void Task::handleWatchdog() {
+    WatchdogCheckin current, none{WatchdogCheckin::None};
+
+    taskENTER_CRITICAL();
+
+    // acquire current state
+    __atomic_exchange(&this->wdgCheckin, &none, &current, __ATOMIC_ACQUIRE);
+
+    // check it
+    if((current & WatchdogCheckin::Mandatory) == WatchdogCheckin::Mandatory) {
+        Drivers::Watchdog::Pet();
+    } else {
+        Logger::Panic("!!! WATCHDOG CHECKIN FAILURE: %08x (expected %08x)", current,
+                WatchdogCheckin::Mandatory);
+    }
+
+    taskEXIT_CRITICAL();
 }

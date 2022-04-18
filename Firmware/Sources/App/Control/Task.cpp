@@ -3,6 +3,7 @@
 #include "LoadDriver.h"
 #include "DumbLoadDriver.h"
 
+#include "App/Main/Task.h"
 #include "Drivers/I2C.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
 
@@ -100,6 +101,9 @@ void Task::main() {
             err = this->driver->setExternalVSense(this->isUsingExternalSense);
             REQUIRE(!err, "control: %s (%d)", "failed to change sense relay", err);
         }
+
+        // check in with watchdog
+        App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Control);
     }
 }
 
