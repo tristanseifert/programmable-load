@@ -7,7 +7,7 @@
   (title_block
     (title "Front Panel")
     (date "2022-03-07")
-    (rev "1")
+    (rev "2")
   )
 
   (lib_symbols
@@ -3347,7 +3347,8 @@
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid 5f0dc388-dda6-44ce-9081-80f8035ab9d2)
   )
-  (text "Suitable knob: Grayhill 11K5013-KCNG" (at 239.395 42.545 0)
+  (text "Suitable knob: Grayhill 11K5013-KCNG\nor Eagle Plastic Devices 450-2925"
+    (at 239.395 43.18 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 77e4705a-d1ce-4eb8-b74f-441b11701d1f)
   )
@@ -4874,7 +4875,7 @@
     (property "Datasheet" "~" (id 3) (at 260.35 23.876 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "EN11-HSM1AF15" (id 4) (at 260.35 30.48 0)
+    (property "MPN" "EN11-HSM1AF25" (id 4) (at 260.35 30.48 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "A" (uuid 5bfe6dc3-5e7d-47a0-85d8-4db2b2d9ea08))
