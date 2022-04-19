@@ -131,91 +131,91 @@ void HmiDriver::handleIrq() {
  *
  * TODO: handle gradation/blinking as needed
  */
-int HmiDriver::setIndicatorState(const Indicator state) {
+int HmiDriver::setIndicatorState(const FrontIoIndicator state) {
     int err{0};
 
     // figure out what indicators changed
-    const uintptr_t changed = (state ^ this->indicatorState);
+    const auto changed = static_cast<FrontIoIndicator>(state ^ this->indicatorState);
 
     // update indicators
-    if(changed & Indicator::Overheat) {
+    if(TestFlags(changed & FrontIoIndicator::Overheat)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::Overheat),
-                (state & Indicator::Overheat) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::Overheat) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::Overcurrent) {
+    if(TestFlags(changed & FrontIoIndicator::Overcurrent)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::Overcurrent),
-                (state & Indicator::Overcurrent) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::Overcurrent) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::GeneralError) {
+    if(TestFlags(changed & FrontIoIndicator::GeneralError)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::Error),
-                (state & Indicator::GeneralError) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::GeneralError) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::LimitingOn) {
+    if(TestFlags(changed & FrontIoIndicator::LimitingOn)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::LimitingOn),
-                (state & Indicator::LimitingOn) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::LimitingOn) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
 
     // mode selector
-    if(changed & Indicator::ModeCC) {
+    if(TestFlags(changed & FrontIoIndicator::ModeCC)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::ModeCC),
-                (state & Indicator::ModeCC) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::ModeCC) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::ModeCV) {
+    if(TestFlags(changed & FrontIoIndicator::ModeCV)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::ModeCV),
-                (state & Indicator::ModeCV) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::ModeCV) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::ModeCW) {
+    if(TestFlags(changed & FrontIoIndicator::ModeCW)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::ModeCW),
-                (state & Indicator::ModeCW) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::ModeCW) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
-    if(changed & Indicator::ModeExt) {
+    if(TestFlags(changed & FrontIoIndicator::ModeExt)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::ModeExt),
-                (state & Indicator::ModeExt) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::ModeExt) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
     }
 
     // input enable button
-    if(changed & Indicator::InputEnabled) {
+    if(TestFlags(changed & FrontIoIndicator::InputEnabled)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::InputEnableG),
-                (state & Indicator::InputEnabled) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::InputEnabled) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
 
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::InputEnableR),
-                (state & Indicator::InputEnabled) ? 0.f : 1.f);
+                TestFlags(state & FrontIoIndicator::InputEnabled) ? 0.f : 1.f);
         if(err) {
             goto beach;
         }
     }
 
     // misc buttons
-    if(changed & Indicator::Menu) {
+    if(TestFlags(changed & FrontIoIndicator::Menu)) {
         err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::Menu),
-                (state & Indicator::Menu) ? 1.f : 0.f);
+                TestFlags(state & FrontIoIndicator::Menu) ? 1.f : 0.f);
         if(err) {
             goto beach;
         }
@@ -228,3 +228,30 @@ beach:;
     return err;
 }
 
+/**
+ * @brief Set brightness of RGB status indicator
+ */
+int HmiDriver::setStatusColor(const uint32_t color) {
+    int err;
+
+    err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::StatusR),
+            static_cast<float>((color & 0xFF0000) >> 16) / 255.f);
+    if(err) {
+        goto beach;
+    }
+
+    err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::StatusG),
+            static_cast<float>((color & 0x00FF00) >> 8) / 255.f);
+    if(err) {
+        goto beach;
+    }
+
+    err = this->ledDriver.setBrightness(static_cast<uint8_t>(LedChannel::StatusB),
+            static_cast<float>(color & 0x0000FF) / 255.f);
+    if(err) {
+        goto beach;
+    }
+
+beach:;
+    return err;
+}

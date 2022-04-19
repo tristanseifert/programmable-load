@@ -12,6 +12,16 @@
 #include "LoadDriver.h"
 
 namespace App::Control {
+/**
+ * @brief Control loop operation mode
+ */
+enum class OperationMode {
+    ConstantCurrent,
+    ConstantVoltage,
+    ConstantWattage,
+};
+
+
 class Task {
     friend void Start();
 
@@ -158,6 +168,20 @@ class Task {
             NotifyTask(TaskNotifyBits::UpdateSenseRelay);
         }
 
+        /**
+         * @brief Determine whether the load is enabled
+         */
+        inline static auto GetIsLoadActive() {
+            return gShared->isLoadEnabled;
+        }
+
+        /**
+         * @brief Get the current control loop operation mode
+         */
+        inline static auto GetMode() {
+            return gShared->mode;
+        }
+
     private:
         void main();
 
@@ -175,12 +199,17 @@ class Task {
         /// Storage for sampling timer
         StaticTimer_t sampleTimerBuf;
 
+        /// Current control loop mode
+        OperationMode mode{OperationMode::ConstantCurrent};
+
         /// Last input voltage reading (mV)
         uint32_t inputVoltage{0};
         /// Last input current reading (µA)
         uint32_t inputCurrent{0};
         /// Are we using external voltage sense?
         bool isUsingExternalSense{false};
+        /// Is the load enabled?
+        bool isLoadEnabled{false};
 
         /// Driver handling the load
         LoadDriver *driver{nullptr};

@@ -5,6 +5,7 @@
 #include "FrontIo/HmiDriver.h"
 #include "Screens/Screens.h"
 
+#include "App/Control/Task.h"
 #include "App/Main/Task.h"
 #include "Drivers/ExternalIrq.h"
 #include "Drivers/Gpio.h"
@@ -101,8 +102,9 @@ void Task::main() {
     err = Display::Transfer();
     REQUIRE(!err, "pinball: %s (%d)", "failed to transfer display buffer", err);
 
-    // perform lights test
+    // perform lights test, then reset light state
     this->doChristmasTreeTest();
+    this->updateIndicators();
 
     /*
      * Start handling messages
@@ -129,6 +131,11 @@ void Task::main() {
          * which will call into the GUI code with updated button states. If the encoder state was
          * changed (handled in Hw class state machine) we'll read it out and forward it to the
          * GUI task as well.
+         *
+         * During the front panel interactions time is when we'll receive calls about the mode
+         * or load on/off switches changing as well.
+         *
+         * This is also when the buttons may be updated.
          */
         if(note & TaskNotifyBits::FrontIrq) {
             this->frontDriver->handleIrq();
@@ -136,6 +143,9 @@ void Task::main() {
         if(note & TaskNotifyBits::EncoderChanged) {
             const auto delta = Hw::ReadEncoderDelta();
             Gui::InputManager::EncoderChanged(delta);
+        }
+        if(note & TaskNotifyBits::UpdateIndicators) {
+            this->updateIndicators();
         }
 
         /*
@@ -269,10 +279,15 @@ void Task::detectFrontPanel() {
 
     /*
      * We only support one type of front panel right now, so ensure that the driver ID in the
-     * IDPROM matches that, then instantiate it.
+     * IDPROM matches that, then instantiate it. Also detect rev1 hardware, which didn't have
+     * debouncing on buttons.
      */
     REQUIRE(this->frontDriverId == HmiDriver::kDriverId, "unknown front I/O driver: %s",
             uuidStr.data());
+    if(this->frontRev < 2) {
+        Logger::Warning("WARNING: Unsupported front I/O (rev %u), input may not work right!",
+                this->frontRev);
+    }
 
     static uint8_t gHmiDriverBuf[sizeof(HmiDriver)] __attribute__((aligned(alignof(HmiDriver))));
     auto ptr = reinterpret_cast<HmiDriver *>(gHmiDriverBuf);
@@ -321,29 +336,80 @@ void Task::doChristmasTreeTest() {
     int err;
 
     // turn off all indicators first
-    err = this->frontDriver->setIndicatorState(FrontIoDriver::Indicator::None);
+    err = this->frontDriver->setIndicatorState(FrontIoIndicator::None);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
+    err = this->frontDriver->setStatusColor(0xff0000);
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    vTaskDelay(pdMS_TO_TICKS(420));
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
+
     // set button lights
-    err = this->frontDriver->setIndicatorState(static_cast<FrontIoDriver::Indicator>(
-                FrontIoDriver::ModeCC | FrontIoDriver::ModeCV | FrontIoDriver::ModeCW |
-                FrontIoDriver::ModeExt | FrontIoDriver::Menu));
+    err = this->frontDriver->setIndicatorState(static_cast<FrontIoIndicator>(
+                FrontIoIndicator::ModeCC | FrontIoIndicator::ModeCV | FrontIoIndicator::ModeCW |
+                FrontIoIndicator::ModeExt | FrontIoIndicator::Menu));
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    err = this->frontDriver->setStatusColor(0x00ff00);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
     App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // now, the indicators
-    err = this->frontDriver->setIndicatorState(static_cast<FrontIoDriver::Indicator>(
-                FrontIoDriver::Overheat | FrontIoDriver::Overcurrent |
-                FrontIoDriver::GeneralError | FrontIoDriver::LimitingOn |
-                FrontIoDriver::InputEnabled));
+    err = this->frontDriver->setIndicatorState(static_cast<FrontIoIndicator>(
+                FrontIoIndicator::Overheat | FrontIoIndicator::Overcurrent |
+                FrontIoIndicator::GeneralError | FrontIoIndicator::LimitingOn |
+                FrontIoIndicator::InputEnabled));
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    err = this->frontDriver->setStatusColor(0x0000ff);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
     App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // extinguish indicators
-    err = this->frontDriver->setIndicatorState(FrontIoDriver::Indicator::None);
+    err = this->frontDriver->setIndicatorState(FrontIoIndicator::None);
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+
+    err = this->frontDriver->setStatusColor(0x000000);
+    REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
+}
+
+/**
+ * @brief Calculate light state and update
+ *
+ * Figures out which buttons and indicators should be lit, and updates them.
+ */
+void Task::updateIndicators() {
+    int err;
+    FrontIoIndicator on{FrontIoIndicator::None};
+
+    // TODO: menu button
+
+    // whether load is on or off
+    if(App::Control::Task::GetIsLoadActive()) {
+        on |= FrontIoIndicator::InputEnabled;
+    }
+
+    // current mode
+    switch(App::Control::Task::GetMode()) {
+        case App::Control::OperationMode::ConstantCurrent:
+            on |= FrontIoIndicator::ModeCC;
+            break;
+        case App::Control::OperationMode::ConstantVoltage:
+            on |= FrontIoIndicator::ModeCV;
+            break;
+        case App::Control::OperationMode::ConstantWattage:
+            on |= FrontIoIndicator::ModeCW;
+            break;
+    }
+
+    // TODO: errors/fault conditions
+
+    // update the indicators
+    err = this->frontDriver->setIndicatorState(on);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 }

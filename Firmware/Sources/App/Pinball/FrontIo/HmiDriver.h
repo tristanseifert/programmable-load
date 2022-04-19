@@ -43,7 +43,8 @@ class HmiDriver: public FrontIoDriver {
         ~HmiDriver() override;
 
         void handleIrq() override;
-        int setIndicatorState(const Indicator state) override;
+        int setIndicatorState(const FrontIoIndicator state) override;
+        int setStatusColor(const uint32_t color) override;
 
     private:
         /// Bus address of the LED driver
@@ -73,33 +74,33 @@ class HmiDriver: public FrontIoDriver {
             // Mode selector, bonus mode
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 15000,
             },
             // Mode selector, constant wattage
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 15000,
             },
             // Mode selector, constant voltage
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 15000,
             },
             // Mode selector, constant current
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 15000,
             },
 
             // input enable (green)
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 17500,
             },
             // input enable (red)
             {
                 .enabled = 1,
-                .fullCurrent = 10000,
+                .fullCurrent = 18000,
             },
 
             // menu
@@ -290,7 +291,7 @@ class HmiDriver: public FrontIoDriver {
          * This is initialized to all 1's so that on the first request to set the indicators, we'll
          * update every indicator on the board.
          */
-        Indicator indicatorState{UINTPTR_MAX};
+        FrontIoIndicator indicatorState{UINTPTR_MAX};
 
         /**
          * @brief IO state poll timer

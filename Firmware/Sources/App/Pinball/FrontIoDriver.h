@@ -1,6 +1,7 @@
 #ifndef APP_PINBALL_FRONTIODRIVER_H
 #define APP_PINBALL_FRONTIODRIVER_H
 
+#include <bitflags.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -13,6 +14,74 @@ class AT24CS32;
 }
 
 namespace App::Pinball {
+/**
+ * @brief Various indicators available on the front panel
+ *
+ * These indicator constants can map to an indicator (LED) on the front panel, or perhaps
+ * set the color of a multicolor indicator.
+ */
+enum class FrontIoIndicator: uintptr_t {
+    None                        = 0,
+
+    /**
+     * @brief Overheat error
+     *
+     * Indicates the system is overheating.
+     */
+    Overheat                    = (1 << 0),
+
+    /**
+     * @brief Current exceeded
+     *
+     * The input current exceeded the maximum allowable current.
+     */
+    Overcurrent                 = (1 << 1),
+
+    /**
+     * @brief Generic error
+     *
+     * Some sort of error has occurred during the operation.
+     */
+    GeneralError                = (1 << 2),
+
+    /**
+     * @brief Input active
+     *
+     * Current sinking input is enabled
+     */
+    InputEnabled                = (1 << 3),
+
+    /**
+     * @brief Menu button
+     *
+     * Used by the UI layer to indicate that the menu is activated
+     */
+    Menu                        = (1 << 4),
+
+    /**
+     * @brief Constant current mode enabled
+     */
+    ModeCC                      = (1 << 5),
+    /**
+     * @brief Constant voltage mode enabled
+     */
+    ModeCV                      = (1 << 6),
+    /**
+     * @brief Constant wattage mode enabled
+     */
+    ModeCW                      = (1 << 7),
+    /**
+     * @brief Bonus mode enabled
+     */
+    ModeExt                     = (1 << 8),
+
+    /**
+     * @brief Limiter active
+     */
+    LimitingOn                  = (1 << 9),
+};
+ENUM_FLAGS_EX(FrontIoIndicator, uintptr_t);
+
 /**
  * @brief Interface for a front panel IO driver
  *
@@ -67,73 +136,6 @@ class FrontIoDriver {
             ModeSelectExt               = (1 << 6),
         };
 
-        /**
-         * @brief Various indicators available on the front panel
-         *
-         * These indicator constants can map to an indicator (LED) on the front panel, or perhaps
-         * set the color of a multicolor indicator.
-         */
-        enum Indicator: uintptr_t {
-            None                        = 0,
-
-            /**
-             * @brief Overheat error
-             *
-             * Indicates the system is overheating.
-             */
-            Overheat                    = (1 << 0),
-
-            /**
-             * @brief Current exceeded
-             *
-             * The input current exceeded the maximum allowable current.
-             */
-            Overcurrent                 = (1 << 1),
-
-            /**
-             * @brief Generic error
-             *
-             * Some sort of error has occurred during the operation.
-             */
-            GeneralError                = (1 << 2),
-
-            /**
-             * @brief Input active
-             *
-             * Current sinking input is enabled
-             */
-            InputEnabled                = (1 << 3),
-
-            /**
-             * @brief Menu button
-             *
-             * Used by the UI layer to indicate that the menu is activated
-             */
-            Menu                        = (1 << 4),
-
-            /**
-             * @brief Constant current mode enabled
-             */
-            ModeCC                      = (1 << 5),
-            /**
-             * @brief Constant voltage mode enabled
-             */
-            ModeCV                      = (1 << 6),
-            /**
-             * @brief Constant wattage mode enabled
-             */
-            ModeCW                      = (1 << 7),
-            /**
-             * @brief Bonus mode enabled
-             */
-            ModeExt                     = (1 << 8),
-
-            /**
-             * @brief Limiter active
-             */
-            LimitingOn                  = (1 << 9),
-        };
-
     public:
         /**
          * @brief Initialize driver
@@ -171,7 +173,18 @@ class FrontIoDriver {
          *
          * @param state Bitwise OR of indicator values to set
          */
-        virtual int setIndicatorState(const Indicator state) = 0;
+        virtual int setIndicatorState(const FrontIoIndicator state) = 0;
+
+        /**
+         * @brief Set status indicator
+         *
+         * Update the color displayed on the RGB status indicator.
+         *
+         * @param color An RGB color, formatted as 0x00RRGGBB.
+         *
+         * @return 0 on success or a negative error code
+         */
+        virtual int setStatusColor(const uint32_t color) = 0;
 
     protected:
         /// The I2C bus to which the front IO board is connected

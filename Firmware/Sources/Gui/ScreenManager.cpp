@@ -325,6 +325,9 @@ void ScreenManager::push(const Screen *screen, const Animation animation) {
     this->requestDraw();
 
     InputManager::ResetSelection(screen);
+
+    // update indicators (for menu button light)
+    App::Pinball::Task::NotifyTask(App::Pinball::Task::TaskNotifyBits::UpdateIndicators);
 }
 
 /**
@@ -371,6 +374,9 @@ void ScreenManager::pop(const Animation animation) {
     }
 
     this->requestDraw();
+
+    // update indicators (for menu button light)
+    App::Pinball::Task::NotifyTask(App::Pinball::Task::TaskNotifyBits::UpdateIndicators);
 }
 
 /**

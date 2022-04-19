@@ -90,12 +90,21 @@ class Task {
             ProcessMelody               = (1 << 7),
 
             /**
+             * @brief Update front panel indicators
+             *
+             * Requests the indicators (including illuminated buttons) on the front panel are
+             * updated to the latest state.
+             */
+            UpdateIndicators            = (1 << 8),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
             All                         = (FrontIrq | RearIrq | PowerPressed | EncoderChanged |
-                    RedrawUI | ShowHomeScreen | ProcessWorkQueue | ProcessMelody),
+                    RedrawUI | ShowHomeScreen | ProcessWorkQueue | ProcessMelody |
+                    UpdateIndicators),
         };
 
     public:
@@ -154,7 +163,9 @@ class Task {
         void main();
         void detectFrontPanel();
         void showVersionScreen();
+
         void doChristmasTreeTest();
+        void updateIndicators();
 
     private:
         /// Task handle
