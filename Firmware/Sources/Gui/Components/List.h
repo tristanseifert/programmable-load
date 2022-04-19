@@ -94,6 +94,34 @@ class List {
             auto &d = data.list;
             d.rowSelected(d.state->selectedRow, d.context);
         }
+
+        /**
+         * @brief Handle encoder event
+         *
+         * This scrolls the list according to the specified delta, limiting it to the start (0) or
+         * end (count) items.
+         *
+         * @param delta Relative change of encoder value
+         */
+        static void HandleEncoder(const ComponentData &data, const int delta, bool &needsDraw) {
+            if(!delta) {
+                return;
+            }
+
+            auto &d = data.list;
+            const auto numRows = d.getNumRows(d.context);
+
+            auto newIndex = static_cast<long>(d.state->selectedRow) + delta;
+            if(newIndex < 0) {
+                newIndex = 0;
+            }
+            if(newIndex >= numRows) {
+                newIndex = numRows - 1;
+            }
+
+            d.state->selectedRow = static_cast<size_t>(newIndex);
+            needsDraw = true;
+        }
 };
 }
 

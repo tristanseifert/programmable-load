@@ -196,6 +196,8 @@ const Gui::Screen *Screens::GetMainScreen() {
 
 
 constexpr static const size_t kMenuRows{4};
+// stuff for list
+static Gui::Components::ListState gMenuListState;
 
 /**
  * @brief Draw a row in the main menu list
@@ -269,9 +271,6 @@ static void HandleMenuRowSelection(const size_t index, void *context) {
  * serves as the "portal" to various other system settings menus.
  */
 static const Gui::Screen *GetMenuScreen() {
-    // stuff for list
-    static Gui::Components::ListState gListState;
-
     // define the screen
     static const Gui::ComponentData gComponents[]{
         // top divider
@@ -287,7 +286,7 @@ static const Gui::Screen *GetMenuScreen() {
             .type = Gui::ComponentType::List,
             .bounds = {Gfx::MakePoint(0, 1), Gfx::MakeSize(256, 63)},
             .list = {
-                .state = &gListState,
+                .state = &gMenuListState,
                 .rowHeight = 21,
                 .getNumRows = [](auto ctx) -> size_t {
                     return kMenuRows;
@@ -303,6 +302,10 @@ static const Gui::Screen *GetMenuScreen() {
         .title = "Main Menu",
         .numComponents = (sizeof(gComponents) / sizeof(gComponents[0])),
         .components = gComponents,
+        // reset the list to the top when showing the view
+        .willPresent = [](auto screen, auto ctx) {
+            gMenuListState.selectedRow = 0;
+        },
         // use the "slide down" animation
         .menuPressed = [](auto screen, auto ctx){
             Gui::ScreenManager::Pop(Gui::ScreenManager::Animation::SlideDown);

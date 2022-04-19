@@ -63,12 +63,12 @@ class HmiDriver: public FrontIoDriver {
             // Status RGB green channel
             {
                 .enabled = 1,
-                .fullCurrent = 5000,
+                .fullCurrent = 1000,
             },
             // Status RGB red channel
             {
                 .enabled = 1,
-                .fullCurrent = 5000,
+                .fullCurrent = 1500,
             },
 
             // Mode selector, bonus mode
@@ -95,12 +95,12 @@ class HmiDriver: public FrontIoDriver {
             // input enable (green)
             {
                 .enabled = 1,
-                .fullCurrent = 17500,
+                .fullCurrent = 18000,
             },
             // input enable (red)
             {
                 .enabled = 1,
-                .fullCurrent = 18000,
+                .fullCurrent = 20000,
             },
 
             // menu
@@ -111,7 +111,7 @@ class HmiDriver: public FrontIoDriver {
             // status RGB led (blue)
             {
                 .enabled = 1,
-                .fullCurrent = 5000,
+                .fullCurrent = 1500,
             },
 
             // unused x2

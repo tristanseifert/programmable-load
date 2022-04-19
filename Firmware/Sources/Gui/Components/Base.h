@@ -82,6 +82,30 @@ constexpr inline bool HandleSelection(const Screen *screen, const ComponentData 
             return false;
     }
 }
+
+/**
+ * @brief Handle an encoder event for a control
+ *
+ * Dispatches the encoder event (rotation delta) to the control's handler, based on its type; this
+ * will only be invoked if the control is currently selected (e.g. move mode is inactive)
+ *
+ * @param screen Screen on which the control is displayed
+ * @param data Component data
+ * @param delta Encoder movement delta
+ * @param needsDraw Variable set if the screen should be redrawn
+ */
+constexpr inline void HandleEncoder(const Screen *screen, const ComponentData &data,
+        const int delta, bool &needsDraw) {
+    switch(data.type) {
+        // scroll list
+        case ComponentType::List:
+            List::HandleEncoder(data, delta, needsDraw);
+            break;
+
+        default:
+            break;
+    }
+}
 }
 
 #endif

@@ -22,6 +22,8 @@ namespace Gui {
  * optionally with animations.
  */
 class ScreenManager {
+    friend class InputManager;
+
     public:
         /**
          * @brief Animations used for presenting a screen

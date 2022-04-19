@@ -111,8 +111,56 @@ void InputManager::handleMenuLongPress() {
  * @param delta Relative encoder change since last invocation
  */
 void InputManager::updateEncoder(const int delta) {
-    // TODO: implement
+    bool needsDraw{false};
     Logger::Notice("gui: encoder delta = %d", delta);
+
+    // move selection to next selectable component
+    if(this->isMoveMode) {
+        /*
+         * Figure out the starting index of the search for the next selectable component.
+         *
+         * This begins either at index 0 (if there's no selectable component yet,) or at one past
+         * the currently selected component. If the value is greater than the total number of
+         * components, we restart at the beginning.
+         */
+        size_t start = this->selectedComponent.value_or(0);
+
+        if(start >= this->screen->numComponents) {
+            start = 0;
+        }
+
+        /*
+         * Iterate over all components. The actual index of the component is shifted by the
+         * starting index we calculated, then modulus the number of components to allow us to wrap
+         * to the start of the components once we reach the end.
+         */
+        for(size_t i = 0; i < this->screen->numComponents; i++) {
+            size_t componentIdx = (i + start) % this->screen->numComponents;
+            auto &cd = this->screen->components[*this->selectedComponent];
+
+            if(!Components::IsSelectable(cd)) {
+                continue;
+            }
+
+            // update component, and redraw (handle selection outlines)
+            this->selectedComponent = componentIdx;
+
+            ScreenManager::gShared->requestDraw();
+            break;
+        }
+    }
+    // send the event to the controller
+    else {
+        REQUIRE(this->selectedComponent, "gui: %s",
+                "got encoder event outside move mode without selected component");
+
+        auto &cd = this->screen->components[*this->selectedComponent];
+        Components::HandleEncoder(this->screen, cd, delta, needsDraw);
+
+        if(needsDraw) {
+            ScreenManager::gShared->requestDraw();
+        }
+    }
 }
 
 

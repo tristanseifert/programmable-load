@@ -339,7 +339,7 @@ void Task::doChristmasTreeTest() {
     err = this->frontDriver->setIndicatorState(FrontIoIndicator::None);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
-    err = this->frontDriver->setStatusColor(0xff0000);
+    err = this->frontDriver->setStatusColor(0x0000ff);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
@@ -364,7 +364,7 @@ void Task::doChristmasTreeTest() {
                 FrontIoIndicator::InputEnabled));
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
-    err = this->frontDriver->setStatusColor(0x0000ff);
+    err = this->frontDriver->setStatusColor(0xff0000);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 
     vTaskDelay(pdMS_TO_TICKS(420));
