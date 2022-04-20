@@ -181,24 +181,13 @@ class HmiDriver: public FrontIoDriver {
             // Menu button
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
                 .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
-            // Encoder push switch
-            {
-                .input = true,
-                .pullUp = true,
-                .invertInput = true,
-                .irq = true,
-                .irqRising = true,
-                .irqFalling = true,
-                .irqFilter = true,
-            },
-            // unused IOs x6
+            // unused IOs x7
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
@@ -213,59 +202,67 @@ class HmiDriver: public FrontIoDriver {
             },
             // unused IOs x2
             Drivers::I2CDevice::XRA1203::kPinConfigUnused,
-            Drivers::I2CDevice::XRA1203::kPinConfigUnused,
+            // Encoder push switch
+            {
+                .input = true,
+                .pullUp = false,
+                .invertInput = false,
+                .irq = true,
+                .irqRising = true,
+                .irqFalling = true,
+            },
             // input enable
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
             // constant current mode
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
             // constant voltage mode
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
             // constant wattage mode
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
             // bonus mode
             {
                 .input = true,
-                .pullUp = true,
-                .invertInput = true,
+                .pullUp = false,
+                .invertInput = false,
                 .irq = true,
+                .irqRising = true,
                 .irqFalling = true,
-                .irqFilter = true,
             },
         }};
         /// Bitmask of IO lines that have buttons connected
-        constexpr static const uint16_t kIoButtonMask{0xF803};
+        constexpr static const uint16_t kIoButtonMask{0xFC01};
         /// Input line for the menu button
         constexpr static const uint16_t kIoButtonMenu{1 << 0};
         /// Input line for the select (encoder) button
-        constexpr static const uint16_t kIoButtonSelect{1 << 1};
+        constexpr static const uint16_t kIoButtonSelect{1 << 10};
         /// Input line for the input enable button
         constexpr static const uint16_t kIoButtonInputEnable{1 << 11};
         /// Input line for the constant current mode button

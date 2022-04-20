@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "TraceSWO.h"
 
+#include "App/Pinball/Hardware.h"
 #include "Rtos/Rtos.h"
 
 #include <printf/printf.h>
@@ -54,6 +55,7 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
 void Logger::Panic() {
     // print a message
     Error("Panic! at the system, halting");
+    App::Pinball::Hw::SetStatusLed(0b110);
 
     // get task info (if scheduler is running)
     unsigned long totalRuntime{0};

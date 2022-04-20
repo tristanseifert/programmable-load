@@ -3,6 +3,7 @@
 #include "App/Main/Task.h"
 #include "Drivers/Dma.h"
 #include "Drivers/ExternalIrq.h"
+#include "Drivers/Random.h"
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
 #include "Util/HwInfo.h"
@@ -35,6 +36,7 @@ extern "C" int main() {
      */
     Drivers::Dma::Init();
     Drivers::ExternalIrq::Init();
+    Drivers::Random::Init();
 
     Util::HwInfo::Init();
 
