@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "FrontIoDriver.h"
 #include "Rtos/Rtos.h"
 #include "Util/Uuid.h"
 
@@ -11,8 +12,6 @@
 
 /// User interface task and related
 namespace App::Pinball {
-class FrontIoDriver;
-
 /**
  * @brief User interface task
  *
@@ -157,6 +156,20 @@ class Task {
             xTaskNotifyIndexed(gShared->task, kNotificationIndex, bits, eSetBits);
         }
 
+        /**
+         * @brief Handle front panel button changes
+         *
+         * Invoked from the driver's IRQ handler (which runs inside our task main loop) when the
+         * control buttons state changes.
+         *
+         * @param down Buttons pressed down
+         * @param up Buttons released
+         */
+        static inline void ButtonsChanged(const FrontIoDriver::Button down,
+                const FrontIoDriver::Button up) {
+            gShared->handleButtons(down, up);
+        }
+
     private:
         Task();
 
@@ -166,6 +179,7 @@ class Task {
 
         void doChristmasTreeTest();
         void updateIndicators();
+        void handleButtons(const FrontIoDriver::Button down, const FrontIoDriver::Button up);
 
     private:
         /// Task handle

@@ -413,3 +413,14 @@ void Task::updateIndicators() {
     err = this->frontDriver->setIndicatorState(on);
     REQUIRE(!err, "pinball: %s (%d)", "failed to set indicators", err);
 }
+
+/**
+ * @brief Handle button presses
+ *
+ * This processes the mode selector and load on/off button actions.
+ *
+ * @param down Buttons pressed down
+ * @param up Buttons released
+ */
+void Task::handleButtons(const FrontIoDriver::Button down, const FrontIoDriver::Button up) {
+}

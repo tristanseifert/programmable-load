@@ -70,6 +70,7 @@ void Task::main() {
      * controller driver instance, which in turn initializes the hardware on the driver.
      */
     Logger::Trace("control: %s", "identify hardware");
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Control);
     Hw::PulseReset();
 
     this->identifyDriver();
@@ -78,6 +79,7 @@ void Task::main() {
      * Start handling messages
      */
     Logger::Trace("control: %s", "start message loop");
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Control);
 
     xTimerStart(this->sampleTimer, portMAX_DELAY);
 

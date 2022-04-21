@@ -103,6 +103,7 @@ void HmiDriver::handleIrq() {
      * buttons: the other buttons are under the control of the UI task directly.
      */
     constexpr static const auto kGuiButtons{Button::MenuBtn | Button::Select};
+    constexpr static const auto kOtherButtons{~kGuiButtons};
 
     if((newDown & kGuiButtons) || (newReleased & kGuiButtons)) {
         Gui::InputKey guiDown{0}, guiUp{0};
@@ -120,6 +121,14 @@ void HmiDriver::handleIrq() {
         }
 
         Gui::InputManager::KeyStateChanged(guiDown, guiUp);
+    }
+
+    /*
+     * Send the other buttons to the UI task directly. These control the load on/off state and
+     * the current operation mode.
+     */
+    if((newDown & kOtherButtons) || (newReleased & kOtherButtons)) {
+        Task::ButtonsChanged(static_cast<Button>(newDown), static_cast<Button>(newReleased));
     }
 }
 
