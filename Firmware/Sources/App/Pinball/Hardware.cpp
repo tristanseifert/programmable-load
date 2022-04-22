@@ -205,7 +205,7 @@ void Hw::InitEncoder() {
     Drivers::ExternalIrq::ConfigureLine(7, { // A
         .irq = 1,
         .event = 0,
-        .filter = 1,
+        .filter = 0,
         .debounce = 1,
         .mode = Drivers::ExternalIrq::SenseMode::EdgeBoth
     });

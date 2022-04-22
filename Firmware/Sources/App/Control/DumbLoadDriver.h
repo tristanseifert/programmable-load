@@ -51,6 +51,8 @@ class DumbLoadDriver: public LoadDriver {
         void handleIrq() override;
 
         int setEnabled(const bool isEnabled) override;
+        int readInputCurrent(uint32_t &outCurrent) override;
+
         int readInputVoltage(uint32_t &outVoltage) override;
         int setExternalVSense(const bool isExternal) override;
 
@@ -78,6 +80,8 @@ class DumbLoadDriver: public LoadDriver {
         int setIndicatorState(const bool isLit) {
             return this->ioExpander.setOutput(3, !isLit);
         }
+
+        int readCurrentAdc(Drivers::I2CDevice::MCP3421 &adc, uint32_t &outCurrent);
 
     private:
         /// Bus address of the IO expander
@@ -125,6 +129,13 @@ class DumbLoadDriver: public LoadDriver {
         /// Gain factor to convert the VSense voltage to input voltage
         constexpr static const float kVSenseGain{50.f};
 
+        /// Set the current ADC to 12 bit resolution
+        constexpr static const auto kCurrentAdcBits{Drivers::I2CDevice::MCP3421::SampleDepth::Low};
+        /// Bus address for current sense ADC, channel 1
+        constexpr static const uint8_t kCurrentAdc1Address{0b1101010};
+        /// Bus address for current drive DAC, channel 1
+        constexpr static const uint8_t kCurrentDac1Address{0b1001010};
+
     private:
         /// When set, the relay de-energization timer fired, and they are turned off next IRQ
         bool deenergizeRelays{false};
@@ -134,6 +145,9 @@ class DumbLoadDriver: public LoadDriver {
 
         /// ADC sampling input voltage
         Drivers::I2CDevice::MCP3421 voltageAdc;
+
+        /// Current sense ADC for channel 1
+        Drivers::I2CDevice::MCP3421 currentAdc1;
 
         /**
          * @brief Relay de-energization timer

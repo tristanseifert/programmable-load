@@ -78,6 +78,17 @@ class LoadDriver {
          */
         virtual int setEnabled(const bool isEnabled) = 0;
 
+        /**
+         * @brief Read the input current
+         *
+         * Reads the current value from any sensors/ADCs on the board. If the load board features
+         * multiple channels in parallel, this is the sum of all of them.
+         *
+         * @param outCurrent Current on the input of the load, in µA
+         *
+         * @return 0 on success or negative error code
+         */
+        virtual int readInputCurrent(uint32_t &outCurrent) = 0;
 
 
         /**

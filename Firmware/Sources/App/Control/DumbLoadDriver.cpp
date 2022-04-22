@@ -20,7 +20,8 @@ const Util::Uuid DumbLoadDriver::kDriverId(kUuidBytes);
  */
 DumbLoadDriver::DumbLoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : LoadDriver(bus, idprom),
     ioExpander(bus, kExpanderPinConfig, kExpanderAddress),
-    voltageAdc(bus, kVSenseAdcAddress, kVSenseAdcBits) {
+    voltageAdc(bus, kVSenseAdcAddress, kVSenseAdcBits),
+    currentAdc1(bus, kCurrentAdc1Address, kCurrentAdcBits) {
     int err;
 
     /*
@@ -154,6 +155,100 @@ int DumbLoadDriver::setEnabled(const bool isEnabled) {
     // TODO: implement
     return -1;
 }
+
+/**
+ * @brief Sample current ADCs
+ *
+ * Reads the current values from the two current ADCs, the nconverts these values to current
+ * values. If they are out of range, we'll adjust the ADC's PGA accordingly.
+ */
+int DumbLoadDriver::readInputCurrent(uint32_t &outCurrent) {
+    int err;
+    uint32_t current{0}, tempCurrent;
+
+    // read ADC 1
+    err = this->readCurrentAdc(this->currentAdc1, tempCurrent);
+    if(err) {
+        return err;
+    }
+
+    current += tempCurrent;
+
+    // read all ADCs
+    outCurrent = current;
+    return 0;
+}
+
+/**
+ * @brief Read the ADC value and convert to current
+ *
+ * This may change the gain setting of the converter, if needed. The gain is increased if the
+ * read value is below a certain threshold, and decreased if it's above a certain threshold.
+ *
+ * @param adc Converter to read from
+ * @param outCurrent Converted current value, in µA
+ *
+ * @return 0 on succes or a negative error code
+ *
+ * @TODO This should be smarter (to handle noise, for example) about gain changes
+ */
+int DumbLoadDriver::readCurrentAdc(Drivers::I2CDevice::MCP3421 &adc, uint32_t &outCurrent) {
+    int err, voltage;
+    uint16_t sample;
+
+//sample:;
+    // read the raw value (µV)
+    err = adc.readVoltage(voltage, sample);
+    if(err) {
+        return err;
+    }
+
+    /*
+     * Adjust the gain if needed.
+     *
+     * Note that we ignore values of 0 for gain changes, since that probably means that the load
+     * is disabled.
+     *
+     * @TODO: Make the thresholds based on the gain setting
+     */
+    constexpr static const uint16_t kLowerThreshold{0x100};
+    constexpr static const uint16_t kUpperThreshold{0xf00};
+
+    if(sample) {
+        const auto oldGain = adc.getGain();
+        auto gain = oldGain;
+
+        if(sample >= kUpperThreshold) {
+            // reduce the gain
+            gain = Drivers::I2CDevice::MCP3421::LowerGain(gain);
+        } else if(sample <= kLowerThreshold) {
+            // increase the gain
+            gain = Drivers::I2CDevice::MCP3421::HigherGain(gain);
+        }
+
+        // update gain
+        if(oldGain != gain) {
+            Logger::Notice("Change gain: %u -> %u", oldGain, gain);
+
+            err = adc.setGain(gain);
+            if(err) {
+                return err;
+            }
+        }
+    }
+
+    /*
+     * Convert to current
+     *
+     * TODO: apply calibration/compensation, and handle different sense resistor values
+     */
+    constexpr static const float kResistance{0.05f};
+    outCurrent = static_cast<float>(voltage) / kResistance;
+
+    return 0;
+}
+
+
 
 /**
  * @brief Read the current input voltage

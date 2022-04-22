@@ -129,8 +129,8 @@ static void UpdateMainScreen(const Gui::Screen *screen) {
     const auto current = App::Control::Task::GetInputCurrent();
 
     if(current < 1'000'000) { // format as mA below 1A
-        snprintf(gCurrentBuffer, sizeof(gCurrentBuffer), "%d.%02d mA", current / 1000,
-                (current % 1000) / 10);
+        snprintf(gCurrentBuffer, sizeof(gCurrentBuffer), "%d.%01d mA", current / 1000,
+                (current % 1000) / 100);
     } else {
         const auto ma = current / 1000;
         snprintf(gCurrentBuffer, sizeof(gCurrentBuffer), "%d.%03d A", ma / 1000,

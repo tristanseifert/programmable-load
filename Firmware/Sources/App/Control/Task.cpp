@@ -224,6 +224,10 @@ void Task::identifyDriver() {
 void Task::readSensors() {
     int err;
 
+    // read current
+    err = this->driver->readInputCurrent(this->inputCurrent);
+    REQUIRE(!err, "control: %s (%d)", "failed to read current", err);
+
     // read input voltage
     err = this->driver->readInputVoltage(this->inputVoltage);
     REQUIRE(!err, "control: %s (%d)", "failed to read input voltage", err);

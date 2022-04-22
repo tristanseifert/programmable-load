@@ -88,11 +88,20 @@ class MCP3421 {
         }
 
         /**
-         * @brief Get the current gain
+         * @brief Get the current gain setting
+         *
+         * @remark This is the last set setting, not read from the device.
+         */
+        inline const Gain getGain() const {
+            return this->gain;
+        }
+
+        /**
+         * @brief Get the current gain factor
          *
          * @return Gain value (integer factor)
          */
-        constexpr inline size_t getGain() const {
+        constexpr inline size_t getGainFactor() const {
             return GainToFactor(this->gain);
         }
 
@@ -116,10 +125,11 @@ class MCP3421 {
          * This performs a read of the raw code, then converts it to the voltage.
          *
          * @param outVoltage Variable to receive the input voltage, in µV
+         * @param outCode Raw sample read from ADC
          *
          * @return 0 on success, or negative error code.
          */
-        int readVoltage(int &outVoltage) {
+        int readVoltage(int &outVoltage, uint16_t &outCode) {
             int err;
             int32_t code;
 
@@ -131,8 +141,16 @@ class MCP3421 {
 
             // convert it
             outVoltage = CodeToVoltage(code, this->depth, this->gain);
+            outCode = code;
             return 0;
         }
+
+        /// Read the input voltage at the ADC
+        int readVoltage(int &outVoltage) {
+            uint16_t temp;
+            return this->readVoltage(outVoltage, temp);
+        }
+
 
         /**
          * @brief Get weight of least significant bit in a given sample depth
@@ -165,6 +183,42 @@ class MCP3421 {
                     return 4;
                 case Gain::x8:
                     return 8;
+            }
+        }
+
+        /**
+         * @brief Return the next lowest gain
+         *
+         * @remark If the minimum gain is specified, that value is returned.
+         */
+        static constexpr inline Gain LowerGain(const Gain gain) {
+            switch(gain) {
+                case Gain::Unity:
+                    return Gain::Unity;
+                case Gain::x2:
+                    return Gain::Unity;
+                case Gain::x4:
+                    return Gain::x2;
+                case Gain::x8:
+                    return Gain::x4;
+            }
+        }
+
+        /**
+         * @brief Return the next highest gain
+         *
+         * @remark If the maximum gain is specified, that value is returned.
+         */
+        static constexpr inline Gain HigherGain(const Gain gain) {
+            switch(gain) {
+                case Gain::Unity:
+                    return Gain::x2;
+                case Gain::x2:
+                    return Gain::x4;
+                case Gain::x4:
+                    return Gain::x8;
+                case Gain::x8:
+                    return Gain::x8;
             }
         }
 
