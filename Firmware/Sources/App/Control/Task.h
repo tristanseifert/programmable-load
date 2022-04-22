@@ -57,12 +57,20 @@ class Task {
             UpdateSenseRelay            = (1 << 3),
 
             /**
+             * @brief Control configuration change
+             *
+             * Indicate the state of the load control loop has changed, such as the load enable
+             * state, operation mode, or setpoints.
+             */
+            ConfigChange                = (1 << 4),
+
+            /**
              * @brief All valid notify bits
              *
              * Bitwise OR of all notification bits.
              */
             All                         = (ExternalTrigger | IrqAsserted | SampleData |
-                    UpdateSenseRelay),
+                    UpdateSenseRelay | ConfigChange),
         };
 
     public:
@@ -169,6 +177,28 @@ class Task {
         }
 
         /**
+         * @brief Set the current set point directly
+         *
+         * This is used externally when the load is in constant current mode.
+         *
+         * @param current Desired load current, in µA
+         */
+        inline static void SetCurrentSetpoint(const uint32_t current) {
+            gShared->loadCurrentSetpoint = current;
+            NotifyTask(TaskNotifyBits::ConfigChange);
+        }
+
+        /**
+         * @brief Set load state
+         *
+         * @param isActive Whether the load is active (sinking current)
+         */
+        inline static void SetIsLoadActive(const bool isActive) {
+            gShared->isLoadEnabled = isActive;
+            NotifyTask(TaskNotifyBits::ConfigChange);
+        }
+
+        /**
          * @brief Determine whether the load is enabled
          */
         inline static auto GetIsLoadActive() {
@@ -188,6 +218,7 @@ class Task {
         void identifyDriver();
 
         void readSensors();
+        void updateConfig();
 
     private:
         /// Task handle
@@ -201,6 +232,8 @@ class Task {
 
         /// Current control loop mode
         OperationMode mode{OperationMode::ConstantCurrent};
+        /// Load set point (µA)
+        uint32_t loadCurrentSetpoint{0};
 
         /// Last input voltage reading (mV)
         uint32_t inputVoltage{0};
@@ -210,6 +243,8 @@ class Task {
         bool isUsingExternalSense{false};
         /// Is the load enabled?
         bool isLoadEnabled{false};
+        /// Previous load enable state
+        bool prevIsLoadEnabled{false};
 
         /// Driver handling the load
         LoadDriver *driver{nullptr};
@@ -232,7 +267,8 @@ class Task {
         /**
          * @brief Measurement sample interval (msec)
          *
-         * Interval at which the data from the analog board is read.
+         * Interval at which the data from the analog board is read. This also sets the speed at
+         * which the internal control loop runs and adjusts the output.
          */
         constexpr static const size_t kMeasureInterval{10};
 

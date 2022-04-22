@@ -90,6 +90,17 @@ class LoadDriver {
          */
         virtual int readInputCurrent(uint32_t &outCurrent) = 0;
 
+        /**
+         * @brief Set the output current
+         *
+         * Updates the output driver current setting so that the load consumes approximately the
+         * specified current.
+         *
+         * @param current New current to set, in µA
+         *
+         * @return 0 on success or negative error code
+         */
+        virtual int setOutputCurrent(const uint32_t current) = 0;
 
         /**
          * @brief Get maximum input voltage

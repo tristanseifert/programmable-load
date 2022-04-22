@@ -21,7 +21,7 @@ const Util::Uuid DumbLoadDriver::kDriverId(kUuidBytes);
 DumbLoadDriver::DumbLoadDriver(Drivers::I2CBus *bus, Drivers::I2CDevice::AT24CS32 &idprom) : LoadDriver(bus, idprom),
     ioExpander(bus, kExpanderPinConfig, kExpanderAddress),
     voltageAdc(bus, kVSenseAdcAddress, kVSenseAdcBits),
-    currentAdc1(bus, kCurrentAdc1Address, kCurrentAdcBits) {
+    currentAdc1(bus, kCurrentAdc1Address, kCurrentAdcBits), currentDac1(bus, kCurrentDac1Address) {
     int err;
 
     /*
@@ -151,9 +151,22 @@ void DumbLoadDriver::handleIrq() {
  *
  * @return 0 on success, error code otherwise
  */
-int DumbLoadDriver::setEnabled(const bool isEnabled) {
-    // TODO: implement
-    return -1;
+int DumbLoadDriver::setEnabled(const bool enable) {
+    // bail if no state change
+    if(enable == this->isEnabled) {
+        return 0;
+    }
+
+    // set current to zero to disable load
+    if(!enable) {
+        this->isEnabled = false;
+        return this->setOutputCurrent(0, true);
+    }
+    // when re-enabling, restore the old current value
+    else {
+        this->isEnabled = true;
+        return this->setOutputCurrent(this->currentSetpoint, true);
+    }
 }
 
 /**
@@ -242,11 +255,73 @@ int DumbLoadDriver::readCurrentAdc(Drivers::I2CDevice::MCP3421 &adc, uint32_t &o
      *
      * TODO: apply calibration/compensation, and handle different sense resistor values
      */
-    constexpr static const float kResistance{0.05f};
-    outCurrent = static_cast<float>(voltage) / kResistance;
+    outCurrent = static_cast<float>(voltage) / kSenseResistance;
 
     return 0;
 }
+
+/**
+ * @brief Set the output current
+ *
+ * Update the current drive settings.
+ *
+ * @param newCurrent Output current (in µA)
+ * @param isInternal Whether the caller is internal; in this case we don't check that we're enabled
+ *        and also don't update the current setting value.
+ */
+int DumbLoadDriver::setOutputCurrent(const uint32_t current, const bool isInternal) {
+    int err;
+
+    // ensure we're enabled
+    if(!isInternal) {
+        // if not, just record the current setting (to apply it when re-enabling)
+        if(!this->isEnabled) {
+            this->currentSetpoint = current;
+            return 0;
+        }
+    }
+
+    /*
+     * Calculate the desired current setting value, in µV.
+     *
+     * The hardware works by matching the MOSFET drive strength so the current sense resistor
+     * voltage drop is equal to the control voltage. So we just need to calculate what the actual
+     * voltage across the resistor would be for the desired current.
+     */
+    const auto microvolts = static_cast<float>(current) * kSenseResistance;
+
+    /*
+     * Update the drive DACs.
+     *
+     * For voltage settings above 1V, use 1x gain. Otherwise, use 2x gain to get some additional
+     * resolution for the drive voltage.
+     */
+    Drivers::I2CDevice::DAC60501::Gain newGain;
+    float percent{0.f};
+
+    newGain = Drivers::I2CDevice::DAC60501::Gain::Unity;
+    percent = microvolts / kDacReference;
+
+    // set the gains and DAC voltages
+    if(this->currentDac1.getGain() != newGain) {
+        err = this->currentDac1.setGain(newGain);
+        if(err) {
+            return err;
+        }
+    }
+
+    err = this->currentDac1(percent);
+    if(err) {
+        return err;
+    }
+
+    // assume success
+    if(!isInternal) {
+        this->currentSetpoint = current;
+    }
+    return 0;
+}
+
 
 
 

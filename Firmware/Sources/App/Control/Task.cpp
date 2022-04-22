@@ -4,6 +4,7 @@
 #include "DumbLoadDriver.h"
 
 #include "App/Main/Task.h"
+#include "App/Pinball/Task.h"
 #include "Drivers/I2C.h"
 #include "Drivers/I2CDevice/AT24CS32.h"
 
@@ -73,6 +74,7 @@ void Task::main() {
     App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Control);
     Hw::PulseReset();
 
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Control);
     this->identifyDriver();
 
     /*
@@ -91,6 +93,11 @@ void Task::main() {
         // handle interrupt and triggers
         if(note & TaskNotifyBits::IrqAsserted) {
             this->driver->handleIrq();
+        }
+
+        // handle load configuration change
+        if(note & TaskNotifyBits::ConfigChange) {
+            this->updateConfig();
         }
 
         // sample sensors
@@ -231,4 +238,37 @@ void Task::readSensors() {
     // read input voltage
     err = this->driver->readInputVoltage(this->inputVoltage);
     REQUIRE(!err, "control: %s (%d)", "failed to read input voltage", err);
+}
+
+/**
+ * @brief Update load configuration
+ *
+ * Updates the load enable status, as well as the setpoint (current, voltage, etc.)
+ */
+void Task::updateConfig() {
+    int err;
+
+    if(this->isLoadEnabled) {
+        // update current
+        err = this->driver->setOutputCurrent(this->loadCurrentSetpoint);
+        REQUIRE(!err, "control: %s (%d)", "failed to set load current", err);
+
+        // enable load
+        err = this->driver->setEnabled(true);
+        REQUIRE(!err, "control: %s (%d)", "failed to set load enable status", err);
+    } else {
+        // disable load
+        err = this->driver->setEnabled(false);
+        REQUIRE(!err, "control: %s (%d)", "failed to set load enable status", err);
+
+        // enable current (the cached value)
+        err = this->driver->setOutputCurrent(this->loadCurrentSetpoint);
+        REQUIRE(!err, "control: %s (%d)", "failed to set load current", err);
+    }
+
+    // did the UI enable state change?
+    if(this->prevIsLoadEnabled != this->isLoadEnabled) {
+        App::Pinball::Task::NotifyTask(App::Pinball::Task::TaskNotifyBits::UpdateIndicators);
+        this->prevIsLoadEnabled = this->isLoadEnabled;
+    }
 }

@@ -8,6 +8,7 @@
 
 #include "LoadDriver.h"
 
+#include "Drivers/I2CDevice/DAC60501.h"
 #include "Drivers/I2CDevice/MCP3421.h"
 #include "Drivers/I2CDevice/PI4IOE5V9536.h"
 #include "Rtos/Rtos.h"
@@ -52,6 +53,9 @@ class DumbLoadDriver: public LoadDriver {
 
         int setEnabled(const bool isEnabled) override;
         int readInputCurrent(uint32_t &outCurrent) override;
+        int setOutputCurrent(const uint32_t current) override {
+            return this->setOutputCurrent(current, false);
+        }
 
         int readInputVoltage(uint32_t &outVoltage) override;
         int setExternalVSense(const bool isExternal) override;
@@ -80,6 +84,8 @@ class DumbLoadDriver: public LoadDriver {
         int setIndicatorState(const bool isLit) {
             return this->ioExpander.setOutput(3, !isLit);
         }
+
+        int setOutputCurrent(const uint32_t current, const bool isInternal);
 
         int readCurrentAdc(Drivers::I2CDevice::MCP3421 &adc, uint32_t &outCurrent);
 
@@ -136,9 +142,19 @@ class DumbLoadDriver: public LoadDriver {
         /// Bus address for current drive DAC, channel 1
         constexpr static const uint8_t kCurrentDac1Address{0b1001010};
 
+        /// DAC reference voltage, in µV
+        constexpr static const float kDacReference{2'500'000.f};
+        /// Resistance of the current sense shunt (in Ω)
+        constexpr static const float kSenseResistance{0.05f};
+
     private:
         /// When set, the relay de-energization timer fired, and they are turned off next IRQ
         bool deenergizeRelays{false};
+        /// Whether the load is enabled
+        bool isEnabled{false};
+
+        /// Current setpoint (µA)
+        uint32_t currentSetpoint{0};
 
         /// IO expander on the load board, driving the VSense relay and indicator
         Drivers::I2CDevice::PI4IOE5V9536 ioExpander;
@@ -148,6 +164,9 @@ class DumbLoadDriver: public LoadDriver {
 
         /// Current sense ADC for channel 1
         Drivers::I2CDevice::MCP3421 currentAdc1;
+
+        /// Current drive DAC for channel 1
+        Drivers::I2CDevice::DAC60501 currentDac1;
 
         /**
          * @brief Relay de-energization timer
