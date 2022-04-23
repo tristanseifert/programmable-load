@@ -1,2 +1,5 @@
 **/fp-info-cache
 **/#auto_saved_files#
+
+# HTML BOMs are exported here
+**/bom/
