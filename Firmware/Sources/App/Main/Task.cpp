@@ -231,7 +231,7 @@ void Task::handleWatchdog() {
             App::Pinball::Hw::SetStatusLed(0b100);
         }
     } else {
-        Logger::Panic("!!! WATCHDOG CHECKIN FAILURE: %08x (expected %08x)", current,
+        Logger::Error("!!! WATCHDOG CHECKIN FAILURE: %08x (expected %08x)", current,
                 WatchdogCheckin::Mandatory);
     }
 

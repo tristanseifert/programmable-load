@@ -16,6 +16,7 @@ namespace Gui {
 namespace Components {
 class Base;
 struct ListState;
+struct NumericSpinnerState;
 }
 /**
  * @brief Component type value
@@ -60,6 +61,14 @@ enum class ComponentType: uint32_t {
      * and to draw each item.
      */
     List                                = 4,
+
+    /**
+     * @brief Numeric value adjuster
+     *
+     * A box that allows entering whole numbers (by incrementing them up or down) with the encoder
+     * wheel when selected.
+     */
+    NumericSpinner                      = 5,
 };
 
 /**
@@ -143,6 +152,56 @@ struct ComponentData {
              */
             void (*rowSelected)(const size_t index, void *context);
         } list;
+        /// Number spinner
+        struct {
+            /// State structure
+            Components::NumericSpinnerState *state{nullptr};
+
+            /// Font to display the value in
+            const Gfx::Font *font{nullptr};
+            /// Render flags for the font
+            Gfx::FontRenderFlags fontMode;
+
+            /**
+             * @brief Display units
+             *
+             * Defines a transformation from the raw numerical value of the spinner to a display
+             * string. In effect, this defines a divisor (to transform the integer value to a
+             * floating point value) and the number of digits before and after the decimal point
+             * to display, as well as an unit string.
+             *
+             * Each unit is accompanied with a lower bound, which is the _absolute_ value of the
+             * integer value of the component above which this unit is selected. When formatting
+             * for display, we'll select the last unit in this list with a lower bound greater than
+             * or equal to the current value.
+             *
+             * @remark Terminate the list with a `NULL` value.
+             */
+            struct unit {
+                /// Absolute lower bound
+                uint32_t lowerBound{0};
+                /// Divisor
+                float divisor{0.f};
+                /// Unit display name (or `NULL` for none)
+                const char *displayName{nullptr};
+
+                /// Number of digits to the left of the decimal point to show
+                uint8_t leftDigits:4{3};
+                /// Number of digits to the right of the decimal point to show
+                uint8_t rightDigits:4{0};
+            };
+            const struct unit **units;
+
+            /// Context for callbacks
+            void *context{nullptr};
+            /**
+             * @brief Callback invoked when value changes
+             *
+             * @param value Current spinner value
+             * @param context Value of the `context` variable
+             */
+            void (*valueChanged)(const int32_t value, void *context);
+        } numSpinner;
     };
 
     /// Is the control hidden?

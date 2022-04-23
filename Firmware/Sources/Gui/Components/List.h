@@ -64,6 +64,12 @@ class List {
             size_t maxRow = (startRow + rowsPerScreen) < numRows ? (startRow + rowsPerScreen) :
                 numRows;
 
+            if((startRow + rowsPerScreen) >= numRows) {
+                if(startRow) {
+                    startRow -= 1;
+                }
+            }
+
             // calculate bounds for the rows
             auto rowBounds = contentBounds;
             auto remainingHeight = rowBounds.size.height;

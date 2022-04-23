@@ -112,7 +112,6 @@ void InputManager::handleMenuLongPress() {
  */
 void InputManager::updateEncoder(const int delta) {
     bool needsDraw{false};
-    Logger::Notice("gui: encoder delta = %d", delta);
 
     // move selection to next selectable component
     if(this->isMoveMode) {

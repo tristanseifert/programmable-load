@@ -15,6 +15,7 @@
 #include "Gfx/Icon.h"
 #include "Gui/ScreenManager.h"
 #include "Gui/Components/List.h"
+#include "Gui/Components/NumericSpinner.h"
 #include "Rtos/Rtos.h"
 
 #include <printf/printf.h>
@@ -27,6 +28,15 @@ static const Gui::Screen *GetMenuScreen();
 static char gVoltageBuffer[16];
 /// String buffer for current label
 static char gCurrentBuffer[16];
+
+/**
+ * @brief State for current spinner
+ */
+static Gui::Components::NumericSpinnerState gCurrentSpinnerState{
+    .isLimited = 1,
+    .minimum = 0,
+    .maximum = 10'000,
+};
 
 /**
  * @brief Main screen components
@@ -80,6 +90,19 @@ static Gui::ComponentData gMainComponents[]{
             .string = "※",
             .font = &Gfx::Font::gNumbers_L,
             .fontMode = Gfx::FontRenderFlags::HAlignLeft,
+        },
+    },
+    // current set value
+    {
+        .type = Gui::ComponentType::NumericSpinner,
+        .bounds = {Gfx::MakePoint(148, 2), Gfx::MakeSize(104, 28)},
+        .numSpinner = {
+            .state = &gCurrentSpinnerState,
+            .font = &Gfx::Font::gNumbers_L,
+            .fontMode = Gfx::FontRenderFlags::HAlignCenter,
+            .valueChanged = [](auto newValue, auto ctx) {
+                App::Control::Task::SetCurrentSetpoint(newValue * 1000);
+            }
         },
     },
     // USB connectivity icon
@@ -142,7 +165,7 @@ static void UpdateMainScreen(const Gui::Screen *screen) {
     sampleIndicator.staticLabel.string = gSamplingFlag ? "※" : " ";
 
     // icons (on the left side)
-    auto &usbIcon = gMainComponents[5], &extSenseIcon = gMainComponents[6];
+    auto &usbIcon = gMainComponents[6], &extSenseIcon = gMainComponents[7];
 
     usbIcon.staticIcon.hideIcon = !UsbStack::Task::GetIsConnected();
     extSenseIcon.staticIcon.hideIcon = !App::Control::Task::GetIsExternalSenseActive();
@@ -217,7 +240,7 @@ static void DrawMenuRow(Gfx::Framebuffer &fb, const Gfx::Rect bounds, const size
      */
     static const etl::array<const char *, kMenuRows> kTitles{{
         "Voltage Sense", "Mode",
-        "System Setup",
+        "Display", "System Setup",
     }};
     static const etl::array<const bool, kMenuRows> kHasAccessory{{
         true, true, false, false

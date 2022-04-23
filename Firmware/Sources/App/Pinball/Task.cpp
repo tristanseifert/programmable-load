@@ -85,6 +85,7 @@ void Task::main() {
     // initialize display
     Logger::Trace("pinball: %s", "init display");
     Display::Init();
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // discover front panel hardware, and initialize it
     Logger::Trace("pinball: %s", "init front panel");
@@ -95,6 +96,7 @@ void Task::main() {
     Gui::InputManager::Init();
     Gui::ScreenManager::Init();
     this->showVersionScreen();
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     // force display to update
     Gui::ScreenManager::Draw();
@@ -114,6 +116,7 @@ void Task::main() {
      * to be passed, it'll be in the appropriate queues.
      */
     Logger::Trace("pinball: %s", "start message loop");
+    App::Main::Task::CheckIn(App::Main::WatchdogCheckin::Pinball);
 
     while(1) {
         bool uiDirty{false};
@@ -423,4 +426,22 @@ void Task::updateIndicators() {
  * @param up Buttons released
  */
 void Task::handleButtons(const FrontIoDriver::Button down, const FrontIoDriver::Button up) {
+    /*
+     * Handle load on/off button
+     *
+     * We'll switch the load off on button down, but turn it on when the button is released.
+     */
+    const bool isLoadActive = App::Control::Task::GetIsLoadActive();
+
+    if((down & FrontIoDriver::Button::InputBtn) && isLoadActive) {
+        this->didDisableLoad = true;
+        App::Control::Task::SetIsLoadActive(false);
+    }
+    else if((up & FrontIoDriver::Button::InputBtn) && !isLoadActive) {
+        if(this->didDisableLoad) {
+            this->didDisableLoad = false;
+        } else {
+            App::Control::Task::SetIsLoadActive(true);
+        }
+    }
 }

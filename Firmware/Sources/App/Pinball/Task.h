@@ -197,6 +197,14 @@ class Task {
         /// Timer to dismiss the version screen
         TimerHandle_t versionDismissTimer;
 
+        /**
+         * @brief We just disabled the load
+         *
+         * Set when the "load on" button is pushed down. This ensures we don't re-enable it
+         * after the button is released.
+         */
+        bool didDisableLoad{false};
+
     private:
         /// Runtime priority level
         static const constexpr uint8_t kPriority{Rtos::TaskPriority::AppLow};

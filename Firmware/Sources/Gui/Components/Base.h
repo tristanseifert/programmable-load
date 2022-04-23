@@ -1,30 +1,32 @@
 #ifndef GUI_COMPONENTS_BASE_H
 #define GUI_COMPONENTS_BASE_H
 
+#include "Types.h"
 #include "../Screen.h"
-#include "Divider.h"
-#include "List.h"
-#include "StaticIcon.h"
-#include "StaticLabel.h"
 
 #include "Gfx/Types.h"
 #include "Log/Logger.h"
+
+#include "Divider.h"
+#include "List.h"
+#include "NumericSpinner.h"
+#include "StaticIcon.h"
+#include "StaticLabel.h"
 
 namespace Gfx {
 class Framebuffer;
 }
 
-/**
- * @brief Namespace containing component implementations
- */
 namespace Gui::Components {
 /**
  * @brief Draws a component.
  *
  * Invokes the appropriate draw function for a particular component, given a component data
  * structure.
+ *
+ * @param flags Modifiers for the current drawing mode
  */
-inline void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
+inline void Draw(Gfx::Framebuffer &fb, const ComponentData &data, const DrawFlags flags) {
     switch(data.type) {
         case ComponentType::Divider:
             Divider::Draw(fb, data);
@@ -37,6 +39,9 @@ inline void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
             break;
         case ComponentType::List:
             List::Draw(fb, data);
+            break;
+        case ComponentType::NumericSpinner:
+            NumericSpinner::Draw(fb, data, flags);
             break;
 
         default:
@@ -52,6 +57,8 @@ inline void Draw(Gfx::Framebuffer &fb, const ComponentData &data) {
 constexpr inline bool IsSelectable(const ComponentData &data) {
     switch(data.type) {
         case ComponentType::List:
+            return true;
+        case ComponentType::NumericSpinner:
             return true;
 
         default:
@@ -76,6 +83,8 @@ constexpr inline bool HandleSelection(const Screen *screen, const ComponentData 
             // you can't get out of a list
             List::HandleSelection(data);
             return true;
+        case ComponentType::NumericSpinner:
+            return NumericSpinner::HandleSelection(data);
 
         // other controls ignore selection event
         default:
@@ -100,6 +109,10 @@ constexpr inline void HandleEncoder(const Screen *screen, const ComponentData &d
         // scroll list
         case ComponentType::List:
             List::HandleEncoder(data, delta, needsDraw);
+            break;
+        // change input value
+        case ComponentType::NumericSpinner:
+            NumericSpinner::HandleEncoder(data, delta, needsDraw);
             break;
 
         default:

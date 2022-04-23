@@ -62,7 +62,7 @@ class Scrollbar {
                         bounds.origin.y + bounds.size.height), kDividerColor);
             Gfx::FillRect(fb, trackBounds, kTrackBackground);
 
-            if(!total) {
+            if(total < 2) {
                 return;
             }
 
@@ -75,7 +75,7 @@ class Scrollbar {
             // calculate knob's position and draw
             const auto knobRange = trackBounds.size.height - knobHeight;
             const uint16_t yOffset = static_cast<float>(knobRange) *
-                (static_cast<float>(position) / static_cast<float>(total));
+                (static_cast<float>(position) / static_cast<float>(total-1));
 
             const Gfx::Rect knobBounds{
                 Gfx::MakePoint<int>(trackBounds.origin.x,

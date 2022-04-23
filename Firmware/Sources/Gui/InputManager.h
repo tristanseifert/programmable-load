@@ -51,6 +51,11 @@ class InputManager {
             gShared->selectFirst(screen);
         }
 
+        /// Get current selection index
+        static inline auto SelectionIndex() {
+            return gShared->selectedComponent;
+        }
+
     private:
         InputManager();
         ~InputManager();
