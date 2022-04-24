@@ -568,6 +568,10 @@
     [
       "bf92557a-c10a-4f08-acca-4cd6e2a152ef",
       "Ethernet PHY"
+    ],
+    [
+      "10825e81-5515-4349-ad21-591c006636aa",
+      "Input Voltage Sense"
     ]
   ],
   "text_variables": {}
