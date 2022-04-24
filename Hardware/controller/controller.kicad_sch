@@ -4614,6 +4614,18 @@
     (path "/10825e81-5515-4349-ad21-591c006636aa/6a72a2f5-eaa0-475b-9420-ac17ba2ca8af"
       (reference "#PWR0509") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/a346bb69-a579-4487-b9ba-3079a7354ba2"
+      (reference "#PWR0510") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/5808772b-8905-4e9a-8011-27b1c9136197"
+      (reference "#PWR0511") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/7baae3bd-f3ca-4dc4-bcd2-17e8fd2e9378"
+      (reference "#PWR0512") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/8262e08e-a9e8-46c9-87ad-a0749f9dd485"
+      (reference "#PWR0513") (unit 1) (value "+3V3") (footprint "")
+    )
     (path "/9f8f850e-f21d-4cfa-8d52-ecff05516820"
       (reference "C101") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
@@ -4652,9 +4664,6 @@
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/4fbc3c59-0424-41a0-8276-7bf2d822ea0c"
       (reference "C204") (unit 1) (value "22µF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/95d0df45-ded6-4bbf-900b-3a4e9df245f9"
-      (reference "C205") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c49eb64-94e2-4a4e-86cb-59182e699d74"
       (reference "C206") (unit 1) (value "47µF") (footprint "Capacitor_SMD:CP_Elec_6.3x5.4")
@@ -4848,8 +4857,17 @@
     (path "/10825e81-5515-4349-ad21-591c006636aa/ec728256-e750-4c91-b2a0-16b45a38a1ea"
       (reference "J501") (unit 1) (value "Conn_01x04") (footprint "programmable-load:CUI_TBLH10-350-04BK")
     )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/4404bb47-4e40-4953-84bb-071b1c6a6caa"
+      (reference "K501") (unit 1) (value "EA2-3T") (footprint "programmable-load:KEMET-EA2")
+    )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/7c27485d-f632-40dd-b2a8-941ad9fa721c"
+      (reference "K502") (unit 1) (value "EA2-3T") (footprint "programmable-load:KEMET-EA2")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/c5d10d4b-b97c-4e85-acb5-701973ac6378"
       (reference "L201") (unit 1) (value "2.2µH") (footprint "Inductor_SMD:L_Taiyo-Yuden_NR-50xx_HandSoldering")
+    )
+    (path "/10825e81-5515-4349-ad21-591c006636aa/51acebf9-8105-424c-8a2e-9e91c1c3ca6c"
+      (reference "L501") (unit 1) (value "L_Coupled_1243") (footprint "programmable-load:ABRACON-ACM-21")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/4ef47829-4d5e-4d68-b3ee-7e486e9d1ac5"
       (reference "LS301") (unit 1) (value "Speaker") (footprint "programmable-load:PUI-AT-1224-TWT")
@@ -4963,7 +4981,7 @@
       (reference "R504") (unit 1) (value "20k .1%") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/10825e81-5515-4349-ad21-591c006636aa/178139c5-5cc1-4995-8f33-a1819558c7c2"
-      (reference "R505") (unit 1) (value "1k") (footprint "")
+      (reference "R505") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/da8bd817-7183-4743-a47e-7ab1536235d2"
       (reference "RV201") (unit 1) (value "Varistor") (footprint "Varistor:RV_Disc_D7mm_W3.4mm_P5mm")
@@ -4999,7 +5017,7 @@
       (reference "U102") (unit 1) (value "EMC2101-R") (footprint "Package_SO:MSOP-8_3x3mm_P0.65mm")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/e8dbc25d-89ce-4517-9376-0c525408ae99"
-      (reference "U201") (unit 1) (value "BD9D321EFJ") (footprint "Package_SO:SOP-8_3.9x4.9mm_P1.27mm")
+      (reference "U201") (unit 1) (value "BD9D321EFJ") (footprint "Package_SO:HTSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.2mm_ThermalVias")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/81a5ecfd-d0da-44de-a66b-aeaee0245b6a"
       (reference "U302") (unit 1) (value "ATSAME51J20A-A") (footprint "Package_QFP:TQFP-64_10x10mm_P0.5mm")
