@@ -427,7 +427,7 @@
       "netlist": "",
       "specctra_dsn": "",
       "step": "",
-      "vrml": ""
+      "vrml": "../3d/boards/front.wrl"
     },
     "page_layout_descr_file": ""
   },
