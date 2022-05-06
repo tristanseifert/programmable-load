@@ -512,6 +512,14 @@
     [
       "ebb39e00-184a-4d9a-998d-a9c1346d5a30",
       "Fan Control & Temperature Sensors"
+    ],
+    [
+      "afc218b4-6ce8-4742-9485-86399056c336",
+      "Analog stuff"
+    ],
+    [
+      "9e14dd43-0fb7-4e60-92a4-f58637916ead",
+      "Clock Generator"
     ]
   ],
   "text_variables": {}
