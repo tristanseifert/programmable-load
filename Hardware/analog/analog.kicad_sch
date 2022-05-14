@@ -374,6 +374,9 @@
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/90e17ac9-f42d-4e20-873a-97e1e3a08eee"
       (reference "#PWR0205") (unit 1) (value "GND") (footprint "")
     )
+    (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/37a64c42-7612-4410-b3f3-9258239f20f1"
+      (reference "#PWR0206") (unit 1) (value "+3V3") (footprint "")
+    )
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/2d7d7fb0-6be6-4904-b2db-292874b5df9d"
       (reference "#PWR0207") (unit 1) (value "GND") (footprint "")
     )
@@ -382,6 +385,9 @@
     )
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/f99b0893-b441-4af1-b75e-945dba8e43a2"
       (reference "#PWR0209") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/73c83ad4-8ddb-4e98-8e37-695fe05c1c8f"
+      (reference "#PWR0210") (unit 1) (value "GND") (footprint "")
     )
     (path "/b8f9c5f7-2403-4b47-9202-13f82aeee8e6/d8bd1851-6f6f-4be1-a9cc-5f8b88bf9564"
       (reference "#PWR0301") (unit 1) (value "GND") (footprint "")
@@ -824,9 +830,6 @@
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/72d7bc75-f9e0-4264-bcfb-19e9b94a268f"
       (reference "HS201") (unit 1) (value "2x C40-058-AE") (footprint "programmable-load:C40-058-AE-DUAL")
     )
-    (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/3aa3585b-d524-4aaa-b230-8c28e6d991ee"
-      (reference "HS202") (unit 1) (value "2x C40-058-AE") (footprint "programmable-load:C40-058-AE-DUAL")
-    )
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/cee430ab-ebb7-4be3-9ccf-b88cca17d6c3"
       (reference "HS203") (unit 1) (value "WV-T247-101E") (footprint "programmable-load:Ohmite-WA-T247-101E-MFG")
     )
@@ -970,6 +973,9 @@
     )
     (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/c40a9777-b759-47d2-9341-5f5e60e7fc54"
       (reference "U202") (unit 1) (value "LM431SC") (footprint "Package_TO_SOT_SMD:SOT-23")
+    )
+    (path "/e1649c35-e6e3-47dd-8aeb-a217676fe0ce/d4a4744b-cb43-47c1-b344-e7fb828045fa"
+      (reference "U203") (unit 1) (value "LMT86LMT") (footprint "Package_TO_SOT_THT:TO-92_Inline_Wide")
     )
     (path "/b8f9c5f7-2403-4b47-9202-13f82aeee8e6/c63730b2-ba91-431e-8380-1aabe53df653"
       (reference "U301") (unit 1) (value "ADUM131D") (footprint "Package_SO:SOIC-16_3.9x9.9mm_P1.27mm")
