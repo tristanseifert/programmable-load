@@ -56,6 +56,8 @@
         }
       ],
       "drc_exclusions": [
+        "silk_edge_clearance|166500000|48000000|8e6f4475-5d5c-466e-b677-79e80a3b48e7|f8f5d27c-714a-442b-9b21-4db5dabafb2c",
+        "silk_edge_clearance|166500000|80000000|599e86ee-16f7-4f11-8ed4-34f94e24a860|64bcb891-a369-4898-bc46-d2628e35716e",
         "silk_over_copper|41500000|48000000|f8f5d27c-714a-442b-9b21-4db5dabafb2c|8e6f4475-5d5c-466e-b677-79e80a3b48e7",
         "silk_over_copper|41500000|80000000|64bcb891-a369-4898-bc46-d2628e35716e|599e86ee-16f7-4f11-8ed4-34f94e24a860",
         "silk_over_copper|46500000|48000000|f8f5d27c-714a-442b-9b21-4db5dabafb2c|65f9a91a-6dbd-47da-8943-4b06c1a212d1",
