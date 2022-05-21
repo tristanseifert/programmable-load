@@ -4070,6 +4070,820 @@
       )
     )
   )
+  (symbol "IP4234CZ6" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "U" (id 0) (at 0 17.78 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "IP4234CZ6" (id 1) (at 0 20.32 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Footprint" "Package_SO:TSOP-6_1.65x3.05mm_P0.95mm" (id 2) (at 0 22.86 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/IP4234CZ6.pdf" (id 3) (at 0 25.4 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "ki_keywords" "usb esd" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "ki_description" "USB ESD Protection" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (symbol "IP4234CZ6_1_1"
+      (polyline
+        (pts
+          (xy 2.54 0)
+          (xy 10.16 0)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 5.08 -10.16)
+          (xy 7.62 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 5.08 -5.08)
+          (xy 7.62 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 5.08 10.16)
+          (xy 5.08 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 -8.89)
+          (xy 7.62 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 -8.89)
+          (xy 10.16 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 -3.81)
+          (xy 7.62 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 -3.81)
+          (xy 10.16 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 5.08)
+          (xy 5.08 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 6.35)
+          (xy 7.62 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 6.35)
+          (xy 10.16 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 10.16)
+          (xy 5.08 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 11.43)
+          (xy 7.62 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 7.62 11.43)
+          (xy 10.16 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -10.16)
+          (xy 7.62 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -10.16)
+          (xy 15.24 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -8.89)
+          (xy 10.16 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -5.08)
+          (xy 7.62 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -5.08)
+          (xy 15.24 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -3.81)
+          (xy 10.16 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 -2.54)
+          (xy 15.24 0)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 2.54)
+          (xy 10.16 -2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 5.08)
+          (xy 7.62 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 5.08)
+          (xy 15.24 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 6.35)
+          (xy 10.16 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 10.16)
+          (xy 7.62 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 10.16)
+          (xy 15.24 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.16 11.43)
+          (xy 10.16 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 -8.89)
+          (xy 11.938 -8.382)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 -7.874)
+          (xy 11.938 -7.366)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 -6.858)
+          (xy 11.938 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 6.35)
+          (xy 11.43 6.096)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 7.366)
+          (xy 11.938 6.858)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 10.922 8.382)
+          (xy 11.938 7.874)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 -9.144)
+          (xy 10.922 -8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 -9.144)
+          (xy 11.43 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 -6.096)
+          (xy 11.43 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 6.096)
+          (xy 11.43 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 9.144)
+          (xy 11.43 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.43 9.144)
+          (xy 11.938 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 -8.382)
+          (xy 10.922 -7.874)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 -7.366)
+          (xy 10.922 -6.858)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 -6.35)
+          (xy 11.43 -6.096)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 6.858)
+          (xy 10.922 6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 7.874)
+          (xy 10.922 7.366)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 11.938 8.89)
+          (xy 10.922 8.382)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 -12.7)
+          (xy 22.86 -12.7)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 -10.16)
+          (xy 13.97 -12.7)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 -7.62)
+          (xy 22.86 -7.62)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 -5.08)
+          (xy 13.97 -7.62)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 5.08)
+          (xy 13.97 7.62)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 7.62)
+          (xy 22.86 7.62)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 10.16)
+          (xy 13.97 12.7)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 13.97 12.7)
+          (xy 22.86 12.7)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 14.478 1.778)
+          (xy 14.478 2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 14.478 2.54)
+          (xy 15.24 2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 -8.89)
+          (xy 15.24 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 -8.89)
+          (xy 17.78 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 -3.81)
+          (xy 15.24 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 -3.81)
+          (xy 17.78 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 -2.54)
+          (xy 16.002 -2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 0)
+          (xy 10.16 2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 2.54)
+          (xy 15.24 -2.54)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 6.35)
+          (xy 15.24 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 6.35)
+          (xy 17.78 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 11.43)
+          (xy 15.24 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 15.24 11.43)
+          (xy 17.78 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 16.002 -2.54)
+          (xy 16.002 -1.778)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 -10.16)
+          (xy 15.24 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 -8.89)
+          (xy 17.78 -11.43)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 -5.08)
+          (xy 15.24 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 -5.08)
+          (xy 20.32 -5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 -3.81)
+          (xy 17.78 -6.35)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 5.08)
+          (xy 15.24 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 5.08)
+          (xy 20.32 5.08)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 6.35)
+          (xy 17.78 3.81)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 10.16)
+          (xy 15.24 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 10.16)
+          (xy 20.32 10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 17.78 11.43)
+          (xy 17.78 8.89)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 20.32 -10.16)
+          (xy 17.78 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 20.32 10.16)
+          (xy 20.32 -10.16)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 22.86 0)
+          (xy 15.24 0)
+        )
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (rectangle (start 2.54 15.24) (end 22.86 -15.24)
+        (stroke (width 0) (type solid))
+        (fill (type background))
+      )
+      (circle (center 5.08 -5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 5.08 0) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 5.08 5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 11.43 -10.16) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 11.43 -5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 11.43 5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 11.43 10.16) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 13.97 -10.16) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 13.97 -5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 13.97 5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 13.97 10.16) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 20.32 -5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 20.32 0) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (circle (center 20.32 5.08) (radius 0.254)
+        (stroke (width 0) (type solid))
+        (fill (type none))
+      )
+      (pin passive line (at 25.4 12.7 180) (length 2.54)
+        (name "1" (effects (font (size 0 0))))
+        (number "1" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 0 0 0) (length 2.54)
+        (name "2" (effects (font (size 0 0))))
+        (number "2" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 25.4 7.62 180) (length 2.54)
+        (name "3" (effects (font (size 0 0))))
+        (number "3" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 25.4 -12.7 180) (length 2.54)
+        (name "4" (effects (font (size 0 0))))
+        (number "4" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 25.4 0 180) (length 2.54)
+        (name "5" (effects (font (size 0 0))))
+        (number "5" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 25.4 -7.62 180) (length 2.54)
+        (name "6" (effects (font (size 0 0))))
+        (number "6" (effects (font (size 1.016 1.016))))
+      )
+    )
+  )
+  (symbol "IP4234CZ6-ALT" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "U" (id 0) (at 6.35 5.08 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Value" "IP4234CZ6-ALT" (id 1) (at 6.35 2.54 0)
+      (effects (font (size 1.27 1.27)))
+    )
+    (property "Footprint" "Package_SO:TSOP-6_1.65x3.05mm_P0.95mm" (id 2) (at 0 22.86 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/IP4234CZ6.pdf" (id 3) (at 0 25.4 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "ki_keywords" "usb esd" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "ki_description" "USB ESD Protection" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (symbol "IP4234CZ6-ALT_0_1"
+      (rectangle (start 0 0) (end 13.97 -15.24)
+        (stroke (width 0) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "IP4234CZ6-ALT_1_1"
+      (pin passive line (at 16.51 -12.7 180) (length 2.54)
+        (name "1" (effects (font (size 0 0))))
+        (number "1" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 16.51 -7.62 180) (length 2.54)
+        (name "GND" (effects (font (size 1.27 1.27))))
+        (number "2" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at -2.54 -12.7 0) (length 2.54)
+        (name "3" (effects (font (size 0 0))))
+        (number "3" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at -2.54 -2.54 0) (length 2.54)
+        (name "4" (effects (font (size 0 0))))
+        (number "4" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at -2.54 -7.62 0) (length 2.54)
+        (name "VBUS" (effects (font (size 1.27 1.27))))
+        (number "5" (effects (font (size 1.016 1.016))))
+      )
+      (pin passive line (at 16.51 -2.54 180) (length 2.54)
+        (name "6" (effects (font (size 0 0))))
+        (number "6" (effects (font (size 1.016 1.016))))
+      )
+    )
+  )
   (symbol "IXTH80N075L2" (pin_names (offset 0) hide) (in_bom yes) (on_board yes)
     (property "Reference" "Q" (id 0) (at 5.08 1.27 0)
       (effects (font (size 1.27 1.27)) (justify left))
