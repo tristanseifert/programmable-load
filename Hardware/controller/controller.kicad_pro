@@ -56,6 +56,9 @@
         }
       ],
       "drc_exclusions": [
+        "lib_footprint_issues|155000000|26500000|2e51601b-a1ab-458b-a4a2-70ff0a759aeb|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_issues|155700000|30050000|da803cda-959d-418e-9d28-8506af2af21c|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_issues|156700000|33500000|bb5fc6f5-9388-4840-a7d5-cbc53f34305f|00000000-0000-0000-0000-000000000000",
         "silk_over_copper|112800000|145050000|342729d4-75ae-45ac-9128-7d9ff059e5e8|56065c72-e4b2-4b13-8b3e-9e354d6dec8c",
         "silk_over_copper|115100000|145050000|342729d4-75ae-45ac-9128-7d9ff059e5e8|22814eac-ff51-4a16-a2fd-bbadfba10225",
         "silk_over_copper|116900000|142150000|472f6373-85ff-441d-8686-5f4f3e0548c0|521544bc-304c-4c8f-877f-3ad10f4c8fee",
@@ -86,6 +89,7 @@
         "silk_over_copper|88650000|122350000|c030468a-d468-416f-9a15-2fe570be486d|ca8c6924-bf3e-431c-8b71-441f37699316",
         "silk_over_copper|88650000|124050000|e872873c-f98a-41f9-8c35-51745623cb1d|ca8c6924-bf3e-431c-8b71-441f37699316",
         "silk_over_copper|92100000|89250000|90a31bba-cd53-4b57-b95a-daf06c25e83b|f8a43c0e-0358-48ee-9475-36aebe3f81ad",
+        "silk_overlap|157000000|51000000|ed501c8b-ac95-445b-aab7-5bf4f8a6940b|de47b0d4-a553-4563-9f53-3b72d3ecb579",
         "silk_overlap|157000000|68000000|ed501c8b-ac95-445b-aab7-5bf4f8a6940b|edc9c462-cbbd-480e-93ea-9e0ea47deac2",
         "silk_overlap|157000000|68000000|edc9c462-cbbd-480e-93ea-9e0ea47deac2|ed501c8b-ac95-445b-aab7-5bf4f8a6940b",
         "silk_overlap|176605000|138400000|1d4950ec-737a-4f17-bd4f-1e0cc347da23|4920eae7-fc74-4e45-80b1-f1ef1d8aa4fb",
@@ -95,6 +99,7 @@
         "silk_overlap|176605000|138400000|638ba031-3294-407a-890c-2dfee03b91bf|4920eae7-fc74-4e45-80b1-f1ef1d8aa4fb",
         "silk_overlap|176605000|138400000|638ba031-3294-407a-890c-2dfee03b91bf|9c29bb35-8ae3-45e0-aa35-8e59b5c21323",
         "silk_overlap|176605000|138400000|9c29bb35-8ae3-45e0-aa35-8e59b5c21323|1d4950ec-737a-4f17-bd4f-1e0cc347da23",
+        "silk_overlap|196000000|51000000|ed501c8b-ac95-445b-aab7-5bf4f8a6940b|f35b7abe-3e5d-41cb-840a-f9782d8d5db5",
         "silk_overlap|196000000|68000000|ed501c8b-ac95-445b-aab7-5bf4f8a6940b|ca1a9b6a-f106-4480-ab93-606c940a7cbf",
         "silk_overlap|197505000|138400000|1688fa3b-ad28-4799-93ad-214270b3d7fc|5397f391-ba38-4d1a-af7c-9c2a71a789a8",
         "silk_overlap|197505000|138400000|1688fa3b-ad28-4799-93ad-214270b3d7fc|638ba031-3294-407a-890c-2dfee03b91bf",
@@ -593,6 +598,10 @@
     [
       "a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a",
       "Rear IO Connections"
+    ],
+    [
+      "d2a88cdd-60c5-4a80-9083-78712e11c498",
+      "Bus Multiplexers"
     ]
   ],
   "text_variables": {}
