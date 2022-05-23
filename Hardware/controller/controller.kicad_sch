@@ -417,7 +417,7 @@
     (uuid fd9d2147-c024-4a4c-8189-0c0ab1cd8d3d)
   )
 
-  (label "ETH_RX+" (at 282.575 24.13 0) (fields_autoplaced)
+  (label "ETH_RXP" (at 282.575 24.13 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 08e3fae1-f059-461b-9dde-fea9326a70e7)
   )
@@ -437,7 +437,7 @@
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 11a2afa1-30a5-420a-a7ad-10d888168e49)
   )
-  (label "ETH_TX+" (at 171.45 61.595 0) (fields_autoplaced)
+  (label "ETH_TXP" (at 171.45 61.595 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 151a74ef-8fca-4ab6-b6ba-b3ca92a5ca20)
   )
@@ -533,7 +533,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4b0d5d4a-858f-42ae-8e57-1e7448e19af7)
   )
-  (label "ETH_LED1" (at 171.45 51.435 0) (fields_autoplaced)
+  (label "~{ETH_LED1}" (at 171.45 51.435 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 4da452f8-a26e-4cba-9d46-0d526dd8b8bf)
   )
@@ -557,7 +557,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 54d3c934-84fc-4474-9e8b-9499d45229ef)
   )
-  (label "ETH_TX-" (at 171.45 59.055 0) (fields_autoplaced)
+  (label "ETH_TXN" (at 171.45 59.055 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 57b1dc3f-c7ee-4996-bc38-7dced1a378a8)
   )
@@ -617,7 +617,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 8c1bc067-c9af-45a7-8e50-3db29c336eca)
   )
-  (label "ETH_LED1" (at 282.575 34.29 0) (fields_autoplaced)
+  (label "~{ETH_LED1}" (at 282.575 34.29 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 8c8e3e96-c7fc-4108-9713-95fb137babb3)
   )
@@ -629,7 +629,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 921224a5-1415-4bf4-b073-1e86a0bda00c)
   )
-  (label "ETH_TX+" (at 282.575 29.21 0) (fields_autoplaced)
+  (label "ETH_TXP" (at 282.575 29.21 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid 95d7b4e4-d090-4b4b-95d7-0687255342ed)
   )
@@ -681,11 +681,11 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid bb06efad-409e-4410-922c-6efb3fb7064e)
   )
-  (label "ETH_RX-" (at 282.575 21.59 0) (fields_autoplaced)
+  (label "ETH_RXN" (at 282.575 21.59 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid bc36005e-79ad-4819-9ef0-eef4f399c170)
   )
-  (label "ETH_RX-" (at 171.45 53.975 0) (fields_autoplaced)
+  (label "ETH_RXN" (at 171.45 53.975 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid bc58f8f2-a6c4-4c83-a7bf-c1d1fa983ec0)
   )
@@ -701,7 +701,7 @@
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid bfb2974f-0e4e-4a26-adc6-29ccb95f1579)
   )
-  (label "ETH_TX-" (at 282.575 26.67 0) (fields_autoplaced)
+  (label "ETH_TXN" (at 282.575 26.67 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid c0e8915a-b362-46e8-9785-22eea4417272)
   )
@@ -741,7 +741,7 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid ddd43315-baf0-478e-b3bc-a7cd95fe9336)
   )
-  (label "ETH_RX+" (at 171.45 56.515 0) (fields_autoplaced)
+  (label "ETH_RXP" (at 171.45 56.515 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid dea1829d-40b0-4fc2-b0dc-df47c7b92590)
   )
@@ -964,23 +964,23 @@
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 8efee317-3b28-4e29-b452-e1dae9114229)
     )
-    (pin "ETH_LED1" output (at 266.7 34.29 0)
+    (pin "~{ETH_LED1}" output (at 266.7 34.29 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 5d3bd1f2-8425-495e-9f2d-4a145522e70d)
     )
-    (pin "ETH_RX-" input (at 266.7 21.59 0)
+    (pin "ETH_RXN" input (at 266.7 21.59 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 68032cbc-1c9b-4edc-858a-b7df67cd7599)
     )
-    (pin "ETH_RX+" input (at 266.7 24.13 0)
+    (pin "ETH_RXP" input (at 266.7 24.13 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid cb4e5939-01cb-467c-a555-83c7b749ecaf)
     )
-    (pin "ETH_TX+" output (at 266.7 26.67 0)
+    (pin "ETH_TXP" output (at 266.7 26.67 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 363c94ec-0c22-43a2-8230-b35e3a1eea5c)
     )
-    (pin "ETH_TX-" output (at 266.7 29.21 0)
+    (pin "ETH_TXN" output (at 266.7 29.21 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 9cea7431-72ea-427f-9823-60f7fb4bf002)
     )
@@ -1208,11 +1208,11 @@
     (property "Sheetfile" "io-rear.kicad_sch" (id 1) (at 184.15 71.0696 0)
       (effects (font (size 1.27 1.27)) (justify left top))
     )
-    (pin "ETH_RX-" output (at 184.15 53.975 180)
+    (pin "ETH_RXN" output (at 184.15 53.975 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid d0e63bd1-6216-4b81-94eb-8d4986799fe9)
     )
-    (pin "ETH_RX+" output (at 184.15 56.515 180)
+    (pin "ETH_RXP" output (at 184.15 56.515 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 1bd9ddb7-631b-4aed-9ae6-f31605e583d2)
     )
@@ -1228,7 +1228,7 @@
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 69622d68-d985-46cc-bbef-f61858c32ec3)
     )
-    (pin "ETH_TX+" input (at 184.15 59.055 180)
+    (pin "ETH_TXN" input (at 184.15 59.055 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid d50cc6f5-84c8-4fa3-a6f2-e10cb3c9567a)
     )
@@ -1236,7 +1236,7 @@
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid d3c840d0-880e-443c-9762-84cf475dea60)
     )
-    (pin "ETH_TX-" input (at 184.15 61.595 180)
+    (pin "ETH_TXP" input (at 184.15 61.595 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 6cc1940e-ac9b-4778-82de-3b23b815adfe)
     )
@@ -1248,7 +1248,7 @@
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 1b73b91d-176f-4d00-b325-913836ba6b38)
     )
-    (pin "ETH_LED1" input (at 184.15 51.435 180)
+    (pin "~{ETH_LED1}" input (at 184.15 51.435 180)
       (effects (font (size 1.27 1.27)) (justify left))
       (uuid 119f31cc-a55a-4e3b-aec9-bfdfec5ff9d1)
     )
@@ -1290,6 +1290,7 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a" (page "6"))
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498" (page "6"))
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25" (page "7"))
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737" (page "8"))
   )
 
   (symbol_instances
@@ -1311,7 +1312,7 @@
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/12d36e4a-eacd-4628-81d1-6d674b5744a0"
       (reference "#PWR0102") (unit 1) (value "GND") (footprint "")
     )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/4ad7d515-c4b9-406c-b04b-c2445dd155be"
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/914bbd0d-6779-49d6-8d82-c5865ec631fc"
       (reference "#PWR0103") (unit 1) (value "GND") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/5c7d63e4-a971-4175-9d78-3725e8dbdbd3"
@@ -1325,6 +1326,15 @@
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/145cbbfa-5d86-4507-bd48-20dfe57b8c96"
       (reference "#PWR0107") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/65bc7903-9a5e-4b0f-987d-52d3adc7faa7"
+      (reference "#PWR0108") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/1c67f19d-a78d-45fc-984c-812b26f054e6"
+      (reference "#PWR0109") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/ea109e1b-5672-48a5-a103-4724ad2b9f1b"
+      (reference "#PWR0112") (unit 1) (value "GND") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
@@ -1376,6 +1386,9 @@
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/e44e15f1-d139-487d-8f50-d43325e66d09"
       (reference "#PWR0217") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/e3de89d9-4b67-45c3-a023-12fee2926b10"
+      (reference "#PWR0219") (unit 1) (value "GND") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/f6978ee0-84b1-44f6-b499-65d9dcc4c6c8"
       (reference "#PWR0220") (unit 1) (value "Earth") (footprint "")
@@ -1494,9 +1507,6 @@
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/5ee9e803-9216-4712-aadb-72e3b113f157"
       (reference "#PWR0413") (unit 1) (value "GND") (footprint "")
     )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/6994a3e5-124a-4759-b86f-03c9e77a1d50"
-      (reference "#PWR0501") (unit 1) (value "GND") (footprint "")
-    )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/f7940918-684c-43e2-b948-f7df6a250b99"
       (reference "#PWR0502") (unit 1) (value "GND") (footprint "")
     )
@@ -1508,6 +1518,9 @@
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/d5a6c454-04df-458b-8a80-9d4a6a5ce41d"
       (reference "#PWR0505") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/4990f6b8-da0e-453a-8160-ad218a3a11a1"
+      (reference "#PWR0506") (unit 1) (value "GND") (footprint "")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/361d1949-1110-4756-bd12-1ce1058b9a65"
       (reference "#PWR0514") (unit 1) (value "+12V") (footprint "")
@@ -1560,6 +1573,39 @@
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/1d0f1a73-4ef3-45f5-8c57-538b02ec990c"
       (reference "#PWR0705") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/5e6ccacc-0f4b-460f-9b5c-47c01418869b"
+      (reference "#PWR0801") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/b8a29003-f998-43d4-8797-3584a9282349"
+      (reference "#PWR0802") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/3df95bf7-b777-4379-92a7-1a955382394c"
+      (reference "#PWR0803") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/af215cf5-5d46-4173-88a8-a61e78bb93a0"
+      (reference "#PWR0804") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/3a91e7d5-fec1-4c5e-bbce-4838f5cbc46b"
+      (reference "#PWR0805") (unit 1) (value "+3V3A") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/fb7aa5cf-5d53-4c9f-bfad-aaf3a0c95c99"
+      (reference "#PWR0806") (unit 1) (value "+3V3A") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/fc3eed75-4798-4d24-85f0-55e24dbdd0fb"
+      (reference "#PWR0807") (unit 1) (value "+3V3A") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/05b65d7a-b5e9-47f8-b979-9d4fbd0102a4"
+      (reference "#PWR0808") (unit 1) (value "+3V3A") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/5554521a-fe65-4cd8-b10e-7a1097dd3db1"
+      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
+    )
+    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/a4bbddf9-0e1d-4752-b446-84356fcffa8c"
+      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/d3355fde-0ef0-4125-ab1e-d2311b610e4f"
+      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/70dde355-c440-4174-9a39-cd7a7cdcb381"
       (reference "BT301") (unit 1) (value "ML-1220") (footprint "programmable-load:Panasonic-ML-1220_V1AN-0-0")
     )
@@ -1611,14 +1657,11 @@
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/d60cab30-3ff2-4da0-902a-7244b4d52eb5"
       (reference "C403") (unit 1) (value "22µF") (footprint "Capacitor_SMD:CP_Elec_6.3x5.9")
     )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/60654258-7675-44bb-b6cb-4c2b7c7d1a27"
-      (reference "C501") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
-    )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/fa3ad873-fb62-4219-b54f-9a05130a3999"
       (reference "C502") (unit 1) (value "10µF") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/ec9b4519-14cb-4662-a0aa-ef4e1015294f"
-      (reference "C503") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
+      (reference "C503") (unit 1) (value "22nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/b3f42227-e370-472a-9d6b-a2b583d39fa0"
       (reference "C601") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -1631,6 +1674,15 @@
     )
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/e1c7927c-e9e9-45fd-8b3f-225b162a28a8"
       (reference "C702") (unit 1) (value "22µF") (footprint "Capacitor_SMD:CP_Elec_6.3x5.9")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/a9a55f1d-e526-47f7-9011-763b20c0d682"
+      (reference "C801") (unit 1) (value "10nF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/f09dc37a-840c-4280-8c12-e1d1f7a30ac4"
+      (reference "C802") (unit 1) (value "470pF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/2294c542-0ed9-426a-84cf-08ee39e3e523"
+      (reference "C803") (unit 1) (value "1µF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/6486ffea-bf1d-4138-b45e-e0b90844d779"
       (reference "D201") (unit 1) (value "Green") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
@@ -1689,6 +1741,9 @@
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/509f7b52-4ebf-4832-b2c0-083a8f222176"
       (reference "FB701") (unit 1) (value "FerriteBead_Small") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/6f134160-09fb-483c-a274-ea21958286b8"
+      (reference "FB801") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
+    )
     (path "/17efdd20-a3b0-49e4-9ae6-a4b2690502b5"
       (reference "H101") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
     )
@@ -1718,6 +1773,9 @@
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/67385ff5-1c0f-4888-889f-0d5f315dda90"
       (reference "J502") (unit 1) (value "USB_B") (footprint "programmable-load:CUI_UJ2-BH-2-TH")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/9157527f-0fb0-4a62-9f00-d478a908a331"
+      (reference "J503") (unit 1) (value "TBP02R1W-381-04BE") (footprint "programmable-load:CUI_TBP02R1W-381-04BE")
     )
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/665358b5-4c12-46f0-a7fb-07bd6beb982e"
       (reference "J701") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_IDC:IDC-Header_2x10_P2.54mm_Horizontal")
@@ -1754,6 +1812,9 @@
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/5a679ec5-3721-4d66-9469-f13d02d663d7"
       (reference "R204") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/011c2560-0aaa-4f4f-9bc9-ae5e6de5421e"
+      (reference "R205") (unit 1) (value "0R") (footprint "Resistor_SMD:R_1210_3225Metric_Pad1.30x2.65mm_HandSolder")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/25107223-2ce3-4232-84d9-7ddb30219505"
       (reference "R206") (unit 1) (value "7k5") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
@@ -1833,6 +1894,27 @@
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/dafca7e6-516d-46d4-9892-1d9fd2c3fb32"
       (reference "R703") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/0ff6229c-4b06-4ff6-b74b-828dcf295377"
+      (reference "R801") (unit 1) (value "12k1 1%") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/9b6bb50c-44df-4ccd-80a4-7959ab7b4fe6"
+      (reference "R802") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/dcc2b119-3f1b-4ec5-a6f7-b0b0ed85913e"
+      (reference "R803") (unit 1) (value "49R9") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/3e7ef1d6-cacc-40ca-a541-6c151c0737e9"
+      (reference "R804") (unit 1) (value "49R9") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/c971455b-6280-4231-9bb9-93548167a868"
+      (reference "R805") (unit 1) (value "49R9") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/57ee3efe-7eb7-4ea9-a64d-993f6695c1aa"
+      (reference "R806") (unit 1) (value "49R9") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/8318b9ba-10c7-4325-8ded-d61305a7ef1b"
+      (reference "R807") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/da8bd817-7183-4743-a47e-7ab1536235d2"
       (reference "RV201") (unit 1) (value "Varistor") (footprint "Varistor:RV_Disc_D7mm_W3.4mm_P5mm")
     )
@@ -1886,6 +1968,9 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/73cd5427-df1a-4b18-830e-2aa7001c1ccd"
       (reference "U603") (unit 1) (value "74LVC1G0832") (footprint "Package_TO_SOT_SMD:SOT-23-6_Handsoldering")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/2af88efa-b2b7-4c7b-af55-b415128c5a1a"
+      (reference "U801") (unit 1) (value "LAN8720A") (footprint "Package_DFN_QFN:QFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/8a07f1bf-c168-4846-af0f-adb86b262938"
       (reference "X201") (unit 1) (value "FS20-1800-C2") (footprint "programmable-load:Triad-FS16-2250-C2")

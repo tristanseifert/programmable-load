@@ -565,6 +565,10 @@
     [
       "5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25",
       "Analog (Load) Connection"
+    ],
+    [
+      "b48c6e1a-d45a-42a7-82ff-53c356fe9737",
+      "Ethernet PHY"
     ]
   ],
   "text_variables": {}
