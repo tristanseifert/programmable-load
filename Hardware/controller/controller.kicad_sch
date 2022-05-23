@@ -1290,11 +1290,17 @@
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/12d36e4a-eacd-4628-81d1-6d674b5744a0"
       (reference "#PWR0102") (unit 1) (value "GND") (footprint "")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/4ad7d515-c4b9-406c-b04b-c2445dd155be"
+      (reference "#PWR0103") (unit 1) (value "GND") (footprint "")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/5c7d63e4-a971-4175-9d78-3725e8dbdbd3"
       (reference "#PWR0104") (unit 1) (value "+12V") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/911c6943-359a-48c4-bab6-f6996b0a8a01"
       (reference "#PWR0105") (unit 1) (value "+5V") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/c7aef9f4-e7fa-4c28-9cf1-cc4870173760"
+      (reference "#PWR0106") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
@@ -1346,12 +1352,6 @@
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/695ebea2-c38a-486f-bf80-fe8474530a8e"
       (reference "#PWR0217") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/70cef4b1-374f-4188-a820-7b0fcd00b427"
-      (reference "#PWR0218") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/84c2ef8b-e7c5-4b1d-b4b8-a2afa75822dd"
-      (reference "#PWR0219") (unit 1) (value "GND") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/f6978ee0-84b1-44f6-b499-65d9dcc4c6c8"
       (reference "#PWR0220") (unit 1) (value "Earth") (footprint "")
@@ -1473,6 +1473,12 @@
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/5ee9e803-9216-4712-aadb-72e3b113f157"
       (reference "#PWR0413") (unit 1) (value "GND") (footprint "")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/6994a3e5-124a-4759-b86f-03c9e77a1d50"
+      (reference "#PWR0501") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/f7940918-684c-43e2-b948-f7df6a250b99"
+      (reference "#PWR0502") (unit 1) (value "GND") (footprint "")
+    )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/dfa5167d-8587-4aff-a7eb-65aa275d88cb"
       (reference "#PWR0503") (unit 1) (value "+12V") (footprint "")
     )
@@ -1587,8 +1593,14 @@
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/d60cab30-3ff2-4da0-902a-7244b4d52eb5"
       (reference "C403") (unit 1) (value "22µF") (footprint "Capacitor_SMD:CP_Elec_6.3x5.9")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/60654258-7675-44bb-b6cb-4c2b7c7d1a27"
+      (reference "C501") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
+    )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/fa3ad873-fb62-4219-b54f-9a05130a3999"
       (reference "C502") (unit 1) (value "10µF") (footprint "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/ec9b4519-14cb-4662-a0aa-ef4e1015294f"
+      (reference "C503") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/b3f42227-e370-472a-9d6b-a2b583d39fa0"
       (reference "C601") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder")
@@ -1683,6 +1695,12 @@
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/43b719a3-7c36-455d-ba05-b45c8aefaba3"
       (reference "J402") (unit 1) (value "USB_A") (footprint "programmable-load:CUI_UJ2-AH-4-TH")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/e700240f-ce03-49c8-bb19-2eade828259e"
+      (reference "J501") (unit 1) (value "ARJM11C7-009-AB") (footprint "programmable-load:Abracon-ARJM11C7")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/67385ff5-1c0f-4888-889f-0d5f315dda90"
+      (reference "J502") (unit 1) (value "USB_B") (footprint "programmable-load:CUI_UJ2-BH-2-TH")
+    )
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/665358b5-4c12-46f0-a7fb-07bd6beb982e"
       (reference "J701") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_IDC:IDC-Header_2x10_P2.54mm_Horizontal")
     )
@@ -1773,6 +1791,12 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/74ee9575-9ced-42b9-9d6c-45ef62c162db"
       (reference "R504") (unit 1) (value "4k7") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/454e1e76-6b3e-4f34-862f-d1c31b7a2130"
+      (reference "R505") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/3bb4750c-ba5f-4f66-a069-a776c938cdec"
+      (reference "R506") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/d47ca922-41c6-4860-8b75-2867f3db62d3"
       (reference "R601") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
     )
@@ -1809,14 +1833,8 @@
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/17ff0f97-5523-46e3-99b8-90e97fcf5628"
       (reference "TP204") (unit 1) (value "GND") (footprint "TestPoint:TestPoint_Keystone_5000-5004_Miniature")
     )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/5632b479-f478-46d0-af41-6d35a468dcae"
-      (reference "TP205") (unit 1) (value "TestPoint") (footprint "programmable-load:DELTRON-571-0x00")
-    )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/a9b81f74-f794-4a3d-a053-84644168e097"
-      (reference "TP206") (unit 1) (value "TestPoint") (footprint "programmable-load:DELTRON-571-0x00")
-    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/66ce6b10-d362-4f15-b86d-ccf022cf28fb"
-      (reference "TP207") (unit 1) (value "+12V") (footprint "TestPoint:TestPoint_Keystone_5000-5004_Miniature")
+      (reference "TP207") (unit 1) (value "+VBUS") (footprint "TestPoint:TestPoint_Keystone_5000-5004_Miniature")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/a54d71c7-f4f4-4b30-bc44-4e39065db4a0"
       (reference "U301") (unit 1) (value "MYC-YA151C-4E512D-65-C-T") (footprint "programmable-load:MYCYA151C4E512D65CT")
