@@ -3047,7 +3047,7 @@
     (property "Datasheet" "~" (id 3) (at 81.28 97.79 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "A768EB107M1ELAE036" (id 4) (at 81.28 97.79 0)
+    (property "MPN" "A768EB336M1GLAE045" (id 4) (at 81.28 97.79 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 9c50c3ac-fd5d-4457-a6dc-f13c11835065))

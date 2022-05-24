@@ -1153,7 +1153,7 @@
     (property "Datasheet" "~" (id 3) (at 91.44 40.005 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "APA0606220M035R" (id 4) (at 91.44 40.005 0)
+    (property "MPN" "A768EB336M1GLAE045" (id 4) (at 91.44 40.005 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid f02aeab3-84a4-4f37-a9bf-7d33988bea87))
