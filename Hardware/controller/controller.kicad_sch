@@ -1333,8 +1333,17 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/1c67f19d-a78d-45fc-984c-812b26f054e6"
       (reference "#PWR0109") (unit 1) (value "GND") (footprint "")
     )
+    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/a4bbddf9-0e1d-4752-b446-84356fcffa8c"
+      (reference "#PWR0110") (unit 1) (value "GND2") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/d3355fde-0ef0-4125-ab1e-d2311b610e4f"
+      (reference "#PWR0111") (unit 1) (value "GND2") (footprint "")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/ea109e1b-5672-48a5-a103-4724ad2b9f1b"
       (reference "#PWR0112") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/5554521a-fe65-4cd8-b10e-7a1097dd3db1"
+      (reference "#PWR0113") (unit 1) (value "GND2") (footprint "")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
@@ -1468,6 +1477,12 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/65ae7ee0-82fa-46cb-a424-9b3dcd4a9328"
       (reference "#PWR0314") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/9ee21eed-c34f-4df9-a092-f5b7a80ac10e"
+      (reference "#PWR0315") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/e499efbb-5f35-4718-ba40-ff4212febde8"
+      (reference "#PWR0316") (unit 1) (value "GND") (footprint "")
+    )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/bb676bc7-ede9-4d3e-9c02-71c0c02b5b3d"
       (reference "#PWR0401") (unit 1) (value "+3V3") (footprint "")
     )
@@ -1596,15 +1611,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/05b65d7a-b5e9-47f8-b979-9d4fbd0102a4"
       (reference "#PWR0808") (unit 1) (value "+3V3A") (footprint "")
-    )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/5554521a-fe65-4cd8-b10e-7a1097dd3db1"
-      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
-    )
-    (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/a4bbddf9-0e1d-4752-b446-84356fcffa8c"
-      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
-    )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/d3355fde-0ef0-4125-ab1e-d2311b610e4f"
-      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/70dde355-c440-4174-9a39-cd7a7cdcb381"
       (reference "BT301") (unit 1) (value "ML-1220") (footprint "programmable-load:Panasonic-ML-1220_V1AN-0-0")
@@ -1761,6 +1767,9 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/41b76217-00c9-43a3-a053-470df31396a3"
       (reference "J301") (unit 1) (value "Conn_ARM_JTAG_SWD_10") (footprint "Connector_PinHeader_1.27mm:PinHeader_2x05_P1.27mm_Vertical_SMD")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/c2421ec6-8235-4315-89e0-f6e46bd118e9"
+      (reference "J302") (unit 1) (value "Conn_02x03_Odd_Even") (footprint "Connector_PinHeader_2.54mm:PinHeader_2x03_P2.54mm_Vertical")
     )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/492f4b60-780c-40b0-8f3b-d4bc6ad473cd"
       (reference "J401") (unit 1) (value "Conn_02x25_Counter_Clockwise") (footprint "programmable-load:Hirose_FH12-50S-0.5SH_1x50-1MP_P0.50mm_Horizontal")
