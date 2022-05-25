@@ -602,6 +602,10 @@
     [
       "b48c6e1a-d45a-42a7-82ff-53c356fe9737",
       "Ethernet PHY"
+    ],
+    [
+      "1d4ee42f-ea9c-46c7-beeb-56adffa61af6",
+      "Expansion CAN Controller"
     ]
   ],
   "text_variables": {}
