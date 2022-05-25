@@ -1644,7 +1644,7 @@
     (property "Datasheet" "~" (id 3) (at 257.175 49.53 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "CL21B104KACNFNC" (id 4) (at 257.175 49.53 0)
+    (property "MPN" "" (id 4) (at 257.175 49.53 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 88ae133d-cc4b-4c1f-9b59-b2a9320fa74c))
