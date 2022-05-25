@@ -777,6 +777,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid d73719ff-51b5-4093-9d8f-ba678c910b5b)
   )
+  (label "TRIGGER" (at 217.17 51.435 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid dc724c63-43ba-4c3a-a460-f0df796f632d)
+  )
   (label "CAN_RX" (at 282.575 52.07 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
     (uuid dc7ffb7f-ab71-4bf8-9657-248abbf0d595)
@@ -1975,6 +1979,9 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/9157527f-0fb0-4a62-9f00-d478a908a331"
       (reference "J503") (unit 1) (value "TBP02R1W-381-04BE") (footprint "programmable-load:CUI_TBP02R1W-381-04BE")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/54be5322-58e3-46a5-9750-a1af963e31c7"
+      (reference "J504") (unit 1) (value "Screw_Terminal_01x02") (footprint "programmable-load:CUI_TBL002A-350-02GR-2OR")
+    )
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/665358b5-4c12-46f0-a7fb-07bd6beb982e"
       (reference "J701") (unit 1) (value "Conn_02x10_Odd_Even") (footprint "Connector_IDC:IDC-Header_2x10_P2.54mm_Horizontal")
     )
@@ -1985,7 +1992,7 @@
       (reference "L501") (unit 1) (value "DR331-513BE") (footprint "programmable-load:Bourns-DR331-0-0-MFG")
     )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/a7ba8e79-d42a-4b06-b786-628d1081fadd"
-      (reference "LS401") (unit 1) (value "Speaker") (footprint "programmable-load:PUI-AT-1127-ST-2-R")
+      (reference "LS401") (unit 1) (value "Speaker") (footprint "programmable-load:PUI-AT-1224-TWT")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/3f00aeb0-72fe-4377-bf52-218349ee528d"
       (reference "M501") (unit 1) (value "Fan_4pin") (footprint "programmable-load:Molex-47053-1000-MFG")
@@ -2165,7 +2172,7 @@
       (reference "RV202") (unit 1) (value "470KD10") (footprint "Varistor:RV_Disc_D12mm_W3.9mm_P7.5mm")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/8eb9d2df-f698-40e1-92c8-7282e8c53f5c"
-      (reference "RV501") (unit 1) (value "500k") (footprint "programmable-load:Potentiometer_Nidec_Copal_CT94EW")
+      (reference "RV501") (unit 1) (value "500k") (footprint "Potentiometer_THT:Potentiometer_Bourns_3006P_Horizontal")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b58cf72b-7566-460e-a30e-e69b11eb2720"
       (reference "SW301") (unit 1) (value "SW_DIP_x03") (footprint "programmable-load:CUI-DS04-254-2-03BK-SMT")
