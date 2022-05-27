@@ -1533,6 +1533,9 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/c34bf92c-2a64-43a4-a6a6-a3e2396ea57c"
       (reference "#PWR0117") (unit 1) (value "GND2") (footprint "")
     )
+    (path "/b6b6931b-67ae-4379-a087-f483e9b522be"
+      (reference "#PWR0118") (unit 1) (value "GND2") (footprint "")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
     )
@@ -1901,9 +1904,6 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1d4ee42f-ea9c-46c7-beeb-56adffa61af6/aa4da808-4c6a-4e26-8da1-17699313469d"
       (reference "#PWR0912") (unit 1) (value "+5V") (footprint "")
-    )
-    (path "/b6b6931b-67ae-4379-a087-f483e9b522be"
-      (reference "#PWR?") (unit 1) (value "GND2") (footprint "")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/70dde355-c440-4174-9a39-cd7a7cdcb381"
       (reference "BT301") (unit 1) (value "ML-1220") (footprint "programmable-load:Panasonic-ML-1220_V1AN-0-0")
