@@ -878,8 +878,8 @@
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid 611fa70b-0b19-4e4e-9a52-703136731c67)
   )
-  (text "Host loads regs, fan at 0% duty\n(Because Q501 inverts, this means 100% fan speed)"
-    (at 195.58 66.675 0)
+  (text "Host loads regs, fan at 100% duty\n(Because Q501 inverts, this means 0% fan speed)\nNOTE: Host needs to configure invert bit"
+    (at 195.58 68.58 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 96478efd-c841-4fb3-a5d7-09ac0d2c6f81)
   )
@@ -1132,7 +1132,7 @@
     (property "Datasheet" "~" (id 3) (at 207.01 60.325 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "RMC1/10-103JTP" (id 4) (at 207.01 60.325 90)
+    (property "MPN" "" (id 4) (at 207.01 60.325 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid fc985e32-7fc6-41f0-9f77-eba1807bb64f))

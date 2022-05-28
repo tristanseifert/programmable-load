@@ -1552,11 +1552,6 @@
     (stroke (width 0) (type default))
     (uuid 12225a65-f9a1-481e-81c2-32b6daa3db8b)
   )
-  (polyline (pts (xy 160.02 12.065) (xy 160.02 198.12))
-    (stroke (width 0) (type dash_dot))
-    (uuid 12356409-4816-4385-9a08-b660ba35d7f3)
-  )
-
   (wire (pts (xy 254.635 150.495) (xy 273.05 150.495))
     (stroke (width 0) (type default))
     (uuid 168429b8-a5b3-4bab-a962-0dd1e6168a65)
@@ -1745,6 +1740,11 @@
     (stroke (width 0) (type default))
     (uuid c33a3b0d-ac38-4d2b-8d27-c6f8bacc91ea)
   )
+  (polyline (pts (xy 160.02 12.065) (xy 160.02 198.12))
+    (stroke (width 0) (type dash_dot))
+    (uuid e338a30c-4a2a-4439-b26d-991bf3053541)
+  )
+
   (wire (pts (xy 228.6 155.575) (xy 241.935 155.575))
     (stroke (width 0) (type default))
     (uuid ec2a9618-0b7d-4425-baac-1f291a12b210)
