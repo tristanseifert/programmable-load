@@ -3300,4 +3300,173 @@
     )
     (pin "1" (uuid b9f96bb9-9a1b-4912-ae8f-e0a5d0811d65))
   )
+
+  (sheet_instances
+    (path "/" (page "1"))
+  )
+
+  (symbol_instances
+    (path "/07d5c73c-8fc0-4762-b96b-d67536f8bc5f"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/0a09ccce-3fe5-4763-a6a5-1e55731dee14"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/13766645-e302-4510-a92e-3aeeeac5b204"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/14f32b02-234f-4217-b8f3-22576e84987a"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/164e3f81-d3a1-4897-a7c4-24bfb42eae66"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/178139c5-5cc1-4995-8f33-a1819558c7c2"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/1c3992b6-8267-4680-adab-d2ce2dfdb302"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/1d2a3208-affe-402e-ace7-5f8607f3101f"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/21e00fd9-c8b4-4637-8719-d82bab2830d4"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/3007e439-fb19-4bcd-a4f3-a7bf6c6c572a"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/3152fd14-602a-4ac0-bbe8-1562dc657ce1"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/33f5d726-56c5-4bb5-bb17-20e066529d12"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/391eb491-bee2-4bcb-9ae1-832bb845ed45"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/39cc70f7-5164-4de2-90b7-8d29bc598615"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/4404bb47-4e40-4953-84bb-071b1c6a6caa"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/45cc1e77-ceb1-4991-b56f-4c1520236fa8"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/501fab9e-b2b3-40c2-a654-8554c91eb1b6"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/51acebf9-8105-424c-8a2e-9e91c1c3ca6c"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/5808772b-8905-4e9a-8011-27b1c9136197"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/59065db4-0a13-4e04-941d-b09b118f73e7"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/5d84b8ab-4665-4cb4-895f-af204a91d857"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/621276d1-051c-4225-bde8-c32b4ed05998"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/67331eca-2638-4e60-8ba9-7f9892ba7e59"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/6a72a2f5-eaa0-475b-9420-ac17ba2ca8af"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/6b2131c2-e42e-4e7a-9f2b-085ef0f4f748"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/6cec82b9-f5c5-4b96-93cd-fec554b67293"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/6e47fa31-4c5c-4987-8d16-a7694d007319"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/774a9d79-2ec0-4e62-a256-ce3bb413c417"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/7baae3bd-f3ca-4dc4-bcd2-17e8fd2e9378"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/7c27485d-f632-40dd-b2a8-941ad9fa721c"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/8262e08e-a9e8-46c9-87ad-a0749f9dd485"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/8a58f265-8f11-4218-99f5-648ccaf1a2e3"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/8b85e5f6-8968-4f47-ad1c-3423d27b22c2"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/8ba0fc77-5020-4246-a8f0-ab81d8fe9943"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/8f7c5dde-3d68-4a70-b058-f19c6dc3951d"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/98b82d43-87ca-4cfb-8601-1e341299153d"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/a346bb69-a579-4487-b9ba-3079a7354ba2"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/a4c2160f-a736-4c67-844c-097202bf2cd8"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/a8874508-b6fc-486f-8c5a-73903c26edeb"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/abfbd619-7cca-4c0a-9288-874d424313a3"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/ae409f79-0b1a-4382-a46d-626b31c56e85"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/b2d479c5-92cf-41b8-90c1-1d151f984588"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/be458196-2c43-4519-8836-1e95d9c83840"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/c2b35c84-5aaf-4c78-9d9b-1540d3b932ae"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/c41ed413-35c1-4543-8b6b-ee41cf45b11f"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/cc23f951-0d8f-4fd0-aa85-fff013f73a92"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/d2a44faa-cca7-4dbb-bfc7-3c829915fd67"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/d78c46ad-3e7e-4282-be7c-362fe43ce0d4"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/e2ccc26e-57ba-4d06-8451-728562d01905"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/e48db8f9-c5c1-400e-ba21-fd89207a8749"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/ea219c16-5a27-461e-89b2-660d6f6ea0bd"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/ec728256-e750-4c91-b2a0-16b45a38a1ea"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/ed519f49-4a57-43b4-badc-f030684ac4f2"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+    (path "/f970207a-ec7f-455b-8e5c-8ba6bbcf6789"
+      (reference "U") (unit 1) (value "~") (footprint "")
+    )
+  )
 )
