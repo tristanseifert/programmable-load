@@ -1752,7 +1752,7 @@
       (reference "U304") (unit 1) (value "74LVC1G139") (footprint "Package_SO:SSOP-8_2.95x2.8mm_P0.65mm")
     )
     (path "/b8f9c5f7-2403-4b47-9202-13f82aeee8e6/365d0ea3-21c0-4a68-a632-65b74b064605"
-      (reference "U305") (unit 1) (value "AT24CS32-SSHM") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
+      (reference "U305") (unit 1) (value "AT24CS32-SSHM") (footprint "Package_SO:TSSOP-8_4.4x3mm_P0.65mm")
     )
     (path "/b8f9c5f7-2403-4b47-9202-13f82aeee8e6/a95fca7f-5a0e-4831-822a-1648579a3f9f"
       (reference "U306") (unit 1) (value "FODM217B") (footprint "Package_SO:SOP-4_4.4x2.6mm_P1.27mm")
