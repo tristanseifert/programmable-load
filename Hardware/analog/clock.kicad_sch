@@ -459,6 +459,10 @@
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 1fcacd9d-0483-4c05-8b3c-09c980b8b741)
   )
+  (text "I2C Address: 0b1100000" (at 27.94 22.86 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid 3a199202-e3d2-4ceb-a0d1-7c750db94451)
+  )
 
   (hierarchical_label "ADCCLK_{1}" (shape output) (at 83.82 41.91 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify left))

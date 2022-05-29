@@ -7002,7 +7002,7 @@
       )
     )
     (symbol "MAX6166_1_1"
-      (pin no_connect line (at 8.89 -7.62 180) (length 2.54) hide
+      (pin no_connect line (at 8.89 -8.255 180) (length 2.54) hide
         (name "" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
@@ -7010,7 +7010,7 @@
         (name "V_{in}" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 8.89 -7.62 180) (length 2.54) hide
+      (pin no_connect line (at 8.89 -8.89 180) (length 2.54) hide
         (name "" (effects (font (size 1.27 1.27))))
         (number "3" (effects (font (size 1.27 1.27))))
       )
@@ -7018,7 +7018,7 @@
         (name "GND" (effects (font (size 1.27 1.27))))
         (number "4" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 8.89 -7.62 180) (length 2.54) hide
+      (pin no_connect line (at 8.89 -6.985 180) (length 2.54) hide
         (name "" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
@@ -7026,7 +7026,7 @@
         (name "V_{out}" (effects (font (size 1.27 1.27))))
         (number "6" (effects (font (size 1.27 1.27))))
       )
-      (pin no_connect line (at 8.89 -7.62 180) (length 2.54) hide
+      (pin no_connect line (at 8.89 -9.525 180) (length 2.54) hide
         (name "" (effects (font (size 1.27 1.27))))
         (number "7" (effects (font (size 1.27 1.27))))
       )
@@ -7285,7 +7285,7 @@
         (name "MOSI" (effects (font (size 1.27 1.27))))
         (number "15" (effects (font (size 1.27 1.27))))
       )
-      (pin output line (at -10.16 -20.32 0) (length 2.54)
+      (pin tri_state line (at -10.16 -20.32 0) (length 2.54)
         (name "MISO" (effects (font (size 1.27 1.27))))
         (number "16" (effects (font (size 1.27 1.27))))
       )
@@ -7393,7 +7393,7 @@
         (name "MOSI" (effects (font (size 1.27 1.27))))
         (number "15" (effects (font (size 1.27 1.27))))
       )
-      (pin output line (at -10.16 -20.32 0) (length 2.54)
+      (pin tri_state line (at -10.16 -20.32 0) (length 2.54)
         (name "MISO" (effects (font (size 1.27 1.27))))
         (number "16" (effects (font (size 1.27 1.27))))
       )
@@ -7501,7 +7501,7 @@
         (name "MOSI" (effects (font (size 1.27 1.27))))
         (number "15" (effects (font (size 1.27 1.27))))
       )
-      (pin output line (at -10.16 -20.32 0) (length 2.54)
+      (pin tri_state line (at -10.16 -20.32 0) (length 2.54)
         (name "MISO" (effects (font (size 1.27 1.27))))
         (number "16" (effects (font (size 1.27 1.27))))
       )
