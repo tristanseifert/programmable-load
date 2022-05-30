@@ -385,7 +385,7 @@
           (name "~{RESET}" (effects (font (size 1.27 1.27))))
           (number "3" (effects (font (size 1.27 1.27))))
         )
-        (pin input input_low (at 12.7 -3.81 180) (length 2.54)
+        (pin passive input_low (at 12.7 -3.81 180) (length 2.54)
           (name "~{INT0}" (effects (font (size 1.27 1.27))))
           (number "4" (effects (font (size 1.27 1.27))))
         )
@@ -401,7 +401,7 @@
           (name "GND" (effects (font (size 1.27 1.27))))
           (number "7" (effects (font (size 1.27 1.27))))
         )
-        (pin input input_low (at 12.7 -13.97 180) (length 2.54)
+        (pin passive input_low (at 12.7 -13.97 180) (length 2.54)
           (name "~{INT1}" (effects (font (size 1.27 1.27))))
           (number "8" (effects (font (size 1.27 1.27))))
         )
@@ -507,6 +507,7 @@
       )
     )
   )
+
 
   (junction (at 73.025 62.865) (diameter 0) (color 0 0 0 0)
     (uuid 2261edb6-394e-455b-9b8b-9f64f1948a6d)
