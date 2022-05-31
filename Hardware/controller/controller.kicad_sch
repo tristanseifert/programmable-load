@@ -834,6 +834,10 @@
     (effects (font (size 2.54 2.54)) (justify left bottom))
     (uuid 720e0743-944c-4179-8b13-3efd6ec1572e)
   )
+  (text "SMD Assembly Tooling Holes" (at 101.6 171.45 0)
+    (effects (font (size 1.27 1.27)) (justify left bottom))
+    (uuid a17f02a9-14bc-4ed7-9db1-f3dfca3addc5)
+  )
 
   (label "ETH_RXP" (at 282.575 24.13 0) (fields_autoplaced)
     (effects (font (size 1.27 1.27)) (justify right bottom))
@@ -1344,6 +1348,42 @@
     (pin "2" (uuid 99cf59f9-648f-48b7-b741-a66e2b208c1f))
   )
 
+  (symbol (lib_id "Mechanical:MountingHole") (at 104.14 186.69 0) (unit 1)
+    (in_bom no) (on_board yes)
+    (uuid 74603812-27c7-4241-bfca-13d226f07676)
+    (default_instance (reference "H") (unit 1) (value "MountingHole") (footprint ""))
+    (property "Reference" "H" (id 0) (at 106.68 186.69 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (id 1) (at 106.68 188.595 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Footprint" "" (id 2) (at 104.14 186.69 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 104.14 186.69 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
+  (symbol (lib_id "Mechanical:MountingHole") (at 104.14 181.61 0) (unit 1)
+    (in_bom no) (on_board yes)
+    (uuid 77bd58ef-cba6-4a02-8a00-a0842267bec7)
+    (default_instance (reference "H") (unit 1) (value "MountingHole") (footprint ""))
+    (property "Reference" "H" (id 0) (at 106.68 181.61 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (id 1) (at 106.68 183.515 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Footprint" "" (id 2) (at 104.14 181.61 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 104.14 181.61 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+  )
+
   (symbol (lib_id "Mechanical:MountingHole") (at 155.575 179.07 0) (unit 1)
     (in_bom no) (on_board yes) (fields_autoplaced)
     (uuid 897c21f2-3f11-4fbb-b34b-14d239022a02)
@@ -1363,7 +1403,7 @@
   )
 
   (symbol (lib_id "Mechanical:MountingHole_Pad") (at 154.305 185.42 270) (unit 1)
-    (in_bom yes) (on_board yes)
+    (in_bom no) (on_board yes)
     (uuid 8b41574e-83b0-4f77-a894-ce484be1f178)
     (default_instance (reference "U") (unit 1) (value "") (footprint ""))
     (property "Reference" "U" (id 0) (at 158.115 184.785 90)
@@ -1436,6 +1476,24 @@
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 0a1fdb02-d897-4f68-b466-2cee975c0ef6))
+  )
+
+  (symbol (lib_id "Mechanical:MountingHole") (at 104.14 175.895 0) (unit 1)
+    (in_bom no) (on_board yes)
+    (uuid c5c5fc6a-1704-4307-bbf1-824a52e8ebaa)
+    (default_instance (reference "H") (unit 1) (value "MountingHole") (footprint ""))
+    (property "Reference" "H" (id 0) (at 106.68 175.895 0)
+      (effects (font (size 1.27 1.27)) (justify left))
+    )
+    (property "Value" "MountingHole" (id 1) (at 106.68 177.8 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+    (property "Footprint" "" (id 2) (at 104.14 175.895 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Datasheet" "~" (id 3) (at 104.14 175.895 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
   )
 
   (symbol (lib_id "power:GND") (at 52.07 180.34 0) (unit 1)
@@ -1597,11 +1655,11 @@
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid cb4e5939-01cb-467c-a555-83c7b749ecaf)
     )
-    (pin "ETH_TXP" output (at 266.7 26.67 0)
+    (pin "ETH_TXP" output (at 266.7 29.21 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 363c94ec-0c22-43a2-8230-b35e3a1eea5c)
     )
-    (pin "ETH_TXN" output (at 266.7 29.21 0)
+    (pin "ETH_TXN" output (at 266.7 26.67 0)
       (effects (font (size 1.27 1.27)) (justify right))
       (uuid 9cea7431-72ea-427f-9823-60f7fb4bf002)
     )
@@ -2030,9 +2088,6 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/225f0f2e-a8d7-4322-9c56-3d0b4ab8bbaa"
       (reference "#PWR0124") (unit 1) (value "GND") (footprint "")
     )
-    (path "/67d5a359-e645-42fd-8878-688bcd98810b/ff3b00c4-7cf3-4fb0-8232-11e792415362"
-      (reference "#PWR0125") (unit 1) (value "+5V") (footprint "")
-    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/9c6f6cc4-208f-44ac-bf13-e8f8cbdf89ef"
       (reference "#PWR0201") (unit 1) (value "GND") (footprint "")
     )
@@ -2167,6 +2222,9 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/204e10d0-cb19-4a57-af03-19b16d7b988d"
       (reference "#PWR0316") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/6d3329da-a6d2-4c34-99af-053e39f3186a"
+      (reference "#PWR0317") (unit 1) (value "+3V3") (footprint "")
     )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/bb676bc7-ede9-4d3e-9c02-71c0c02b5b3d"
       (reference "#PWR0401") (unit 1) (value "+3V3") (footprint "")
@@ -2613,7 +2671,7 @@
       (reference "FB401") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
     )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/4b15c12b-9c23-4615-b54d-301226fa0de7"
-      (reference "FB402") (unit 1) (value "FerriteBead_Small") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+      (reference "FB402") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/ee915743-17b0-4112-986c-c10a33da269e"
       (reference "FB501") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
@@ -2622,7 +2680,7 @@
       (reference "FB502") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
     )
     (path "/5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25/509f7b52-4ebf-4832-b2c0-083a8f222176"
-      (reference "FB701") (unit 1) (value "FerriteBead_Small") (footprint "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder")
+      (reference "FB701") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/6f134160-09fb-483c-a274-ea21958286b8"
       (reference "FB801") (unit 1) (value "FerriteBead_Small") (footprint "Inductor_SMD:L_0805_2012Metric_Pad1.05x1.20mm_HandSolder")
@@ -2638,6 +2696,15 @@
     )
     (path "/ea1f67da-3a17-4e5b-ab3b-83aa621211f9"
       (reference "H104") (unit 1) (value "MountingHole") (footprint "MountingHole:MountingHole_3.2mm_M3")
+    )
+    (path "/c5c5fc6a-1704-4307-bbf1-824a52e8ebaa"
+      (reference "H105") (unit 1) (value "MountingHole") (footprint "programmable-load:JLCPCB-SmdAssembly-ToolingHole")
+    )
+    (path "/77bd58ef-cba6-4a02-8a00-a0842267bec7"
+      (reference "H106") (unit 1) (value "MountingHole") (footprint "programmable-load:JLCPCB-SmdAssembly-ToolingHole")
+    )
+    (path "/74603812-27c7-4241-bfca-13d226f07676"
+      (reference "H107") (unit 1) (value "MountingHole") (footprint "programmable-load:JLCPCB-SmdAssembly-ToolingHole")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/bc2659e3-0d9c-4201-bbcc-1acc6827d6f2"
       (reference "J201") (unit 1) (value "Conn_01x04") (footprint "programmable-load:CUI_TBL002A-350-04GR-2OR")
@@ -2694,10 +2761,10 @@
       (reference "PS203") (unit 1) (value "P7812-2000-S") (footprint "programmable-load:CONV_P7812-2000-S")
     )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/dbbcb442-fcb6-48b3-8c34-e8917ced97b2"
-      (reference "Q401") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-323_SC-70_Handsoldering")
+      (reference "Q401") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/b556f832-e158-4fae-990a-3822e9ad2dab"
-      (reference "Q501") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-323_SC-70_Handsoldering")
+      (reference "Q501") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/92f6f638-55af-481a-b7ad-667d55b168c7"
       (reference "R201") (unit 1) (value "4k7") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
@@ -2852,6 +2919,9 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/71a96a04-78c5-4cd4-8c20-37a650cadb97"
       (reference "R808") (unit 1) (value "33R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/38f9dc46-9eba-4980-9e8c-6915211be873"
+      (reference "R809") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1d4ee42f-ea9c-46c7-beeb-56adffa61af6/432d6961-d9fd-4b1d-b4df-446d490fd78c"
       (reference "R901") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
@@ -2928,7 +2998,7 @@
       (reference "U504") (unit 1) (value "SM4007") (footprint "Diode_SMD:D_SMA_Handsoldering")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/fec5cace-c154-4f27-b9d0-5350cdf43347"
-      (reference "U505") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-23_Handsoldering")
+      (reference "U505") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-23")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/77f2ca77-15d8-4560-a25c-937395df0cc0"
       (reference "U506") (unit 1) (value "FODM217B") (footprint "Package_SO:SOP-4_4.4x2.6mm_P1.27mm")

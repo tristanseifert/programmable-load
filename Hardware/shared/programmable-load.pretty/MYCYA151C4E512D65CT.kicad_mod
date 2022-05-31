@@ -207,8 +207,8 @@
   (pad "146" smd oval (at -15.5 -19.5) (size 0.6 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 7cd19881-e32b-424a-9980-bd82a58ad83f))
   (pad "147" smd oval (at -16.5 -19.5) (size 0.6 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2fc498f1-e656-4c41-a396-0107fb7286c7))
   (pad "148" smd oval (at -17.5 -19.5) (size 0.6 1.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2cd65d06-e622-451a-b788-b834ae4ede3e))
-  (model "../shared/programmable-load.pretty/MYC-YA151C-4E512D-65-C-T.stp"
-    (offset (xyz 0 0 0))
+  (model "../shared/programmable-load.pretty/MYC-YA151C-0424.STEP"
+    (offset (xyz -18.5 -19.5 1.6))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 0 0))
   )
