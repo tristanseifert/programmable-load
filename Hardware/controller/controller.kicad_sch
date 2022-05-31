@@ -2427,6 +2427,9 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/2712f645-d426-402d-b121-21efbd963792"
       (reference "#PWR0816") (unit 1) (value "GND") (footprint "")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/543f229f-43e5-4709-820f-aec99cabdb20"
+      (reference "#PWR0817") (unit 1) (value "+3V3") (footprint "")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1d4ee42f-ea9c-46c7-beeb-56adffa61af6/26b7d978-9d0a-42fa-a8bd-4c5fdb5e8fb4"
       (reference "#PWR0901") (unit 1) (value "+3V3") (footprint "")
     )
@@ -2922,11 +2925,32 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/38f9dc46-9eba-4980-9e8c-6915211be873"
       (reference "R809") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/4057078f-3d2f-4f7c-8dba-9562eb60eb2e"
+      (reference "R810") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1d4ee42f-ea9c-46c7-beeb-56adffa61af6/432d6961-d9fd-4b1d-b4df-446d490fd78c"
       (reference "R901") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1d4ee42f-ea9c-46c7-beeb-56adffa61af6/f808cd99-ef49-474e-8d36-b65ea88f36ed"
       (reference "R902") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/2ea10885-0fb3-4531-a53b-b8b9ba6144fc"
+      (reference "RN801") (unit 1) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/a488d4a2-0ea2-4550-b5be-4d0a14ed3210"
+      (reference "RN801") (unit 2) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/741bc1fa-dad6-47a3-9ab1-a9f8d0c57011"
+      (reference "RN801") (unit 3) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/e1291e61-5e30-40dd-9e7d-01daf21b577c"
+      (reference "RN802") (unit 1) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/ada533cd-ec7c-47fe-82e5-0df91636ac67"
+      (reference "RN802") (unit 2) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/b48c6e1a-d45a-42a7-82ff-53c356fe9737/aa614d9e-2283-444d-806b-88e055a0281a"
+      (reference "RN802") (unit 4) (value "33R") (footprint "Resistor_SMD:R_Array_Convex_4x0603")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/da8bd817-7183-4743-a47e-7ab1536235d2"
       (reference "RV201") (unit 1) (value "Varistor") (footprint "Varistor:RV_Disc_D7mm_W3.4mm_P5mm")

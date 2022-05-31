@@ -241,6 +241,7 @@
       "multiple_net_names|1968500|1600200|768ff8ed-8395-4cd8-b1be-9b7aee0ad655|48457b33-49d1-4378-b370-5b9c523cc91e",
       "multiple_net_names|1968500|1600200|9e351c64-f107-4a0c-af6e-d5a4efdd6a5e|48457b33-49d1-4378-b370-5b9c523cc91e",
       "power_pin_not_driven|1244600|330200|41a6253d-33c1-4260-84d9-f7503871d656|00000000-0000-0000-0000-000000000000",
+      "power_pin_not_driven|1270000|330200|836c365f-9803-43e8-a4c3-2c3830cbc91e|00000000-0000-0000-0000-000000000000",
       "power_pin_not_driven|1295400|330200|6d5395d8-9b86-45eb-a136-33aa83236f90|00000000-0000-0000-0000-000000000000"
     ],
     "meta": {
@@ -519,6 +520,37 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.228854,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6.0
+      },
+      {
+        "bus_width": 12.0,
+        "clearance": 0.0,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Imp-50",
+        "nets": [
+          "/CPU/ETH_CRS_DV",
+          "/CPU/ETH_RXD0",
+          "/CPU/ETH_RXD1",
+          "/CPU/ETH_TXD0",
+          "/CPU/ETH_TXD1",
+          "/CPU/ETH_TX_EN",
+          "Net-(RN802A-R1.1)",
+          "Net-(RN802B-R2.1)",
+          "Net-(RN802D-R4.1)",
+          "Net-(U801-TXD0)",
+          "Net-(U801-TXD1)",
+          "Net-(U801-TXEN)"
+        ],
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.29337,
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6.0
