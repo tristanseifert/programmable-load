@@ -2226,6 +2226,9 @@
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/6d3329da-a6d2-4c34-99af-053e39f3186a"
       (reference "#PWR0317") (unit 1) (value "+3V3") (footprint "")
     )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/a94a0713-c8b2-41d8-ace1-7b7ca6cf0aa1"
+      (reference "#PWR0318") (unit 1) (value "GND") (footprint "")
+    )
     (path "/797f743c-5314-4e1a-aa30-7415012cd40e/bb676bc7-ede9-4d3e-9c02-71c0c02b5b3d"
       (reference "#PWR0401") (unit 1) (value "+3V3") (footprint "")
     )
@@ -2336,6 +2339,9 @@
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/739c2bc7-6341-41eb-afaf-4b82ad6ab460"
       (reference "#PWR0524") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/c6a6c48c-3947-439b-beb1-0ed3064afd99"
+      (reference "#PWR0526") (unit 1) (value "GND") (footprint "")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/4f177bd8-4096-4a16-a751-20e4e15e8c8b"
       (reference "#PWR0601") (unit 1) (value "+3V3") (footprint "")
@@ -2649,6 +2655,9 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/7e8b958a-8f07-4186-a168-f62aa2839c73"
       (reference "D503") (unit 1) (value "1N4148W") (footprint "Diode_SMD:D_SOD-123")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/575ca382-eb65-4640-8ece-bad5e07b6fd6"
+      (reference "D504") (unit 1) (value "Green") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
+    )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/789afc57-5a8a-463a-a9d7-08051105cace"
       (reference "F202") (unit 1) (value ".3A") (footprint "Fuse:Fuse_1812_4532Metric_Pad1.30x3.40mm_HandSolder")
     )
@@ -2877,6 +2886,9 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/867e88bd-00b2-4bff-af21-c52f2889813a"
       (reference "R512") (unit 1) (value "47k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/8753c007-1dac-4b13-ad69-286fcb0b4767"
+      (reference "R513") (unit 1) (value "4k7") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/d2a88cdd-60c5-4a80-9083-78712e11c498/d47ca922-41c6-4860-8b75-2867f3db62d3"
       (reference "R601") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
@@ -2966,6 +2978,9 @@
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b58cf72b-7566-460e-a30e-e69b11eb2720"
       (reference "SW301") (unit 1) (value "SW_DIP_x03") (footprint "programmable-load:CUI-DS04-254-2-03BK-SMT")
+    )
+    (path "/67d5a359-e645-42fd-8878-688bcd98810b/1bca54b3-6946-4844-8746-e2b000d07e4f"
+      (reference "SW302") (unit 1) (value "SW_MEC_5E") (footprint "Button_Switch_THT:SW_PUSH_6mm")
     )
     (path "/b7fd8d9f-f2af-4339-978a-b429d8a8def6/770c3bb1-87d8-4efc-9e01-f5d76de8762b"
       (reference "TP201") (unit 1) (value "+12V") (footprint "TestPoint:TestPoint_Keystone_5000-5004_Miniature")
