@@ -1,5 +1,6 @@
 {
   "board": {
+    "3dviewports": [],
     "design_settings": {
       "defaults": {
         "board_outline_line_width": 0.09999999999999999,
@@ -581,6 +582,10 @@
     [
       "7241d088-8274-4968-b145-4efacdc92185",
       "INDICAtors"
+    ],
+    [
+      "ebee26f7-6842-4b55-9c2f-f547551ac88e",
+      "Embedded Controller"
     ]
   ],
   "text_variables": {}

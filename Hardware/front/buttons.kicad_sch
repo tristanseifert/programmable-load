@@ -6,8 +6,8 @@
 
   (title_block
     (title "Front Panel")
-    (date "2022-05-20")
-    (rev "2")
+    (date "2022-06-27")
+    (rev "4")
   )
 
   (lib_symbols
