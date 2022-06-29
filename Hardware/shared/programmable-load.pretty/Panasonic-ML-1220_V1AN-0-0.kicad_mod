@@ -1,4 +1,4 @@
-(footprint "Panasonic-ML-1220_V1AN-0-0" (version 20220427) (generator pcbnew)
+(footprint "Panasonic-ML-1220_V1AN-0-0" (version 20220609) (generator pcbnew)
   (layer "F.Cu")
   (descr "Panasonic ML-1220 battery, vertical mount")
   (attr through_hole)
@@ -44,8 +44,8 @@
     (stroke (width 0.15) (type solid)) (layer "F.Fab") (tstamp 91005f88-4416-4b55-b2be-51afc56cf04c))
   (fp_line (start 6.4 1.675) (end -6.399998 1.675)
     (stroke (width 0.15) (type solid)) (layer "F.Fab") (tstamp f9c064e4-fc91-4d56-b66b-7860a39b3a97))
-  (pad "1" thru_hole oval (at 0 -1.225) (size 2.5 1.5) (drill oval 1.2 0.8) (layers *.Cu *.Mask) (tstamp 43ec0ef0-d8e8-42bc-a70d-9e2a56433598))
-  (pad "2" thru_hole oval (at 0 1.225) (size 3.3 1.8) (drill oval 1.9 0.8) (layers *.Cu *.Mask) (tstamp 992ca1a6-c0c2-4acd-9788-dafd2a97a1ac))
+  (pad "1" thru_hole oval (at 0 1.225) (size 3.3 1.8) (drill oval 1.9 0.8) (layers *.Cu *.Mask) (tstamp 992ca1a6-c0c2-4acd-9788-dafd2a97a1ac))
+  (pad "2" thru_hole oval (at 0 -1.225) (size 2.5 1.5) (drill oval 1.2 0.8) (layers *.Cu *.Mask) (tstamp 43ec0ef0-d8e8-42bc-a70d-9e2a56433598))
   (model "../shared/programmable-load.pretty/Panasonic-ML-1220-V1AN.step"
     (offset (xyz 0 0 -0.4))
     (scale (xyz 1 1 1))

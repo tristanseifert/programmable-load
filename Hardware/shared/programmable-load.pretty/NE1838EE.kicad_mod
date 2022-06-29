@@ -1,4 +1,4 @@
-(footprint "NE1838EE" (version 20220427) (generator pcbnew)
+(footprint "NE1838EE" (version 20220609) (generator pcbnew)
   (layer "F.Cu")
   (descr "C&K NE18 series switch, NE1838 (2U) contact arrangement")
   (attr through_hole)
@@ -61,12 +61,12 @@
     )
 
     (stroke (width 0.05) (type solid)) (fill none) (layer "F.CrtYd") (tstamp 1c12e944-2641-4c61-aad0-a9c13632aae2))
-  (pad "A_{1}" thru_hole roundrect (at -6.275 4) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 387cee8a-6b44-489b-9422-5d525dfc4678))
-  (pad "A_{2}" thru_hole roundrect (at 6.275 4) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp bcd3dc35-ac9c-4957-839f-38cbc95934cb))
+  (pad "A_{1}" thru_hole roundrect (at -6.275 16) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 8ff664cb-bf55-4176-b3ab-7063640541b7))
+  (pad "A_{2}" thru_hole roundrect (at 6.275 16) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 9e107554-ac22-4622-a3d4-61e855927aa3))
   (pad "P_{1}" thru_hole roundrect (at -5 10) (size 2.5 2.5) (drill 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 79e4fd87-2b6f-4b11-998d-aa4e3be1d047))
   (pad "P_{2}" thru_hole roundrect (at 5 10) (size 2.5 2.5) (drill 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp b66f7878-f3f0-42f9-96f0-f835f8906c35))
-  (pad "R_{1}" thru_hole roundrect (at -6.275 16) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 8ff664cb-bf55-4176-b3ab-7063640541b7))
-  (pad "R_{2}" thru_hole roundrect (at 6.275 16) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 9e107554-ac22-4622-a3d4-61e855927aa3))
+  (pad "R_{1}" thru_hole roundrect (at -6.275 4) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp 387cee8a-6b44-489b-9422-5d525dfc4678))
+  (pad "R_{2}" thru_hole roundrect (at 6.275 4) (size 2 3) (drill oval 1 1.5) (layers *.Cu *.Mask) (roundrect_rratio 0.2) (tstamp bcd3dc35-ac9c-4957-839f-38cbc95934cb))
   (model "../shared/programmable-load.pretty/NE182UEEP6AMP.step"
     (offset (xyz 0 -13.9 -5))
     (scale (xyz 1 1 1))
