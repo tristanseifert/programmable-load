@@ -73,7 +73,9 @@
         "lib_footprint_mismatch|138200000|114050000|67534386-a8ed-4e86-bc11-532f50e3a669|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|138200000|128500000|f85a4bde-99f2-4f51-928c-1f553dd022aa|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|138200000|133500000|a42730e0-0879-416a-a6bb-1d64c4b3ed7b|00000000-0000-0000-0000-000000000000",
-        "lib_footprint_mismatch|84350000|138950000|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000"
+        "lib_footprint_mismatch|84000000|140980059|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|84350000|138950000|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|88000000|140715774|546083bf-4fd3-4e4a-b1db-68fe3adc67cb|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
         "version": 2
@@ -542,12 +544,7 @@
           "/CPU/ETH_TXD0",
           "/CPU/ETH_TXD1",
           "/CPU/ETH_TX_EN",
-          "Net-(RN802A-R1.1)",
-          "Net-(RN802B-R2.1)",
-          "Net-(RN802D-R4.1)",
-          "Net-(U801-TXD0)",
-          "Net-(U801-TXD1)",
-          "Net-(U801-TXEN)"
+          "Net-(RN802A-R1.1)"
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
@@ -649,6 +646,10 @@
     [
       "1d4ee42f-ea9c-46c7-beeb-56adffa61af6",
       "Expansion CAN Controller"
+    ],
+    [
+      "b0c13c31-6960-4119-8a6d-3edf1f2e7410",
+      "I²C Real-Time Clock"
     ]
   ],
   "text_variables": {}
