@@ -1,6 +1,5 @@
 (footprint "Lightpipe-SLP3-150-NNN-F" (version 20220609) (generator pcbnew)
   (layer "F.Cu")
-  (attr through_hole)
   (fp_text reference "REF**" (at -2.1 0 90 unlocked) (layer "F.SilkS")
       (effects (font (size 1 1) (thickness 0.15)))
     (tstamp 8a5a2884-1623-4b68-a66b-41df7d313e0d)
