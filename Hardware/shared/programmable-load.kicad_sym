@@ -772,7 +772,7 @@
         (name "EN" (effects (font (size 1.27 1.27))))
         (number "4" (effects (font (size 1.27 1.27))))
       )
-      (pin power_out line (at 10.16 2.54 180) (length 2.54) hide
+      (pin passive line (at 10.16 2.54 180) (length 2.54) hide
         (name "OUT" (effects (font (size 1.27 1.27))))
         (number "5" (effects (font (size 1.27 1.27))))
       )
