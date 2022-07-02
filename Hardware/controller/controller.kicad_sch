@@ -2239,6 +2239,9 @@
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/575ca382-eb65-4640-8ece-bad5e07b6fd6"
       (reference "D504") (unit 1) (value "Green") (footprint "LED_SMD:LED_0805_2012Metric_Pad1.15x1.40mm_HandSolder")
     )
+    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/2998fbae-9feb-4adf-896d-019cff583dfd"
+      (reference "D505") (unit 1) (value "SM4007") (footprint "Diode_SMD:D_SMA_Handsoldering")
+    )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b0c13c31-6960-4119-8a6d-3edf1f2e7410/addfde08-f52c-4e48-bbad-bc96335f422d"
       (reference "D1001") (unit 1) (value "BAS40HE3") (footprint "Package_TO_SOT_SMD:SOT-23_Handsoldering")
     )
@@ -2540,10 +2543,10 @@
       (reference "R902") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b0c13c31-6960-4119-8a6d-3edf1f2e7410/b9d7edee-3b1c-43bb-85b7-533b30064689"
-      (reference "R1001") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R1001") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b0c13c31-6960-4119-8a6d-3edf1f2e7410/63a303c9-c1ec-4ea0-916c-6cf1bac7c4ff"
-      (reference "R1002") (unit 1) (value "100R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+      (reference "R1002") (unit 1) (value "330R") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b0c13c31-6960-4119-8a6d-3edf1f2e7410/18144f59-f8b8-4bc6-8a19-b190fd33bfd6"
       (reference "R1003") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
@@ -2649,9 +2652,6 @@
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/d0d8c79d-4b8f-429b-b658-b9c72799bf6d"
       (reference "U503") (unit 1) (value "TLP170A") (footprint "Package_SO:MFSOP6-4_4.4x3.6mm_P1.27mm")
-    )
-    (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/9013af15-fcd3-4f0d-ae86-f10b5e9b371c"
-      (reference "U504") (unit 1) (value "SM4007") (footprint "Diode_SMD:D_SMA_Handsoldering")
     )
     (path "/a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a/fec5cace-c154-4f27-b9d0-5350cdf43347"
       (reference "U505") (unit 1) (value "MMBT3904") (footprint "Package_TO_SOT_SMD:SOT-23")
