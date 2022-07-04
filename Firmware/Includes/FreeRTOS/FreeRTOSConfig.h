@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 
-#include <vendor/sam.h>
+#include "stm32mp1xx.h"
 
 extern void log_panic(const char *fmt, ...);
 
@@ -92,7 +92,7 @@ extern void log_panic(const char *fmt, ...);
 /// Enable static allocation support
 #define configSUPPORT_STATIC_ALLOCATION                         1
 /// Disable dynamic allocation support
-#define configSUPPORT_DYNAMIC_ALLOCATION                        0
+#define configSUPPORT_DYNAMIC_ALLOCATION                        1
 
 /* Set the following definitions to 1 to include the API function, or zero
 to exclude the API function. */
@@ -105,6 +105,10 @@ to exclude the API function. */
 #define INCLUDE_vTaskDelay                                      1
 #define INCLUDE_eTaskGetState                                   1
 #define INCLUDE_xTimerPendFunctionCall                          1
+
+// include various functions for acquiring task handles
+#define INCLUDE_xTaskGetCurrentTaskHandle                       1
+#define INCLUDE_xTaskGetIdleTaskHandle                          1
 
 /* Cortex-M specific definitions. */
 #ifdef __NVIC_PRIO_BITS
@@ -146,7 +150,7 @@ See http://www.FreeRTOS.org/RTOS-Cortex-M3-M4.html. */
  * Map the FreeRTOS interrupt handler names to the CMSIS equivalents.
  */
 /// SVC request handler
-#define vPortSVCHandler SVCall_Handler
+#define vPortSVCHandler SVC_Handler
 /// PendSV handler
 #define xPortPendSVHandler PendSV_Handler
 /// SysTick IRQ

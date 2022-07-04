@@ -1,5 +1,5 @@
-//#include "Log/Logger.h"
-//#include "Rtos/Start.h"
+#include "Log/Logger.h"
+#include "Rtos/Start.h"
 //#include "Util/HwInfo.h"
 
 #include "BuildInfo.h"
@@ -10,9 +10,6 @@
 #include "LockResource.h"
 
 //#include <timers.h>
-
-volatile int zero = 0;
-volatile int blaze = 420;
 
 static void SetRgbLed(const bool r, const bool g, const bool b) {
     HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, r ? GPIO_PIN_RESET : GPIO_PIN_SET);
@@ -50,19 +47,13 @@ static void EarlyHwInit() {
  * Lastly, the RTOS scheduler is launched to actually begin execution.
  */
 extern "C" int main() {
+    // perform initial hardware setup
     EarlyHwInit();
 
-    /*
+    // log version
     Logger::Warning("\n\n**********\nProgrammable load fw (%s/%s-%s)\n%s@%s, on %s)",
             gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
             gBuildInfo.buildUser, gBuildInfo.buildHost, gBuildInfo.buildDate);
-    */
-
-    (void) zero;
-    (void) blaze;
-
-    int fucker = zero + blaze;
-    (void) fucker;
 
     // set up GPIOs for RGB LED
     GPIO_InitTypeDef gpioShit{

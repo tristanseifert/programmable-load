@@ -1,13 +1,13 @@
 ####################################################################################################
 # Programmable load firmware
 #
-# This defines the main firmware target, which produces the actual binary image that's flashed into
-# the microcontroller.
+# This defines the main firmware target which produces the ELF that's loaded by the remoteproc
+# framework into the processor's memory spaces.
 ####################################################################################################
 ###############
 # Set up the CMake project and include some plugins
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
-project(programmable-load VERSION 2.0 LANGUAGES ASM C CXX)
+project(programmable-load VERSION 0.1 LANGUAGES ASM C CXX)
 
 
 include(ExternalProject)
@@ -38,7 +38,7 @@ set(BuildInfoFile "${CMAKE_CURRENT_BINARY_DIR}/BuildInfo.cpp")
 ###############
 # Set warning levels and language version
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_compile_options(-Wall -Wmissing-declarations -Wformat=2 -fdiagnostics-color=always
@@ -65,22 +65,19 @@ add_compile_options(-fstack-protector-strong)
 ###############
 # Set up the primary firmware target
 add_executable(firmware
-    #Sources/Init/Vectors.c
-    #Sources/Init/Startup.cpp
     ${BuildInfoFile}
-    #Sources/Init/StackGuard.cpp
+    Sources/Init/StackGuard.cpp
     #Sources/Init/CppHeap.cpp
     #Sources/Init/CppRuntime.cpp
     #Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
     Sources/Rpc/ResourceTable.cpp
-    #Sources/Log/Logger.cpp
-    #Sources/Log/TraceSWO.cpp
-    #Sources/Rtos/Idle.cpp
-    #Sources/Rtos/Memory.cpp
-    #Sources/Rtos/Start.cpp
+    Sources/Log/Logger.cpp
+    Sources/Rtos/Idle.cpp
+    Sources/Rtos/Memory.cpp
+    Sources/Rtos/Start.cpp
     #Sources/Util/InventoryRom.cpp
-    #Sources/Util/Hash.cpp
+    Sources/Util/Hash.cpp
     #Sources/Util/HwInfo.cpp
 )
 
@@ -131,7 +128,7 @@ include_directories(${CMSIS_INCLUDE_DIR})
 # This is our loose conglomeration of C/C++ code flying in close formation that resembles a C
 # library. It's most definitely not standards compliant, but sufficient to get embedded stuff
 # going.
-add_subdirectory(External/libc)
+add_subdirectory(External/libc EXCLUDE_FROM_ALL)
 target_link_libraries(firmware PRIVATE libc)
 
 ###############
@@ -183,10 +180,10 @@ FetchContent_Declare(FreeRTOS-Kernel
     # CMake support not yet in a release version
     GIT_TAG main
 )
-#FetchContent_MakeAvailable(FreeRTOS-Kernel)
+FetchContent_MakeAvailable(FreeRTOS-Kernel)
 
-#target_link_libraries(freertos_kernel libc vendor-st)
-#target_link_libraries(firmware PRIVATE freertos_kernel)
+target_link_libraries(freertos_kernel libc vendor-st)
+target_link_libraries(firmware PRIVATE freertos_kernel)
 
 ###############
 # CMSIS DSP

@@ -44,6 +44,10 @@ STACK_SIZE = 0x800;
 __OPENAMP_region_start__ = ORIGIN(sram3);
 __OPENAMP_region_end__   = ORIGIN(sram3) + LENGTH(sram3);
 
+/* symbols for heap location and size (consumed by libc) */
+PROVIDE_HIDDEN(_sheap = ORIGIN(sram2));
+PROVIDE_HIDDEN(_eheap = ORIGIN(sram2) + LENGTH(sram2));
+
 /* Section Definitions */
 SECTIONS
 {
@@ -149,14 +153,6 @@ SECTIONS
         . = ALIGN(16);
         _estack = .;
     } >sram1 :bss
-
-    /* system heap */
-    /*.heap (NOLOAD):
-    {
-        PROVIDE_HIDDEN(_sheap = .);
-        . += LENGTH(sram2);
-        PROVIDE_HIDDEN(_eheap = .);
-    } >sram2*/
 
     _end = . ;
 }

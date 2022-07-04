@@ -8,7 +8,7 @@
 
 #include <stdarg.h>
 
-#include <vendor/sam.h>
+#include "stm32mp1xx.h"
 
 #include <etl/array.h>
 
@@ -30,6 +30,16 @@ bool Logger::gInitialized{false};
 Logger::Level Logger::gLevel{Logger::Level::Trace};
 
 /**
+ * @brief Output a character
+ *
+ * Handles writing a character to all enabled output mechanisms.
+ */
+static void LogPutchar(const char ch) {
+    (void) ch;
+    // TODO: implement
+}
+
+/**
  * @brief Output a log message.
  *
  * @param level Message level
@@ -41,9 +51,9 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
     vfctprintf([](char c, auto) {
         // send to SWO
-            TraceSWO::PutChar(c);
+        LogPutchar(c);
     }, nullptr, format.data(), args);
-    TraceSWO::PutChar('\n');
+    LogPutchar('\n');
 #pragma clang diagnostic pop
 }
 
@@ -55,7 +65,7 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
 void Logger::Panic() {
     // print a message
     Error("Panic! at the system, halting");
-    App::Pinball::Hw::SetStatusLed(0b110);
+    //App::Pinball::Hw::SetStatusLed(0b110);
 
     // get task info (if scheduler is running)
     unsigned long totalRuntime{0};

@@ -14,8 +14,12 @@
 extern "C" {
 #endif
 
+void *memchr(const void *, int, size_t);
 int memcmp(const void *s1, const void *s2, size_t n);
 void *memcpy(void *dst0, const void *src0, size_t length);
+void	*memmove(void *, const void *, size_t)
+		__attribute__ ((__bounded__(__buffer__,1,3)))
+		__attribute__ ((__bounded__(__buffer__,2,3)));
 void *memset(void *b, int c, size_t len);
 
 char *strchr(const char *p, int ch);

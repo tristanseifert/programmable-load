@@ -49,7 +49,8 @@ defined in linker script */
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
-  ldr   sp, =_estack      /* set stack pointer */
+    // set up stack ptr
+    ldr   sp, =_estack
 
 /*     Loop to copy data from read only memory to RAM. The ranges
  *      of copy from/to are specified by following symbols evaluated in
@@ -57,53 +58,59 @@ Reset_Handler:
  *      _sidata: End of code section, i.e., begin of data sections to copy from.
  *      _sdata/_edata: RAM address range that data should be
  *      copied to. Both must be aligned to 4 bytes boundary.  */
-  movs  r1, #0
-  b  LoopCopyDataInit
+
+    /*
+     * copy .data segment from .text
+     * this doesn't make any sense (since we're entirely RAM based) except it allows us to support
+     * resetting the firmware by jumping to the entry point (or via debugger) reliably without
+     * having to reload the firmware image
+     */
+    movs        r1, #0
+    b           LoopCopyDataInit
 
 CopyDataInit:
-  ldr  r3, =_sidata
-  ldr  r3, [r3, r1]
-  str  r3, [r0, r1]
-  adds  r1, r1, #4
+    ldr         r3, =_sidata
+    ldr         r3, [r3, r1]
+    str         r3, [r0, r1]
+    adds        r1, r1, #4
 
 LoopCopyDataInit:
-  ldr  r0, =_sdata
-  ldr  r3, =_edata
-  adds  r2, r0, r1
-  cmp  r2, r3
-  bcc  CopyDataInit
+    ldr         r0, =_sdata
+    ldr         r3, =_edata
+    adds        r2, r0, r1
+    cmp         r2, r3
+    bcc         CopyDataInit
 
-  ldr  r2, =_sbss
-  b  LoopFillZerobss
+    // zero fill .bss
+    movs        r0, #0
+    ldr         r2, =_sbss
+    ldr         r3, =_ebss
+    b           .bssCheck
 
-/* Zero fill the bss segment. */
-FillZerobss:
-  movs  r3, #0
-  str  r3, [r2], #4
+.bssFill:
+    str         r0, [r2], #4
 
-LoopFillZerobss:
-  ldr  r3, = _ebss
-  cmp  r2, r3
-  bcc  FillZerobss
+.bssCheck:
+    // loop again if not end of bss
+    cmp         r2, r3
+    bcc         .bssFill
 
-/* Call the clock system intitialization function.*/
-  bl  SystemInit
- // ldr r0, =SystemInit
- // blx r0
+    // perform processor initialization
+    bl          SystemInit
 
-/* Call static constructors */
- // TODO: implement this
- // bl __libc_init_array
- // ldr r0, =__libc_init_array
- // blx r0
+    // init runtime, run static constructors
+    // TODO: set up C runtime (including heap)
+    bl          __libc_heap_init
 
-/* Call the application's entry point.*/
-  bl main
-  //ldr r0, =main
-  //blx r0
+    // TODO: implement this
+    // bl __libc_init_array
 
+    // execute app main
+    bl          main
+
+    // enter an infinite loop
 LoopForever:
-    b LoopForever
+    b           LoopForever
 
 
 .size Reset_Handler, .-Reset_Handler

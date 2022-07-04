@@ -8,7 +8,7 @@
  */
 #include "Rtos.h"
 
-#include <vendor/sam.h>
+#include "stm32mp1xx.h"
 
 using namespace Rtos;
 
