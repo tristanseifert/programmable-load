@@ -150,6 +150,26 @@ void SystemInit (void)
 #else
 #error Please #define CORE_CM4
 #endif	                         
+
+    // Configure interrupts
+    /* MemoryManagement_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(MemoryManagement_IRQn, 1, 0);
+    /* BusFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(BusFault_IRQn, 1, 0);
+    /* UsageFault_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(UsageFault_IRQn, 1, 0);
+    /* SVCall_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(SVCall_IRQn, 1, 0);
+    /* DebugMonitor_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(DebugMonitor_IRQn, 1, 0);
+    /* PendSV_IRQn interrupt configuration */
+    HAL_NVIC_SetPriority(PendSV_IRQn, 1, 0);
+
+    // use all bits for preemption (for FreeRTOS)
+    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+
+    // update system clock value
+    SystemCoreClockUpdate();
 }
 
 /**

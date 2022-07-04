@@ -144,7 +144,7 @@ target_compile_options(etl INTERFACE -DETL_NO_STL -DETL_NO_CPP_NAN_SUPPORT)
 
 target_link_libraries(firmware PRIVATE etl)
 
-# Atmel-provided vendor code: headers and low level drivers
+# ST-provided vendor code: headers and low level drivers
 add_subdirectory(External/st)
 
 target_include_directories(firmware PUBLIC External/st/Includes)
@@ -220,6 +220,9 @@ include_directories(External/libc/Includes)
 add_subdirectory(${DSP}/Source bin_dsp EXCLUDE_FROM_ALL)
 
 target_link_libraries(libc PRIVATE CMSISDSP)
+
+###############
+add_subdirectory(External/openamp EXCLUDE_FROM_ALL)
 
 ###############
 # TinyCBOR
