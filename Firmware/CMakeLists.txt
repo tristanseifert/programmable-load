@@ -171,8 +171,8 @@ target_compile_definitions(firmware PUBLIC -DPRINTF_ALIAS_STANDARD_FUNCTION_NAME
 ###############
 # FreeRTOS
 set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" CACHE STRING "")
-# give it a dummy heap file
-set(FREERTOS_HEAP ${CMAKE_CURRENT_LIST_DIR}/Includes/BuildInfo.h CACHE STRING "")
+# wrap our C library's allocator
+set(FREERTOS_HEAP "3" CACHE STRING "")
 set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "")
 
 FetchContent_Declare(FreeRTOS-Kernel
@@ -223,6 +223,8 @@ target_link_libraries(libc PRIVATE CMSISDSP)
 
 ###############
 add_subdirectory(External/openamp EXCLUDE_FROM_ALL)
+
+target_link_libraries(firmware PRIVATE open_amp-static)
 
 ###############
 # TinyCBOR

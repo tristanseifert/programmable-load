@@ -7,7 +7,7 @@
 #include "stm32mp1xx_hal_gpio.h"
 #include "stm32mp1xx_hal_rcc.h"
 
-#include "LockResource.h"
+#include "Rpc/ResourceTable.h"
 
 //#include <timers.h>
 
@@ -55,6 +55,8 @@ extern "C" int main() {
             gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
             gBuildInfo.buildDate,
             gBuildInfo.buildUser, gBuildInfo.buildHost);
+
+    Logger::Notice("Virtio: vring0@%p, vring1@%p", Rpc::ResourceTable::GetVring0().da, Rpc::ResourceTable::GetVring1().da);
 
     // set up GPIOs for RGB LED
     GPIO_InitTypeDef gpioShit{

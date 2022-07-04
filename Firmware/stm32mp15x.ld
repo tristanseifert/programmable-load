@@ -28,6 +28,7 @@ MEMORY
 PHDRS {
     text        PT_LOAD;
     rodata      PT_LOAD;
+    coprorsrc   PT_LOAD;
     data        PT_LOAD;
     bss         PT_LOAD;
 }
@@ -110,7 +111,7 @@ SECTIONS
         . = ALIGN(4);
         KEEP (*(.resource_table*))
         . = ALIGN(4);
-    } >retram :rodata
+    } >retram :coprorsrc
 
     . = ALIGN(4);
     _etext = .;

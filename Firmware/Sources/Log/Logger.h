@@ -21,6 +21,37 @@ class Logger {
     friend void ::log_panic(const char *, ...);
 
     public:
+        /// Size of the trace buffer (in bytes)
+        constexpr static const size_t kTraceBufferSize{0x2000};
+
+        /**
+         * @brief Trace logging buffer
+         *
+         * This is a circular buffer that receives all log messages in the system. We'll start
+         * writing at the top, and continue til the end, then loop around.
+         *
+         * Its size is fixed at compile time, as it is exposed to the host via the resource table
+         * mechanism.
+         *
+         * @remark This is only accessible here so the resource table can know its location; you
+         * should not manually interact with it.
+         */
+        static char gTraceBuffer[kTraceBufferSize];
+
+    private:
+        /// Write pointer into the trace buffer
+        static size_t gTraceWritePtr;
+
+        /// Put a character into the trace buffer
+        static inline void TracePutChar(const char ch) {
+            gTraceBuffer[gTraceWritePtr] = ch;
+            // handle wrap-around here
+            if(++gTraceWritePtr >= kTraceBufferSize) {
+                gTraceWritePtr = 0;
+            }
+        }
+
+    public:
         /**
          * @brief Log level
          *

@@ -14,6 +14,9 @@
 
 using namespace Log;
 
+char Logger::gTraceBuffer[kTraceBufferSize];
+size_t Logger::gTraceWritePtr{0};
+
 /**
  * @brief Indicates whether the logger backends have been initialized
  *
@@ -29,15 +32,7 @@ bool Logger::gInitialized{false};
  */
 Logger::Level Logger::gLevel{Logger::Level::Trace};
 
-/**
- * @brief Output a character
- *
- * Handles writing a character to all enabled output mechanisms.
- */
-static void LogPutchar(const char ch) {
-    (void) ch;
-    // TODO: implement
-}
+
 
 /**
  * @brief Output a log message.
@@ -50,10 +45,14 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
     vfctprintf([](char c, auto) {
-        // send to SWO
-        LogPutchar(c);
+        // TODO: other output mechanisms
+
+        // write to trace buffer
+        TracePutChar(c);
     }, nullptr, format.data(), args);
-    LogPutchar('\n');
+
+    // terminate the message in the trace buffer
+    TracePutChar('\n');
 #pragma clang diagnostic pop
 }
 
