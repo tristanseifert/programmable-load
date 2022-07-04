@@ -65,73 +65,28 @@ add_compile_options(-fstack-protector-strong)
 ###############
 # Set up the primary firmware target
 add_executable(firmware
-    Sources/Init/Vectors.c
-    Sources/Init/Startup.cpp
+    #Sources/Init/Vectors.c
+    #Sources/Init/Startup.cpp
     ${BuildInfoFile}
-    Sources/Init/StackGuard.cpp
-    Sources/Init/CppHeap.cpp
-    Sources/Init/CppRuntime.cpp
-    Sources/Init/FaultHandlers.cpp
+    #Sources/Init/StackGuard.cpp
+    #Sources/Init/CppHeap.cpp
+    #Sources/Init/CppRuntime.cpp
+    #Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
-    Sources/Log/Logger.cpp
-    Sources/Log/TraceSWO.cpp
-    Sources/Rtos/Idle.cpp
-    Sources/Rtos/Memory.cpp
-    Sources/Rtos/Start.cpp
-    Sources/Util/InventoryRom.cpp
-    Sources/Util/Hash.cpp
-    Sources/Util/HwInfo.cpp
-    Sources/Drivers/ClockMgmt.cpp
-    Sources/Drivers/Dma.cpp
-    Sources/Drivers/ExternalIrq.cpp
-    Sources/Drivers/Gpio.cpp
-    Sources/Drivers/I2CBus.cpp
-    Sources/Drivers/I2C.cpp
-    Sources/Drivers/Random.cpp
-    Sources/Drivers/SercomBase.cpp
-    Sources/Drivers/Spi.cpp
-    Sources/Drivers/TimerCounter.cpp
-    Sources/Drivers/Watchdog.cpp
-    Sources/Drivers/I2CDevice/Common.cpp
-    Sources/Drivers/I2CDevice/AT24CS32.cpp
-    Sources/Drivers/I2CDevice/DAC60501.cpp
-    Sources/Drivers/I2CDevice/EMC2101.cpp
-    Sources/Drivers/I2CDevice/MCP3421.cpp
-    Sources/Drivers/I2CDevice/PCA9543A.cpp
-    Sources/Drivers/I2CDevice/PCA9955B.cpp
-    Sources/Drivers/I2CDevice/PI4IOE5V9536.cpp
-    Sources/Drivers/I2CDevice/XRA1203.cpp
-    Sources/Gfx/Font.cpp
-    Sources/Gfx/Icon.cpp
-    Sources/Gfx/Framebuffer.cpp
-    Sources/Gfx/Primitives.cpp
-    Sources/Gui/WorkQueue.cpp
-    Sources/Gui/InputManager.cpp
-    Sources/Gui/ScreenManager.cpp
-    Sources/Gui/Components/StaticLabel.cpp
-    Sources/Usb/Descriptors.cpp
-    Sources/Usb/Init.cpp
-    Sources/Usb/Task.cpp
-    Sources/Usb/Vendor/VendorInterfaceTask.cpp
-    Sources/Usb/Vendor/PropertyRequest.cpp
-    Sources/App/Main/Hardware.cpp
-    Sources/App/Main/Task.cpp
-    Sources/App/Pinball/Hardware.cpp
-    Sources/App/Pinball/Task.cpp
-    Sources/App/Pinball/Beeper.cpp
-    Sources/App/Pinball/FrontIo/Display.cpp
-    Sources/App/Pinball/FrontIo/HmiDriver.cpp
-    Sources/App/Pinball/Screens/Main.cpp
-    Sources/App/Pinball/Screens/Version.cpp
-    Sources/App/Thermal/Hardware.cpp
-    Sources/App/Thermal/Task.cpp
-    Sources/App/Control/Hardware.cpp
-    Sources/App/Control/Task.cpp
-    Sources/App/Control/DumbLoadDriver.cpp
+    Sources/Rpc/ResourceTable.cpp
+    #Sources/Log/Logger.cpp
+    #Sources/Log/TraceSWO.cpp
+    #Sources/Rtos/Idle.cpp
+    #Sources/Rtos/Memory.cpp
+    #Sources/Rtos/Start.cpp
+    #Sources/Util/InventoryRom.cpp
+    #Sources/Util/Hash.cpp
+    #Sources/Util/HwInfo.cpp
 )
 
 # Set defines for the platform
-add_compile_definitions(__SAME51J20A__ __FPU_PRESENT __FPU_USED)
+add_compile_definitions(CORE_CM4 STM32MP151Axx)
+# add_compile_definitions(__FPU_PRESENT __FPU_USED)
 
 # Include directories
 target_include_directories(firmware PUBLIC Includes)
@@ -145,30 +100,11 @@ target_link_options(firmware PRIVATE --static -nostartfiles -nostdlib -ffreestan
 set_target_properties(firmware PROPERTIES OUTPUT_NAME "programmable-load-firmware")
 set_target_properties(firmware PROPERTIES SUFFIX ".elf")
 
-set_target_properties(firmware PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/same51j20a_flash.ld)
+set_target_properties(firmware PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/stm32mp15x.ld)
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_options(firmware PRIVATE "-Wl,-T${CMAKE_CURRENT_LIST_DIR}/same51j20a_flash.ld")
+    target_link_options(firmware PRIVATE "-Wl,-T${CMAKE_CURRENT_LIST_DIR}/stm32mp15x.ld")
 endif()
-
-###############
-# Build GUI resources (fonts, icons) separately
-add_library(gui-rsrc STATIC
-    Sources/Gfx/Fonts/General_14.cpp
-    Sources/Gfx/Fonts/General_16_Condensed.cpp
-    Sources/Gfx/Fonts/General_16_Bold.cpp
-    Sources/Gfx/Fonts/General_16_BoldCondensed.cpp
-    Sources/Gfx/Fonts/Numbers_L.cpp
-    Sources/Gfx/Fonts/Numbers_XL.cpp
-    Sources/Gfx/Fonts/Font_Small.cpp
-
-    Sources/Gfx/Icons/MainBadgeUsb.cpp
-    Sources/Gfx/Icons/MainBadgeVExt.cpp
-)
-target_include_directories(gui-rsrc PRIVATE Includes)
-target_include_directories(gui-rsrc PRIVATE Sources)
-
-target_link_libraries(firmware PRIVATE gui-rsrc)
 
 ####################################################################################################
 # Build various external components and libraries
@@ -180,7 +116,7 @@ target_link_libraries(firmware PRIVATE gui-rsrc)
 # CMSIS 5
 FetchContent_Declare(cmsis_5
     GIT_REPOSITORY https://github.com/ARM-software/CMSIS_5.git
-    GIT_TAG 5.8.0
+    GIT_TAG 5.9.0
 )
 FetchContent_MakeAvailable(cmsis_5)
 
@@ -204,19 +140,18 @@ option(NO_STL "" ON)
 
 FetchContent_Declare(etl
     GIT_REPOSITORY https://github.com/ETLCPP/etl.git
-    GIT_TAG 20.25.0
+    GIT_TAG 20.29.3
 )
 FetchContent_MakeAvailable(etl)
 target_compile_options(etl INTERFACE -DETL_NO_STL -DETL_NO_CPP_NAN_SUPPORT)
 
 target_link_libraries(firmware PRIVATE etl)
-target_link_libraries(gui-rsrc PRIVATE etl)
 
 # Atmel-provided vendor code: headers and low level drivers
-add_subdirectory(External/atmel)
+add_subdirectory(External/st)
 
-target_include_directories(firmware PUBLIC External/atmel/Includes)
-target_link_libraries(firmware PRIVATE vendor-atmel)
+target_include_directories(firmware PUBLIC External/st/Includes)
+target_link_libraries(firmware PRIVATE vendor-st)
 
 ###############
 # printf
@@ -248,27 +183,10 @@ FetchContent_Declare(FreeRTOS-Kernel
     # CMake support not yet in a release version
     GIT_TAG main
 )
-FetchContent_MakeAvailable(FreeRTOS-Kernel)
+#FetchContent_MakeAvailable(FreeRTOS-Kernel)
 
-target_link_libraries(firmware PRIVATE freertos_kernel)
-target_link_libraries(freertos_kernel libc vendor-atmel)
-
-###############
-# TinyUSB (Generic USB stack)
-set(TINYUSB_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}/Includes/TinyUSB/")
-
-add_subdirectory(External/tinyusb)
-
-target_link_libraries(firmware PRIVATE tinyusb)
-target_link_libraries(tinyusb libc vendor-atmel freertos_kernel)
-
-target_link_libraries(firmware PRIVATE tinyusb-platform-atsamd)
-target_link_libraries(tinyusb-platform-atsamd libc vendor-atmel)
-
-###############
-# LittleFS (for NOR flash)
-add_subdirectory(External/littlefs)
-target_link_libraries(firmware PRIVATE littlefs)
+#target_link_libraries(freertos_kernel libc vendor-st)
+#target_link_libraries(firmware PRIVATE freertos_kernel)
 
 ###############
 # CMSIS DSP
@@ -302,7 +220,7 @@ list(APPEND CMAKE_MODULE_PATH ${DSP})
 add_compile_options(-Wno-error)
 include_directories(External/libc/Includes)
 
-add_subdirectory(${DSP}/Source bin_dsp)
+add_subdirectory(${DSP}/Source bin_dsp EXCLUDE_FROM_ALL)
 
 target_link_libraries(libc PRIVATE CMSISDSP)
 
@@ -310,21 +228,15 @@ target_link_libraries(libc PRIVATE CMSISDSP)
 # TinyCBOR
 #
 # A C/C++ library to encode objects as CBOR (a binary object representation)
-add_subdirectory(External/tinycbor)
+add_subdirectory(External/tinycbor EXCLUDE_FROM_ALL)
 target_link_libraries(tinycbor PRIVATE libc)
 
 target_link_libraries(firmware PRIVATE tinycbor)
 
 ###############
-# Produce a firmware image from the primary target, ready to be flashed into the microcontroller;
-# this just pulls out the .text segment out of the executable.
-
-# after building, extract the .text section and save it as a raw binary; and print the sizes
+# Print the size of the firmware after building
 find_program(CMAKE_SIZE size)
-find_program(CMAKE_OBJCOPY objcopy)
 
 add_custom_command(TARGET firmware POST_BUILD
     COMMAND ${CMAKE_SIZE} $<TARGET_FILE:firmware>
 )
-add_custom_command(TARGET firmware POST_BUILD
-    COMMAND ${CMAKE_OBJCOPY} -O binary --only-section=.text --only-section=.data $<TARGET_FILE:firmware> ${CMAKE_CURRENT_BINARY_DIR}/firmware.bin)
