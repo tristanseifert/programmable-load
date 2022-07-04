@@ -51,9 +51,10 @@ extern "C" int main() {
     EarlyHwInit();
 
     // log version
-    Logger::Warning("\n\n**********\nProgrammable load fw (%s/%s-%s)\n%s@%s, on %s)",
+    Logger::Warning("**********\nProgrammable load rtfw (%s/%s-%s)\nBuilt on: %s by %s@%s",
             gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
-            gBuildInfo.buildUser, gBuildInfo.buildHost, gBuildInfo.buildDate);
+            gBuildInfo.buildDate,
+            gBuildInfo.buildUser, gBuildInfo.buildHost);
 
     // set up GPIOs for RGB LED
     GPIO_InitTypeDef gpioShit{

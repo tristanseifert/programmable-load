@@ -45,7 +45,7 @@ defined in linker script */
 /* end address for the .bss section. defined in linker script */
 .word _ebss
 
-  .section .text.Reset_Handler,"ax"
+  .section .startup.Reset_Handler,"ax"
   .weak Reset_Handler
   .type Reset_Handler, %function
 Reset_Handler:
@@ -66,34 +66,34 @@ Reset_Handler:
      * having to reload the firmware image
      */
     movs        r1, #0
-    b           LoopCopyDataInit
+    b           2f
 
-CopyDataInit:
+1:
     ldr         r3, =_sidata
     ldr         r3, [r3, r1]
     str         r3, [r0, r1]
     adds        r1, r1, #4
 
-LoopCopyDataInit:
+2:
     ldr         r0, =_sdata
     ldr         r3, =_edata
     adds        r2, r0, r1
     cmp         r2, r3
-    bcc         CopyDataInit
+    bcc         1b
 
     // zero fill .bss
     movs        r0, #0
     ldr         r2, =_sbss
     ldr         r3, =_ebss
-    b           .bssCheck
+    b           9f
 
-.bssFill:
+8:
     str         r0, [r2], #4
 
-.bssCheck:
+9:
     // loop again if not end of bss
     cmp         r2, r3
-    bcc         .bssFill
+    bcc         8b
 
     // perform processor initialization
     bl          SystemInit
@@ -109,8 +109,8 @@ LoopCopyDataInit:
     bl          main
 
     // enter an infinite loop
-LoopForever:
-    b           LoopForever
+0:
+    b           0b
 
 
 .size Reset_Handler, .-Reset_Handler
@@ -123,7 +123,7 @@ LoopForever:
  * @param  None
  * @retval : None
 */
-    .section .text.Default_Handler,"ax",%progbits
+    .section .startup.Default_Handler,"ax",%progbits
 Default_Handler:
 Infinite_Loop:
   b Infinite_Loop

@@ -56,8 +56,8 @@ SECTIONS
     {
         KEEP(*(.isr_vector))
         KEEP(*(.vectors .vectors.*))
+        KEEP(*(.startup .startup.*))
 
-        .= ALIGN(4);
         *(.text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
     } >retram :text
