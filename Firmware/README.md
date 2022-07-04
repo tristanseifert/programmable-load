@@ -1,10 +1,8 @@
 # Programmable Load Firmware
-This directory contains the firmware for the programmable load, to be built using the llvm (version 13) `arm-none-unknown-eabi` toolchain. It's meant to run on an Atmel/Microchip SAM D5x series chip; specifically, we target the ATSAME51J20A, although chips with smaller flash/RAM will likely work as well. The ATSAME53J20A (with Ethernet MAC) is also supported, and will in the future support Ethernet/TCP interfacing as well with the same hardware, if an Ethernet PHY is populated.
+This directory contains the real-time firmware for the programmable load, to be built using the llvm (version 13) `arm-none-unknown-eabi` toolchain. It runs on the M4 core of the [STM32MP151 SoC](https://www.st.com/en/microcontrollers-microprocessors/stm32mp151.html) the programmable load is built around, running its own RTOS. It communicates with the host software (there, its counterpart is `loadd`) for remote control using the OpenAMP framework's rpmsg facilities.
 
 Notable features include:
 - Based around FreeRTOS
-- USB stack (powered by [TinyUSB](https://github.com/hathach/tinyusb)) to provide a serial console, firmware upgrade support, and data logging
-- Graphic user interface on 256x64 OLED with local buttons
 - Versatile set of control modes
 - Clean, easily hackable code
 
@@ -18,7 +16,11 @@ cmake --build build
 ```
 
 ## Hardware Support
-Currently, only the rev 1 controller board, and associated IO boards (rear panel + front panel) are supported. When other boards are added, these are identified by their configuration EEPROMs. For the processor board itself, we have an SPI flash that can be read out to determine board revision/type.
+Currently, only the rev 3 programmable load controller board is supported, though adding support for later reivsions is simple: this firmware has a very limited set of peripherals under its purview.
 
-### Inventory ROMs
-Most of these boards are connected via I²C, and feature an AT24CS32-family EEPROM. This memory is used to both provide an unique serial number for the part, but also to carry additional identifying information used by the firmware. This is accomplished by means of a fixed header, and a list of tag-length-value blobs. This blob can define information such as hardware revision and driver id.
+### Analog Board Support
+Various types of analog boards can be supported, connected via the dedicated SPI + I²C busses. Boards are identified by means of an AT24CS32-style EEPROM on the I²C bus, which is then used to instantiate the appropriate driver in the firmware. This EEPROM also provides the board's unique serial number, as well as some additional manufacturing information, and any auxiliary board-specific data the driver needs to store (such as calibration or limits) and access at runtime.
+
+Supported analog boards (and their drivers) are:
+
+** None yet! Check back later :) **
