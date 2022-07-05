@@ -73,6 +73,19 @@ enum TaskNotifyIndex: size_t {
     /// First task specific value
     TaskSpecific                        = 2,
 };
+
+/**
+ * @brief Thread-local storage indices
+ *
+ * System-wide reserved indices for thread local storage.
+ */
+enum ThreadLocalIndex: size_t {
+    /// Used by logging infrastructure
+    TLSLogBuffer                        = 0,
+
+    /// First task specific value
+    TLSTaskSpecific                     = 1,
+};
 }
 
 #endif

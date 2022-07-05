@@ -82,6 +82,11 @@ extern void log_panic(const char *fmt, ...);
 #define configUSE_TASK_NOTIFICATIONS                            1
 #define configTASK_NOTIFICATION_ARRAY_ENTRIES                   4
 
+/*
+ * Enable thread local storage
+ */
+#define configNUM_THREAD_LOCAL_STORAGE_POINTERS                 4
+
 /// Enable static allocation support
 #define configSUPPORT_STATIC_ALLOCATION                         1
 /// Disable dynamic allocation support

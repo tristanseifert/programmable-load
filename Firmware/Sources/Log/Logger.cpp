@@ -1,14 +1,11 @@
 #include "Logger.h"
 
 #include "Rtos/Rtos.h"
+#include "Hw/StatusLed.h"
+#include "stm32mp1xx.h"
 
 #include <printf/printf.h>
-
 #include <stdarg.h>
-
-#include "stm32mp1xx.h"
-#include "Hw/StatusLed.h"
-
 #include <etl/array.h>
 
 using namespace Log;
@@ -39,20 +36,84 @@ Logger::Level Logger::gLevel{Logger::Level::Trace};
  * @param level Message level
  * @param format Format string, with printf-style substitutions
  * @param args Arguments to format
+ *
+ * This formats the message into an intermediate task specific buffer; this avoids needing to take
+ * a lock during this process, only when we actually modify the trace buffer do we do so from
+ * inside a critical section.
  */
 void Logger::Log(const Level level, const etl::string_view &format, va_list args) {
+    int numChars{0};
+    size_t bufferSz{0}, bytesWritten{0};
+    char *buffer{nullptr}, *bufferStart{nullptr};
+
+    // log buffer used before scheduler is started
+    static char gLogBuffer[kTaskLogBufferSize];
+    // flag set when the initial log buffer was assigned to a task
+    static bool gLogBufferAssigned{false};
+
+    /*
+     * Get the task-specific log buffer (and its length) if the scheduler has been started;
+     * otherwise use a statically allocated buffer (which is then re-used for the first task)
+     */
+    if(xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED) {
+        buffer = gLogBuffer;
+        bufferSz = kTaskLogBufferSize;
+    }
+    // scheduler is running, so query thread-local storage
+    else {
+        auto ptr = pvTaskGetThreadLocalStoragePointer(nullptr,
+                Rtos::ThreadLocalIndex::TLSLogBuffer);
+
+        if(!ptr) {
+            // if old buffer hasn't been assigned, just use that
+            if(!__atomic_test_and_set(&gLogBufferAssigned, __ATOMIC_RELAXED)) {
+                buffer = gLogBuffer;
+            }
+            // otherwise we need to allocate a buffer
+            else {
+                buffer = static_cast<char *>(pvPortMalloc(kTaskLogBufferSize));
+            }
+
+            // store the used buffer in TLS after zeroing it
+            memset(buffer, 0, bufferSz);
+            vTaskSetThreadLocalStoragePointer(nullptr, Rtos::ThreadLocalIndex::TLSLogBuffer,
+                    buffer);
+        } else {
+            buffer = static_cast<char *>(ptr);
+        }
+
+        // buffer is always this same size
+        bufferSz = kTaskLogBufferSize;
+    }
+
+    bufferStart = buffer;
+
+    // output a timestamp (TODO: use something with better resolution than ticks?)
+    const auto ticks = xTaskGetTickCount();
+    numChars = snprintf(buffer, bufferSz, "[%10u] ", ticks);
+
+    bytesWritten += numChars;
+    bufferSz -= numChars;
+    buffer += numChars;
+
+    // format the message
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
-    vfctprintf([](char c, auto) {
-        // TODO: other output mechanisms
-
-        // write to trace buffer
-        TracePutChar(c);
-    }, nullptr, format.data(), args);
-
-    // terminate the message in the trace buffer
-    TracePutChar('\n');
+    numChars = vsnprintf(buffer, bufferSz, format.data(), args);
 #pragma clang diagnostic pop
+
+    if(numChars >= bufferSz) {
+        numChars = (bufferSz - 1);
+    }
+
+    bytesWritten += numChars;
+    bufferSz -= numChars;
+    buffer += numChars;
+
+    // write it into trace buffer
+    taskENTER_CRITICAL();
+    TracePutString(bufferStart, bytesWritten);
+    taskEXIT_CRITICAL();
 }
 
 /**

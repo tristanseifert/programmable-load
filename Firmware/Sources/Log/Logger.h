@@ -3,6 +3,7 @@
 
 #include <stdarg.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <etl/string_view.h>
 
@@ -21,6 +22,13 @@ class Logger {
     friend void ::log_panic(const char *, ...);
 
     public:
+        /**
+         * @brief Size of a per task log buffer (in bytes)
+         *
+         * This sets an upper cap on the maximum length of a single log message.
+         */
+        constexpr static const size_t kTaskLogBufferSize{256};
+
         /// Size of the trace buffer (in bytes)
         constexpr static const size_t kTraceBufferSize{0x1000};
 
@@ -48,6 +56,47 @@ class Logger {
             // handle wrap-around here
             if(++gTraceWritePtr >= kTraceBufferSize) {
                 gTraceWritePtr = 0;
+            }
+        }
+        /**
+         * @brief Write a string into the trace buffer
+         *
+         * This ensures the string is written in one continuous go. This means we may loop back to
+         * the start of the buffer (and then clear all subsequent string data out) if there's not
+         * enough space at the end.
+         *
+         * Strings are automatically terminated with a newline to delimit messages.
+         *
+         * @remark This method is not thread safe.
+         */
+        static inline void TracePutString(const char *str, const size_t numChars) {
+            // check if there's sufficient space
+            const auto bytesFree = kTraceBufferSize - gTraceWritePtr;
+            const auto bytesNeeded = numChars + 1; // plus newline
+
+            // there isn't, so write the string at the start
+            if(bytesFree < bytesNeeded) {
+                memcpy(gTraceBuffer, str, numChars);
+
+                // reset write ptr and add newline
+                gTraceWritePtr = numChars;
+                gTraceBuffer[gTraceWritePtr++] = '\n';
+            }
+            // otherwise, write it at the current position
+            else {
+                memcpy((gTraceBuffer + gTraceWritePtr), str, numChars);
+
+                // advance write ptr and add newline
+                gTraceWritePtr += numChars;
+                gTraceBuffer[gTraceWritePtr++] = '\n';
+            }
+
+            // kill any remaining partial message on the next line
+            size_t ptr{gTraceWritePtr};
+
+            while(ptr < kTraceBufferSize &&
+                    (gTraceBuffer[ptr] != '\n' || gTraceBuffer[ptr] != '\0')) {
+                gTraceBuffer[ptr++] = '\0';
             }
         }
 
