@@ -81,7 +81,7 @@ extern "C" int main() {
      *
      * We do it this way so that our initialization can rely on stuff like timers working.
      */
-    //Rtos::StartScheduler();
+    Rtos::StartScheduler();
     uint8_t balls{1};
     while(1) {
         volatile uint32_t shit{0x800000};

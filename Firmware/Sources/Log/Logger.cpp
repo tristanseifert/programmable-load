@@ -1,5 +1,4 @@
 #include "Logger.h"
-#include "TraceSWO.h"
 
 #include "App/Pinball/Hardware.h"
 #include "Rtos/Rtos.h"
