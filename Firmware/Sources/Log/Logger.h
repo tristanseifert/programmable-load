@@ -22,7 +22,7 @@ class Logger {
 
     public:
         /// Size of the trace buffer (in bytes)
-        constexpr static const size_t kTraceBufferSize{0x2000};
+        constexpr static const size_t kTraceBufferSize{0x1000};
 
         /**
          * @brief Trace logging buffer

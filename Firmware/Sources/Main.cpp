@@ -8,6 +8,7 @@
 
 #include "Hw/StatusLed.h"
 #include "Rpc/ResourceTable.h"
+#include "Supervisor/Supervisor.h"
 
 /**
  * @brief Early hardware init
@@ -31,8 +32,6 @@ static void EarlyHwInit() {
     // set up status indicator
     Hw::StatusLed::Init();
     Hw::StatusLed::Set(Hw::StatusLed::Color::Yellow);
-
-    // start the watchdog
 }
 
 /**
@@ -54,7 +53,16 @@ extern "C" int main() {
             gBuildInfo.buildDate,
             gBuildInfo.buildUser, gBuildInfo.buildHost);
 
+    Logger::Notice("MPU clock: %u Hz", SystemCoreClock);
     Logger::Notice("Virtio: vring0@%p, vring1@%p", Rpc::ResourceTable::GetVring0().da, Rpc::ResourceTable::GetVring1().da);
+
+    /*
+     * Create the supervisory tasks, which are responsible for thermal control of the system and
+     * ensuring all tasks that should be running are, and aren't hung.
+     *
+     * These in turn feed into the hw watchdog, which is activated from this point on.
+     */
+    Supervisor::Init();
 
     /*
      * Last, transfer control to the FreeRTOS scheduler. This will begin executing the app main

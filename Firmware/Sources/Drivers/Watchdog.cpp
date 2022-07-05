@@ -1,15 +1,20 @@
-#include "Watchdog.h"
+#include "stm32mp1xx.h"
+#include "stm32mp1xx_hal_rcc.h"
 
+#include "Hw/StatusLed.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
-#include <vendor/sam.h>
+#include "Common.h"
+#include "Watchdog.h"
 
 using namespace Drivers;
 
 TaskHandle_t Watchdog::gEarlyWarningTask{nullptr};
 size_t Watchdog::gEarlyWarningNoteIndex{0};
 uintptr_t Watchdog::gEarlyWarningNoteBits{0};
+uint8_t Watchdog::gCounterValue{0};
+uint8_t Watchdog::gWindowValue{0};
 
 /**
  * @brief Configure watchdog
@@ -19,29 +24,42 @@ uintptr_t Watchdog::gEarlyWarningNoteBits{0};
  * @param conf Watchdog configuration to apply
  */
 void Watchdog::Configure(const Config &conf) {
-    // one time initialization
-    Init();
+    // validate inputs
+    REQUIRE(conf.windowValue > 0x41 && conf.windowValue <= 0x7f, "invalid window value %u",
+            conf.windowValue);
+    REQUIRE(conf.counter > 0x40 && conf.counter <= 0x7f, "invalid counter %u", conf.counter);
+    REQUIRE(conf.windowValue <= conf.counter, "invalid window period: open %u total count %u",
+            conf.windowValue, conf.counter);
 
-    // configure as window mode
-    if(conf.windowMode) {
-        WDT->CTRLA.bit.WEN = true;
-        while(WDT->SYNCBUSY.bit.WEN) {}
+    // enable clock for the watchdog
+    __HAL_RCC_WWDG1_CLK_ENABLE();
 
-        // prevent from specifying window open > timeout
-        REQUIRE(conf.timeout > conf.secondary, "invalid window period: open %u timeout %u",
-                conf.secondary, conf.timeout);
+    // configure interrupts
+    NVIC_SetPriority(WWDG1_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
 
-        WDT->CONFIG.reg = WDT_CONFIG_PER(static_cast<uint8_t>(conf.timeout) & 0b1111) |
-                          WDT_CONFIG_WINDOW(static_cast<uint8_t>(conf.secondary) & 0b1111);
-    }
-    // otherwise, in normal mode
-    else {
-        WDT->CTRLA.bit.WEN = false;
-        while(WDT->SYNCBUSY.bit.WEN) {}
+    // get watchdog timer base frequency (APB1 / 4096)
+    const auto wdgFreq = GetApbClock(2) / 4096;
+    const float countFreq = wdgFreq / static_cast<float>(1 << static_cast<uint32_t>(conf.divider));
 
-        WDT->CONFIG.reg = WDT_CONFIG_PER(static_cast<uint8_t>(conf.timeout) & 0b1111);
-        WDT->EWCTRL.reg = WDT_EWCTRL_EWOFFSET(static_cast<uint8_t>(conf.secondary) & 0b1111);
-    }
+    Logger::Notice("WWDG clk %u Hz / %u = %u Hz", wdgFreq, 1 << static_cast<uint32_t>(conf.divider),
+            static_cast<uint32_t>(countFreq));
+
+    Logger::Notice("WWDG timeout %d msec, window at %d msec",
+            static_cast<int>(((1.f / countFreq) * (conf.counter - 0x3f)) * 1000.f),
+            static_cast<int>(((1.f / countFreq) * (0x7f - conf.windowValue)) * 1000.f)
+            );
+
+    // configuration register
+    WWDG1->CFR = (static_cast<uint8_t>(conf.divider) << WWDG_CFR_WDGTB_Pos) |
+        (conf.earlyWarningIrq ? WWDG_CFR_EWI : 0) |
+        (conf.windowValue ? conf.windowValue : 0x7f) << WWDG_CFR_W_Pos;
+
+    // control register
+    gCounterValue = (conf.counter & 0x7f);
+    gWindowValue = (conf.windowValue & 0x7f) - 1;
+
+    while(((WWDG1->CR >> WWDG_CR_T_Pos) & 0x7f) >= gWindowValue) {}
+    WWDG1->CR = static_cast<uint32_t>(gCounterValue) << WWDG_CR_T_Pos;
 
     // set up early warning irq
     if(conf.earlyWarningIrq) {
@@ -49,24 +67,10 @@ void Watchdog::Configure(const Config &conf) {
         gEarlyWarningNoteIndex = conf.notifyIndex;
         gEarlyWarningNoteBits = conf.notifyBits;
 
-        WDT->INTENSET.reg = WDT_INTENSET_EW;
-        NVIC_EnableIRQ(WDT_IRQn);
+        NVIC_EnableIRQ(WWDG1_IRQn);
     } else {
-        WDT->INTENCLR.reg = WDT_INTENCLR_EW;
-
-        NVIC_DisableIRQ(WDT_IRQn);
+        NVIC_DisableIRQ(WWDG1_IRQn);
     }
-}
-
-/**
- * @brief Initialize watchdog
- *
- * This enables the interrupts and clocks required by the watchdog.
- */
-void Watchdog::Init() {
-    MCLK->APBAMASK.bit.WDT_ = true;
-
-    NVIC_SetPriority(WDT_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
 }
 
 /**
@@ -75,16 +79,7 @@ void Watchdog::Init() {
  * It must have been previously configured, or the device will likely reset immediately.
  */
 void Watchdog::Enable() {
-    WDT->CTRLA.bit.ENABLE = true;
-    while(WDT->SYNCBUSY.bit.ENABLE) {}
-}
-
-/**
- * @brief Disable the watchdog
- */
-void Watchdog::Disable() {
-    WDT->CTRLA.bit.ENABLE = false;
-    while(WDT->SYNCBUSY.bit.ENABLE) {}
+    WWDG1->CR = WWDG_CR_WDGA | (static_cast<uint32_t>(gCounterValue) << WWDG_CR_T_Pos);
 }
 
 
@@ -93,14 +88,16 @@ void Watchdog::Disable() {
  *
  * This is the early warning interrupt from the watchdog.
  */
-extern "C" void WDT_Handler() {
+extern "C" void WWDG1_IRQHandler() {
     BaseType_t woken{pdFALSE};
 
+    // notify the task
     if(Watchdog::gEarlyWarningTask) {
         xTaskNotifyIndexedFromISR(Watchdog::gEarlyWarningTask, Watchdog::gEarlyWarningNoteIndex,
                         static_cast<BaseType_t>(Watchdog::gEarlyWarningNoteBits), eSetBits, &woken);
         portYIELD_FROM_ISR(woken);
     }
 
-    WDT->INTFLAG.reg = WDT_INTFLAG_EW;
+    // acknowledge interrupt
+    WWDG1->SR = 0;
 }

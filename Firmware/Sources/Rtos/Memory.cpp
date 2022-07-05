@@ -70,4 +70,15 @@ extern "C" void vApplicationGetTimerTaskMemory(StaticTask_t **outTcb, StackType_
     *outStack = gTimerStack;
     *outStackSize = kTimerStackSize;
 }
+
+
+
+/**
+ * @brief malloc failure hook
+ *
+ * Invoked when a FreeRTOS memory allocation fails.
+ */
+extern "C" void vApplicationMallocFailedHook() {
+    Logger::Panic("out of memory (heap)");
+}
 }

@@ -7,7 +7,7 @@
 #include "Rtos/Rtos.h"
 
 extern "C" {
-void WDT_Handler();
+void WWDG1_IRQHandler();
 }
 
 namespace Drivers {
@@ -18,7 +18,7 @@ namespace Drivers {
  * interrupt may be enabled, which can be used to notify a chosen task.
  */
 class Watchdog {
-    friend void ::WDT_Handler();
+    friend void ::WWDG1_IRQHandler();
 
     public:
         /**
@@ -29,48 +29,43 @@ class Watchdog {
          * oscillator. This means it's not totally accurate.
          */
         enum class ClockDivider: uint8_t {
-            Div8                        = 0x0,
-            Div16                       = 0x1,
-            Div32                       = 0x2,
-            Div64                       = 0x3,
-            Div128                      = 0x4,
-            Div256                      = 0x5,
-            Div512                      = 0x6,
-            Div1024                     = 0x7,
-            Div2048                     = 0x8,
-            Div4096                     = 0x9,
-            Div8192                     = 0xA,
-            Div16384                    = 0xB,
+            Div1                        = 0x0,
+            Div2                        = 0x1,
+            Div4                        = 0x2,
+            Div8                        = 0x3,
+            Div16                       = 0x4,
+            Div32                       = 0x5,
+            Div64                       = 0x6,
+            Div128                      = 0x7,
         };
 
         /// Watchdog configuration
         struct Config {
             /**
-             * @brief Watchdog timeout period
+             * @brief Watchdog clock divider
              *
-             * Defines the timeout for the watchdog, in terms of watchdog clock cycles. The clock
-             * of the watchdog runs at roughly 1kHz.
+             * Indirectly defines the period of the watchdog count; this is an additional
+             * division on top of the existing /4096 from the APB1 input clock. This divided clock
+             * then drives the watchdog counter.
              */
-            ClockDivider timeout;
+            ClockDivider divider;
 
             /**
-             * @brief Secondary timeout
+             * @brief Watchdog timeout
              *
-             * Defines the secondary watchdog timeout. This depends on the mode:
-             *
-             * - Normal mode: Time at which the early warning interrupt is generated
-             * - Window mode: Start of the watchdog window opening
+             * A 7-bit value that defines the watchdog period. It's in units of the watchdog clock
+             * count frequency; this counter is decremented by one every tick of that clock, and
+             * when it reaches 0x3f, a reset is generated.
              */
-            ClockDivider secondary;
+            uint8_t counter{0x7f};
 
             /**
-             * @brief Window mode enable
+             * @brief Window value
              *
-             * When set, the watchdog operates in window mode. In this mode, in addition to needing
-             * to be petted _before_ its primary timeout elapses, this must also take place _after_
-             * a secondary timeout.
+             * This is the upper bound above which the watchdog will generate a reset when it is
+             * petted.(The lower bound is fixed at 0x3f.)
              */
-            uint8_t windowMode:1{0};
+            uint8_t windowValue{0x7f};
 
             /**
              * @brief Early warning interrupt enable
@@ -107,7 +102,6 @@ class Watchdog {
         static void Configure(const Config &conf);
 
         static void Enable();
-        static void Disable();
 
         /**
          * @brief Pet (reset) the watchdog
@@ -116,14 +110,9 @@ class Watchdog {
          * device will be reset the same as if it never pet the watchdog in the first place.
          */
         static inline void Pet() {
-            WDT->CLEAR.reg = WDT_CLEAR_CLEAR_KEY;
+            WWDG1->CR = WWDG_CR_WDGA | (static_cast<uint32_t>(gCounterValue) << WWDG_CR_T_Pos);
             __DSB();
-
-            while(WDT->SYNCBUSY.bit.CLEAR) {}
         }
-
-    private:
-        static void Init();
 
     private:
         /// Task to notify for early warning interrupt
@@ -132,6 +121,11 @@ class Watchdog {
         static size_t gEarlyWarningNoteIndex;
         /// Bits to set for early warning interrupt
         static uintptr_t gEarlyWarningNoteBits;
+
+        /// Down counter value
+        static uint8_t gCounterValue;
+        /// Initial counter value
+        static uint8_t gWindowValue;
 };
 }
 

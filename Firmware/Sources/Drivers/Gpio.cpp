@@ -1,10 +1,12 @@
+#include <FreeRTOS.h>
+
+#include "stm32mp1xx_ll_gpio.h"
+#include "stm32mp1xx_hal_hsem.h"
+
 #include "Gpio.h"
 
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
-
-#include "stm32mp1xx_ll_gpio.h"
-#include "stm32mp1xx_hal_hsem.h"
 
 using namespace Drivers;
 
@@ -166,6 +168,7 @@ void Gpio::ConfigurePin(const Pin pin, const PinConfig &config) {
     // perform the update
     auto port = GetPinPort(pin);
     AcquireLock();
+    taskENTER_CRITICAL();
 
     if(config.mode == Mode::DigitalOut) {
         if(config.initialOutput) {
@@ -177,6 +180,7 @@ void Gpio::ConfigurePin(const Pin pin, const PinConfig &config) {
     LL_GPIO_Init(port, &init);
 
     UnlockGpio();
+    taskEXIT_CRITICAL();
 }
 
 /**

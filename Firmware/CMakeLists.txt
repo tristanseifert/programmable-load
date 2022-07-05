@@ -67,7 +67,7 @@ add_compile_options(-fstack-protector-strong)
 add_executable(firmware
     ${BuildInfoFile}
     Sources/Init/StackGuard.cpp
-    #Sources/Init/CppHeap.cpp
+    Sources/Init/CppHeap.cpp
     #Sources/Init/CppRuntime.cpp
     #Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
@@ -80,6 +80,9 @@ add_executable(firmware
     Sources/Util/Hash.cpp
     #Sources/Util/HwInfo.cpp
     Sources/Drivers/Gpio.cpp
+    Sources/Drivers/Watchdog.cpp
+    Sources/Supervisor/Supervisor.cpp
+    Sources/Supervisor/Task.cpp
 )
 
 # Set defines for the platform
