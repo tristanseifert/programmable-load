@@ -79,6 +79,7 @@ add_executable(firmware
     Sources/Util/InventoryRom.cpp
     Sources/Util/Hash.cpp
     #Sources/Util/HwInfo.cpp
+    Sources/Drivers/Gpio.cpp
 )
 
 # Set defines for the platform

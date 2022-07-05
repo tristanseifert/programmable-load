@@ -59,4 +59,4 @@ target_include_directories(vendor-st PRIVATE ${CMSIS_INCLUDE_DIR})
 target_compile_options(vendor-st PRIVATE -Wno-cast-qual -Wno-parentheses-equality)
 
 # enable the low-level drivers
-target_compile_definitions(vendor-st PRIVATE USE_FULL_LL_DRIVER)
+target_compile_definitions(vendor-st PUBLIC USE_FULL_LL_DRIVER)

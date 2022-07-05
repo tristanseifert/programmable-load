@@ -3,22 +3,86 @@
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
-#include <vendor/sam.h>
+#include "stm32mp1xx_ll_gpio.h"
+#include "stm32mp1xx_hal_hsem.h"
 
 using namespace Drivers;
 
-static PortGroup *MmioFor(const Gpio::Port port);
-static PortGroup *MmioFor(const Gpio::Pin pin) {
-    return MmioFor(pin.first);
+/**
+ * @brief Get the bit corresponding to the given pin number
+ *
+ * Returns the GPIO pin constant for the given pin in the (port, pin) pair.
+ */
+constexpr static inline uint32_t GetPinBit(const Gpio::Pin pin) {
+    switch(pin.second & 0xf) {
+        case 0:
+            return LL_GPIO_PIN_0;
+        case 1:
+            return LL_GPIO_PIN_1;
+        case 2:
+            return LL_GPIO_PIN_2;
+        case 3:
+            return LL_GPIO_PIN_3;
+        case 4:
+            return LL_GPIO_PIN_4;
+        case 5:
+            return LL_GPIO_PIN_5;
+        case 6:
+            return LL_GPIO_PIN_6;
+        case 7:
+            return LL_GPIO_PIN_7;
+        case 8:
+            return LL_GPIO_PIN_8;
+        case 9:
+            return LL_GPIO_PIN_9;
+        case 10:
+            return LL_GPIO_PIN_10;
+        case 11:
+            return LL_GPIO_PIN_11;
+        case 12:
+            return LL_GPIO_PIN_12;
+        case 13:
+            return LL_GPIO_PIN_13;
+        case 14:
+            return LL_GPIO_PIN_14;
+        case 15:
+            return LL_GPIO_PIN_15;
+    }
+
+    // should never get here
+    return 0;
 }
 
-static void DisableIo(const Gpio::Pin pin, const Gpio::PinConfig &config);
-static void ConfigureDigitalIo(const Gpio::Pin pin, const Gpio::PinConfig &config);
-static void ConfigurePeripheralIo(const Gpio::Pin, const Gpio::PinConfig &config);
+/**
+ * @brief Get the GPIO instance corresponding to the given pin
+ *
+ * Returns the GPIO instance that corresponds to the port on which the given pin is located.
+ */
+constexpr static inline GPIO_TypeDef *GetPinPort(const Gpio::Pin &pin) {
+    switch(pin.first) {
+        case Gpio::Port::PortA:
+            return GPIOA;
+        case Gpio::Port::PortB:
+            return GPIOB;
+        case Gpio::Port::PortC:
+            return GPIOC;
+        case Gpio::Port::PortD:
+            return GPIOD;
+        case Gpio::Port::PortE:
+            return GPIOE;
+        case Gpio::Port::PortF:
+            return GPIOF;
+        case Gpio::Port::PortG:
+            return GPIOG;
+        case Gpio::Port::PortH:
+            return GPIOH;
+        case Gpio::Port::PortI:
+            return GPIOI;
+    }
 
-static void ConfigurePull(PortGroup *regs, const uint8_t pin, const Gpio::PinConfig &config,
-        const uint8_t pinCfgBase = 0);
-
+    // should never get here
+    return nullptr;
+}
 
 
 /**
@@ -31,225 +95,145 @@ static void ConfigurePull(PortGroup *regs, const uint8_t pin, const Gpio::PinCon
  * @param config Detailed pin configuration
  */
 void Gpio::ConfigurePin(const Pin pin, const PinConfig &config) {
-    REQUIRE(pin.second <= 32, "invalid pin: %u", pin.second);
+    REQUIRE(pin.second <= 16, "invalid pin: %u", pin.second);
+    const auto pinMask = GetPinBit(pin);
 
-    switch(config.mode) {
-        /*
-         * Disable all digital circuitry on the pin (unused)
-         */
-        case Mode::Off:
-            DisableIo(pin, config);
+    // build up the pin struct; start with pin number
+    LL_GPIO_InitTypeDef init{};
+    init.Pin = pinMask;
+
+    // drive strength
+    switch(config.speed) {
+        default: [[fallthrough]];
+        case 0:
+            init.Speed = LL_GPIO_SPEED_FREQ_LOW;
             break;
-
-        /*
-         * Put the pin into analog mode.
-         *
-         * This has the same effect as disabling all digital circuitry.
-         */
-        case Mode::Analog:
-            DisableIo(pin, config);
-            // TODO: do we need to do additional stuff to analogize it?
+        case 1:
+            init.Speed = LL_GPIO_SPEED_FREQ_MEDIUM;
             break;
-
-        /*
-         * Digital IOs, controlled directly by PORT
-         */
-        case Mode::DigitalIn:
-        case Mode::DigitalOut:
-            ConfigureDigitalIo(pin, config);
+        case 2:
+            init.Speed = LL_GPIO_SPEED_FREQ_HIGH;
             break;
-
-        /**
-         * Peripheral IO
-         */
-        case Mode::Peripheral:
-            ConfigurePeripheralIo(pin, config);
+        case 3:
+            init.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
             break;
     }
+
+    // pull up/down mode
+    switch(config.pull) {
+        default: [[fallthrough]];
+        case Pull::None:
+            init.Pull = LL_GPIO_PULL_NO;
+            break;
+
+        case Pull::Up:
+            init.Pull = LL_GPIO_PULL_UP;
+            break;
+
+        case Pull::Down:
+            init.Pull = LL_GPIO_PULL_DOWN;
+            break;
+    }
+
+    // open drain
+    init.OutputType = config.isOpenDrain ? LL_GPIO_OUTPUT_OPENDRAIN : LL_GPIO_OUTPUT_PUSHPULL;
+
+    // pin mode
+    switch(config.mode) {
+        case Mode::DigitalIn:
+            init.Mode = LL_GPIO_MODE_INPUT;
+            break;
+        case Mode::DigitalOut:
+            init.Mode = LL_GPIO_MODE_OUTPUT;
+            break;
+        case Mode::Analog:
+            init.Mode = LL_GPIO_MODE_ANALOG;
+            break;
+        case Mode::Peripheral:
+            init.Mode = LL_GPIO_MODE_ALTERNATE;
+            // TODO: do we need to validate this?
+            init.Alternate = config.function & 0xf;
+            break;
+
+        // pin is disabled (put it into analog mode)
+        case Mode::Off:
+            init.Mode = LL_GPIO_MODE_ANALOG;
+            init.Pull = LL_GPIO_PULL_NO;
+            init.Speed = LL_GPIO_SPEED_FREQ_LOW;
+            break;
+    }
+
+    // perform the update
+    auto port = GetPinPort(pin);
+    AcquireLock();
+
+    if(config.mode == Mode::DigitalOut) {
+        if(config.initialOutput) {
+            LL_GPIO_SetOutputPin(port, pinMask);
+        } else {
+            LL_GPIO_ResetOutputPin(port, pinMask);
+        }
+    }
+    LL_GPIO_Init(port, &init);
+
+    UnlockGpio();
 }
 
 /**
- * @brief Set the state of an IO pin
+ * @brief Set the state of an output pin
  *
- * Sets the state of an output pin.
- *
- * @param pin GPIO to set
- * @param state Whether the output is high (true) or not
+ * Update the state driven onto an output pin.
  */
 void Gpio::SetOutputState(const Pin pin, const bool state) {
-    auto regs = MmioFor(pin);
+    auto port = GetPinPort(pin);
+    const auto pinMask = GetPinBit(pin);
 
     if(state) {
-        regs->OUTSET.reg = (1U << static_cast<uint32_t>(pin.second));
+        LL_GPIO_SetOutputPin(port, pinMask);
     } else {
-        regs->OUTCLR.reg = (1U << static_cast<uint32_t>(pin.second));
+        LL_GPIO_ResetOutputPin(port, pinMask);
     }
 }
 
 /**
- * @brief Read an IO pin
+ * @brief Get the state of an input pin
  *
- * Gets the state of an input pin.
- *
- * @param pin IO pin to read
- *
- * @return State of the IO pin
- *
- * @remark The return value is only valid if the pin is configured as an input.
+ * Read the input port register
  */
 bool Gpio::GetInputState(const Pin pin) {
-    auto regs = MmioFor(pin);
+    auto port = GetPinPort(pin);
+    const auto pinMask = GetPinBit(pin);
 
-    return !!(regs->IN.reg & (1U << static_cast<uint32_t>(pin.second)));
+    return LL_GPIO_IsInputPinSet(port, pinMask);
 }
 
 
 
-/**
- * @brief Get the register base for the given IO port
- *
- * @param port A GPIO port enumeration value
- *
- * @return GPIO register bank for the specified port
- */
-static PortGroup *MmioFor(const Gpio::Port p) {
-    switch(p) {
-        case Gpio::Port::PortA:
-            return &PORT->Group[0];
-        case Gpio::Port::PortB:
-            return &PORT->Group[1];
-        case Gpio::Port::PortC:
-            return &PORT->Group[2];
 
-        default:
-            Logger::Panic("invalid gpio port %u", static_cast<uint8_t>(p));
+/**
+ * @brief Acquire GPIO configuration semaphore
+ *
+ * To ensure we don't conflict with accesses from the Linux side, we use the first hardware
+ * semaphore slot to synchronize.
+ */
+void Gpio::AcquireLock() {
+    bool ok{false};
+
+    size_t tries{0};
+    while(!ok && tries++ < kLockRetries) {
+        auto ret = HAL_HSEM_FastTake(kSemaphoreId);
+        ok = (ret == HAL_OK);
     }
-}
 
-
-
-/**
- * @brief Disable an IO pin
- *
- * Disables all digital circuitry on an IO pin. This includes pull up/down resistors, and both the
- * input and output buffers.
- */
-static void DisableIo(const Gpio::Pin pin, const Gpio::PinConfig &config) {
-    auto regs = MmioFor(pin);
-
-    taskENTER_CRITICAL();
-
-    // DIR = 0, INEN = 0, PULLEN = 0
-    regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin.second));
-    regs->PINCFG[pin.second].reg = 0 & PORT_PINCFG_MASK;
-
-    ConfigurePull(regs, pin.second, config);
-
-    taskEXIT_CRITICAL();
+    // failed to take the lock
+    REQUIRE(ok, "failed to acquire gpio hwsem")
 }
 
 /**
- * @brief Configure an IO pin as digital IO
+ * @brief Release GPIO configuration semaphore
  *
- * The pin is placed under full control of the PORT controller, and designated as either an input
- * or output pin. It's configurable whether pull up/down resistors are enabled also.
+ * Drops the semaphore that protects GPIO configuration accesses.
  */
-static void ConfigureDigitalIo(const Gpio::Pin pin, const Gpio::PinConfig &config) {
-    auto regs = MmioFor(pin);
-
-    taskENTER_CRITICAL();
-
-    // configure the direction
-    if(config.mode == Gpio::Mode::DigitalOut) {
-        if(config.initialOutput) {
-            regs->OUTSET.reg = (1U << static_cast<uint32_t>(pin.second));
-        } else {
-            regs->OUTCLR.reg = (1U << static_cast<uint32_t>(pin.second));
-        }
-
-        regs->DIRSET.reg = (1UL << static_cast<uint32_t>(pin.second));
-    } else {
-        regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin.second));
-    }
-
-    // build the base pin config (enable pin mux, if requested)
-    uint8_t base{0};
-
-    if(config.pinMuxEnable) {
-        base |= PORT_PINCFG_PMUXEN;
-    }
-
-    // configure pull resistors for inputs
-    if(config.mode == Gpio::Mode::DigitalIn) {
-        base |= PORT_PINCFG_INEN;
-        ConfigurePull(regs, pin.second, config, base);
-    }
-    // configure drive strength for outputs
-    else {
-        if(config.driveStrength) {
-            base |= PORT_PINCFG_DRVSTR;
-        }
-        regs->PINCFG[pin.second].reg = base;
-    }
-
-    taskEXIT_CRITICAL();
-}
-
-/**
- * @brief Configure an IO pin for peripheral use
- *
- * The IO pin is configuered for exclusive control by a peripheral. Its direction and IO value will
- * instead be controlled by the peripheral.
- */
-static void ConfigurePeripheralIo(const Gpio::Pin pin, const Gpio::PinConfig &config) {
-    auto regs = MmioFor(pin);
-
-    taskENTER_CRITICAL();
-
-    // specify the pin multiplexer function
-    if(pin.second & 1) {
-        regs->PMUX[pin.second / 2].bit.PMUXO = config.function;
-    } else {
-        regs->PMUX[pin.second / 2].bit.PMUXE = config.function;
-    }
-
-    // enable pin multiplexer mode
-    regs->DIRCLR.reg = (1UL << static_cast<uint32_t>(pin.second));
-    const uint32_t base = (PORT_PINCFG_PMUXEN) | (config.driveStrength ? PORT_PINCFG_DRVSTR : 0);
-
-    // optionally configure pull resistors also
-    ConfigurePull(regs, pin.second, config, base);
-
-    taskEXIT_CRITICAL();
-}
-
-/**
- * @brief Configure the pull up/down resistors on a pin
- *
- * @param pinCfgBase Base value for the pin config register; it is ORed with the appropriate pull
- *        resistor configuration values.
- *
- * @remark This should only be called if the pin is configured as an input or disabled; otherwise,
- *         the results are undefined.
- *
- * @remark Use this function as part of another GPIO config function that takes a critical section.
- */
-static void ConfigurePull(PortGroup *regs, const uint8_t pin, const Gpio::PinConfig &config,
-        const uint8_t pinCfgBase) {
-    switch(config.pull) {
-        // disable pull resistors
-        case Gpio::Pull::None:
-            regs->PINCFG[pin].reg = pinCfgBase;
-            break;
-        // enable pull up resistors
-        case Gpio::Pull::Up:
-            regs->OUTSET.reg = (1UL << static_cast<uint32_t>(pin));
-            regs->PINCFG[pin].reg = pinCfgBase | PORT_PINCFG_PULLEN;
-            break;
-        // enable pull down restors
-        case Gpio::Pull::Down:
-            regs->OUTCLR.reg = (1UL << static_cast<uint32_t>(pin));
-            regs->PINCFG[pin].reg = pinCfgBase | PORT_PINCFG_PULLEN;
-            break;
-    }
+void Gpio::UnlockGpio() {
+    HAL_HSEM_Release(kSemaphoreId, 0);
 }
