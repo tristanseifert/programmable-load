@@ -20,15 +20,15 @@ class Gpio {
          * each port are up to 16 pins, numbered 0-31.
          */
         enum class Port: uint8_t {
-            PortA,
-            PortB,
-            PortC,
-            PortD,
-            PortE,
-            PortF,
-            PortG,
-            PortH,
-            PortI,
+            PortA                       = 1,
+            PortB                       = 2,
+            PortC                       = 3,
+            PortD                       = 4,
+            PortE                       = 5,
+            PortF                       = 6,
+            PortG                       = 7,
+            PortH                       = 8,
+            PortI                       = 9,
             // Port Z is accessible only from the A7 core
         };
 
@@ -138,6 +138,8 @@ class Gpio {
         static bool GetInputState(const Pin pin);
 
     private:
+        static void EnablePortClock(const Port);
+
         static void AcquireLock();
         static void UnlockGpio();
 
@@ -145,6 +147,14 @@ class Gpio {
         constexpr static const size_t kSemaphoreId{0};
         /// Maximum number of times to try acquiring the lock before giving up
         constexpr static const size_t kLockRetries{5000};
+
+        /**
+         * @brief Bitmask of which ports are currently clocked
+         *
+         * This is consulted when an IO pin is first configured; if the port does not have the
+         * corresponding bit set (that is, its clock isn't enabled) we'll do that and set the bit.
+         */
+        static uint32_t gEnabledPorts;
 };
 }
 

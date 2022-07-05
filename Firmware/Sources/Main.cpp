@@ -6,6 +6,7 @@
 
 #include "stm32mp1xx_hal_rcc.h"
 
+#include "Drivers/Random.h"
 #include "Hw/StatusLed.h"
 #include "Rpc/ResourceTable.h"
 #include "Supervisor/Supervisor.h"
@@ -17,21 +18,15 @@
  * throughout the life of the software.
  */
 static void EarlyHwInit() {
-    // enable clocks for RCC, GPIO
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    __HAL_RCC_GPIOB_CLK_ENABLE();
-    __HAL_RCC_GPIOC_CLK_ENABLE();
-    __HAL_RCC_GPIOD_CLK_ENABLE();
-    __HAL_RCC_GPIOE_CLK_ENABLE();
-    __HAL_RCC_GPIOF_CLK_ENABLE();
-    __HAL_RCC_GPIOG_CLK_ENABLE();
-
     // enable hardware semaphores
     __HAL_RCC_HSEM_CLK_ENABLE();
 
     // set up status indicator
     Hw::StatusLed::Init();
     Hw::StatusLed::Set(Hw::StatusLed::Color::Yellow);
+
+    // initialize a few peripherals
+    Drivers::Random::Init();
 }
 
 /**

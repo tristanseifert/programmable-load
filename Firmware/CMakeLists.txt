@@ -80,6 +80,7 @@ add_executable(firmware
     Sources/Util/Hash.cpp
     #Sources/Util/HwInfo.cpp
     Sources/Drivers/Gpio.cpp
+    Sources/Drivers/Random.cpp
     Sources/Drivers/Watchdog.cpp
     Sources/Supervisor/Supervisor.cpp
     Sources/Supervisor/Task.cpp

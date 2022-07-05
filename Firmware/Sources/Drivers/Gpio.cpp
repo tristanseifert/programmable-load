@@ -2,6 +2,7 @@
 
 #include "stm32mp1xx_ll_gpio.h"
 #include "stm32mp1xx_hal_hsem.h"
+#include "stm32mp1xx_hal_rcc.h"
 
 #include "Gpio.h"
 
@@ -9,6 +10,8 @@
 #include "Rtos/Rtos.h"
 
 using namespace Drivers;
+
+uint32_t Gpio::gEnabledPorts{0};
 
 /**
  * @brief Get the bit corresponding to the given pin number
@@ -99,6 +102,9 @@ constexpr static inline GPIO_TypeDef *GetPinPort(const Gpio::Pin &pin) {
 void Gpio::ConfigurePin(const Pin pin, const PinConfig &config) {
     REQUIRE(pin.second <= 16, "invalid pin: %u", pin.second);
     const auto pinMask = GetPinBit(pin);
+
+    // enable clock resources for the port this pin is on
+    EnablePortClock(pin.first);
 
     // build up the pin struct; start with pin number
     LL_GPIO_InitTypeDef init{};
@@ -213,6 +219,54 @@ bool Gpio::GetInputState(const Pin pin) {
 
 
 
+/**
+ * @brief Enable a GPIO port's clock
+ *
+ * This ungates the RCC clock for the specified port, if needed. If the clock is already enabled
+ * (based on the gEnabledPorts bitfield) we'll do nothing.
+ *
+ * @param port Port to enable clock for
+ */
+void Gpio::EnablePortClock(const Port port) {
+    // check if already enabled
+    const uint32_t bit{1U << static_cast<uint32_t>(port)};
+    if(gEnabledPorts & bit) {
+        return;
+    }
+
+    // enable the RCC clock
+    switch(port) {
+        case Gpio::Port::PortA:
+            __HAL_RCC_GPIOA_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortB:
+            __HAL_RCC_GPIOB_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortC:
+            __HAL_RCC_GPIOC_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortD:
+            __HAL_RCC_GPIOD_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortE:
+            __HAL_RCC_GPIOE_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortF:
+            __HAL_RCC_GPIOF_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortG:
+            __HAL_RCC_GPIOG_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortH:
+            __HAL_RCC_GPIOH_CLK_ENABLE();
+            break;
+        case Gpio::Port::PortI:
+            __HAL_RCC_GPIOI_CLK_ENABLE();
+            break;
+    }
+    // set flag
+    gEnabledPorts |= bit;
+}
 
 /**
  * @brief Acquire GPIO configuration semaphore
