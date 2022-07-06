@@ -43,3 +43,12 @@ target_link_libraries(open_amp-static PRIVATE libc freertos_kernel)
 
 target_include_directories(open_amp-static PUBLIC ${openamp_SOURCE_DIR}/lib/include ${LIBMETAL_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR}/libmetal/machine)
 target_link_libraries(open_amp-static PRIVATE metal-static)
+
+#########################
+# machine support
+add_library(libmetal-machine STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/libmetal/machine/stm32mp15x/sys.c
+)
+target_link_libraries(libmetal-machine PRIVATE open_amp-static)
+target_link_libraries(open_amp-static PRIVATE libmetal-machine)
+

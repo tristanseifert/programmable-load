@@ -9,6 +9,7 @@
 #ifndef LIBMETAL_MACHINE_STM32MP15X_SYS_H
 #define LIBMETAL_MACHINE_STM32MP15X_SYS_H
 
-// TODO: implement these as needed!
+// max supported regions per device (mirror the default)
+#define METAL_MAX_DEVICE_REGIONS 32
 
 #endif

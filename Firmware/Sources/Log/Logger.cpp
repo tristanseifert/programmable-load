@@ -111,9 +111,9 @@ void Logger::Log(const Level level, const etl::string_view &format, va_list args
     buffer += numChars;
 
     // write it into trace buffer
-    taskENTER_CRITICAL();
+    //taskENTER_CRITICAL();
     TracePutString(bufferStart, bytesWritten);
-    taskEXIT_CRITICAL();
+    //taskEXIT_CRITICAL();
 }
 
 /**

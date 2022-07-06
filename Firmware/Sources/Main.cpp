@@ -43,7 +43,7 @@ extern "C" int main() {
     EarlyHwInit();
 
     // log version
-    Logger::Warning("**********\nProgrammable load rtfw (%s/%s-%s)\nBuilt on: %s by %s@%s",
+    Logger::Warning("Programmable load rtfw (%s/%s-%s) built on %s by %s@%s",
             gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
             gBuildInfo.buildDate,
             gBuildInfo.buildUser, gBuildInfo.buildHost);
