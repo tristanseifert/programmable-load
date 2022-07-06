@@ -6,7 +6,6 @@
 #include "Log/Logger.h"
 
 using namespace Rpc;
-
 /**
  * @brief Firmware resource table definition
  *
@@ -32,7 +31,7 @@ struct FwResourceTable {
 /// total number of VRings (fixed for linux compatibility)
 constexpr static const uint32_t kNumVRings{2};
 /// alignment of vring buffers (fixed for linux compatibility)
-constexpr static const uint32_t kVRingAlignment{4};
+constexpr static const uint32_t kVRingAlignment{16};
 /// number of vring buffers
 constexpr static const uint32_t kVRingNumBufs{8}; // may be up to 8?
 
@@ -40,15 +39,6 @@ constexpr static const uint32_t kVRingNumBufs{8}; // may be up to 8?
 constexpr static const uint32_t kVRingIdMasterToRemote{0};
 /// Identifier for the remote-to-master ring
 constexpr static const uint32_t kVRingIdRemoteToMaster{1};
-
-// these are defined by the linker script
-extern int __OPENAMP_region_start__[], __OPENAMP_region_end__[];
-
-#define SHM_START_ADDRESS       ((metal_phys_addr_t) __OPENAMP_region_start__)
-#define SHM_SIZE                (size_t)((void *) __OPENAMP_region_end__ - (void *) __OPENAMP_region_start__)
-
-#define VRING_RX_ADDRESS        SHM_START_ADDRESS
-#define VRING_TX_ADDRESS        (SHM_START_ADDRESS + 0x400)
 
 extern "C" {
 /**
@@ -83,7 +73,7 @@ struct FwResourceTable __attribute__((section(".resource_table"))) __attribute__
         // virtio RPMSG device id (VIRTIO_ID_RPMSG_)
         .id = 7,
         .notifyid = 0,
-        // RPMSG_IPU_C0_FEATURES
+        // RPMSG_IPU_C0_FEATURES = VIRTIO_RPMSG_F_NS
         .dfeatures = 1,
         .gfeatures = 0,
         .config_len = 0,
@@ -112,16 +102,30 @@ struct FwResourceTable __attribute__((section(".resource_table"))) __attribute__
 };
 };
 
+
+/// Get reference to resource table (base)
+struct resource_table &ResourceTable::GetTable() {
+    return reinterpret_cast<struct resource_table &>(rproc_resource);
+}
+/// Get pointer to resource table
+void *ResourceTable::GetTablePtr() {
+    return &rproc_resource;
+}
+/// Get size of resource table (in bytes)
+const size_t ResourceTable::GetTableSize() {
+    return sizeof(rproc_resource);
+}
+
 /// Get reference to the vdev information structure
-const struct fw_rsc_vdev &ResourceTable::GetVdev() {
+struct fw_rsc_vdev &ResourceTable::GetVdev() {
     return rproc_resource.vdev;
 }
 /// Get reference to the vring0 (tx direction)
-const struct fw_rsc_vdev_vring &ResourceTable::GetVring0() {
+struct fw_rsc_vdev_vring &ResourceTable::GetVring0() {
     return rproc_resource.vring0;
 }
 /// Get reference to the vring1 (rx direction)
-const struct fw_rsc_vdev_vring &ResourceTable::GetVring1() {
+struct fw_rsc_vdev_vring &ResourceTable::GetVring1() {
     return rproc_resource.vring1;
 }
 

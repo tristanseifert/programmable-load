@@ -1,6 +1,5 @@
 #include "Log/Logger.h"
 #include "Rtos/Start.h"
-//#include "Util/HwInfo.h"
 
 #include "BuildInfo.h"
 
@@ -8,7 +7,7 @@
 
 #include "Drivers/Random.h"
 #include "Hw/StatusLed.h"
-#include "Rpc/ResourceTable.h"
+#include "Rpc/Rpc.h"
 #include "Supervisor/Supervisor.h"
 
 /**
@@ -39,17 +38,29 @@ static void EarlyHwInit() {
  * Lastly, the RTOS scheduler is launched to actually begin execution.
  */
 extern "C" int main() {
-    // perform initial hardware setup
+    /*
+     * Perform early initialization (status indicators, to show sign of life; and clocks for some
+     * internal peripherals) then log a message indicating that we're alive before proceeding with
+     * the actual initialization.
+     */
     EarlyHwInit();
 
-    // log version
     Logger::Warning("Programmable load rtfw (%s/%s-%s) built on %s by %s@%s",
             gBuildInfo.gitBranch, gBuildInfo.gitHash, gBuildInfo.buildType,
             gBuildInfo.buildDate,
             gBuildInfo.buildUser, gBuildInfo.buildHost);
-
     Logger::Notice("MPU clock: %u Hz", SystemCoreClock);
-    Logger::Notice("Virtio: vring0@%p, vring1@%p", Rpc::ResourceTable::GetVring0().da, Rpc::ResourceTable::GetVring1().da);
+
+    /*
+     * Initialize host RPC interface
+     *
+     * This prepares the tasks used to communicate with the host via the Linux rpmsg interface,
+     * and a virtio device managed via OpenAMP.
+     *
+     * Actual communication won't take place until the FreeRTOS scheduler is started, as a
+     * background task handles all the message processing.
+     */
+    Rpc::Init();
 
     /*
      * Create the supervisory tasks, which are responsible for thermal control of the system and

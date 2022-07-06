@@ -71,6 +71,10 @@ add_executable(firmware
     #Sources/Init/CppRuntime.cpp
     #Sources/Init/FaultHandlers.cpp
     Sources/Main.cpp
+    Sources/Rpc/Rpc.cpp
+    Sources/Rpc/Mailbox.cpp
+    Sources/Rpc/MessageHandler.cpp
+    Sources/Rpc/OpenAmp.cpp
     Sources/Rpc/ResourceTable.cpp
     Sources/Log/Logger.cpp
     Sources/Rtos/Idle.cpp

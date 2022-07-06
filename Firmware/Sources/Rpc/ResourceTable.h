@@ -3,6 +3,13 @@
 
 #include <openamp/open_amp.h>
 
+// these are defined by the linker script
+extern "C" int __OPENAMP_region_start__[], __OPENAMP_region_end__[];
+
+#define SHM_START_ADDRESS       ((metal_phys_addr_t) __OPENAMP_region_start__)
+#define SHM_SIZE                (size_t)((uint8_t *) __OPENAMP_region_end__ - (uint8_t *) __OPENAMP_region_start__)
+#define VRING_BUF_ADDRESS       (SHM_START_ADDRESS + 0x2000)
+
 namespace Rpc {
 /**
  * @brief Thin wrapper around the remoteproc resource table
@@ -12,9 +19,13 @@ namespace Rpc {
  */
 class ResourceTable {
     public:
-        static const struct fw_rsc_vdev &GetVdev();
-        static const struct fw_rsc_vdev_vring &GetVring0();
-        static const struct fw_rsc_vdev_vring &GetVring1();
+        static struct resource_table &GetTable();
+        static void *GetTablePtr();
+        static const size_t GetTableSize();
+
+        static struct fw_rsc_vdev &GetVdev();
+        static struct fw_rsc_vdev_vring &GetVring0();
+        static struct fw_rsc_vdev_vring &GetVring1();
 };
 }
 
