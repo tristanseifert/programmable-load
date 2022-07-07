@@ -1,6 +1,9 @@
 #ifndef RPC_MAILBOX_H
 #define RPC_MAILBOX_H
 
+#include <stddef.h>
+#include <stdint.h>
+
 extern "C" {
 void IPCC_RX1_IRQHandler();
 void IPCC_TX1_IRQHandler();
@@ -25,17 +28,21 @@ class Mailbox {
         static int ProcessDeferredIrq(struct virtio_device *vdev);
         static int Notify(void *priv, const uint32_t id);
 
+        static void AckShutdownRequest();
+
         /**
          * @brief Set the task to receive mailbox notifications
          *
          * @param task Task handle to receive direct-to-task notifications for mailbox ISRs
          * @param index Notification index to modify
-         * @param bits Notification bits to set for mailbox interrupt event
+         * @param msgBits Notification bits to set for mailbox interrupt event
+         * @param shutdownBits Notification bits to set when we're getting shut down
          */
         static inline void SetDeferredIsrHandler(TaskHandle_t task, const size_t index,
-                const uintptr_t bits) {
+                const uintptr_t msgBits, const uintptr_t shutdownBits) {
             gNotifyIndex = index;
-            gNotifyBits = bits;
+            gVirtioNotifyBits = msgBits;
+            gShutdownNotifyBits = shutdownBits;
             // update this last, as the ISR uses it as a flag to see if we should notify
             gNotifyTask = task;
         }
@@ -60,10 +67,12 @@ class Mailbox {
 
         /// Task handle to notify when we receive an irq
         static TaskHandle_t gNotifyTask;
-        /// Bits to set in the notify task
-        static uintptr_t gNotifyBits;
         /// Notify index to set
         static size_t gNotifyIndex;
+        /// Bits to set in the notify task upon message reception (virtio activity)
+        static uintptr_t gVirtioNotifyBits;
+        /// Bits to set in the notify task when we receive a shutdown event
+        static uintptr_t gShutdownNotifyBits;
 
         static void InstallCallbacks();
 };

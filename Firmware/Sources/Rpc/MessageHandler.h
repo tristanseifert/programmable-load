@@ -36,18 +36,28 @@ class MessageHandler {
             MailboxDeferredIrq          = (1 << 0),
 
             /**
+             * @brief System shutdown interrupt
+             *
+             * Host signalled that we will be shutting down, so gracefully notify all tasks that
+             * require it that we're shutting down. We'll also perform some of our own clean-up
+             * at this stage.
+             */
+            ShutdownRequest             = (1 << 1),
+
+            /**
              * @brief All valid notifications
              *
              * Bitwise OR of all notification values defined. These are in turn all bits that are
              * cleared after waiting for a notification.
              */
-            All                         = (MailboxDeferredIrq),
+            All                         = (MailboxDeferredIrq | ShutdownRequest),
         };
 
         MessageHandler();
         ~MessageHandler();
 
         int registerEndpoint(const etl::string_view &epName, Endpoint *handler,
+                const uint32_t srcAddr = RPMSG_ADDR_ANY,
                 const TickType_t timeout = portMAX_DELAY);
 
     private:

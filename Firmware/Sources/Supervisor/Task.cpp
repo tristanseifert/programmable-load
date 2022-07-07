@@ -84,6 +84,6 @@ void Task::wdgEarlyWarning() {
     if(++this->numSuccessfulCheckins & 1) {
         Hw::StatusLed::Set(Hw::StatusLed::Color::Cyan);
     } else {
-        Hw::StatusLed::Set(Hw::StatusLed::Color::Off);
+        Hw::StatusLed::Set(Hw::StatusLed::Color::Green);
     }
 }

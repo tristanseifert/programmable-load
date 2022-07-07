@@ -1,5 +1,6 @@
 #include <openamp/open_amp.h>
 
+#include "Hw/StatusLed.h"
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
@@ -23,7 +24,7 @@ MessageHandler::MessageHandler() {
 
     // sign it up for mailbox interrupt events
     Mailbox::SetDeferredIsrHandler(this->handle, kNotificationIndex,
-            TaskNotifyBits::MailboxDeferredIrq);
+            TaskNotifyBits::MailboxDeferredIrq, TaskNotifyBits::ShutdownRequest);
 }
 
 /**
@@ -58,9 +59,19 @@ void MessageHandler::main() {
         // collect the lock
         xSemaphoreTake(this->lock, portMAX_DELAY);
 
-        // feed the watchdog
+        // process a virtio event
         if(note & TaskNotifyBits::MailboxDeferredIrq) {
             Mailbox::ProcessDeferredIrq(OpenAmp::GetRpmsgDev().vdev);
+        }
+        // handle a shutdown request
+        if(note & TaskNotifyBits::ShutdownRequest) {
+            Logger::Warning("Shutdown request received!");
+            // TODO: ensure it doesn't get overwritten by watchdog blinker
+            Hw::StatusLed::Set(Hw::StatusLed::Color::Red);
+
+            // when we return, all tasks will have been notified and done, so ack shutdown
+            Hw::StatusLed::Set(Hw::StatusLed::Color::Off);
+            Mailbox::AckShutdownRequest();
         }
 
         xSemaphoreGive(this->lock);
@@ -73,12 +84,15 @@ void MessageHandler::main() {
  * This allocates the underlying rpmsg endpoint (announcing it to the host as needed) and registers
  * its callbacks.
  *
+ * @param epName Name under which the endpoint is registered with the host
+ * @param handler Handler class for all messages and events received on this endpoint
+ * @param srcAddr A non-negative fixed channel source address, or -1 to automatically assign
  * @param timeout How long to block to acquire the message handler lock
  *
  * @return 0 on success, or a negative error code
  */
 int MessageHandler::registerEndpoint(const etl::string_view &epName, Endpoint *handler,
-        const TickType_t timeout) {
+        const uint32_t srcAddr, const TickType_t timeout) {
     REQUIRE(!this->endpoints.full(), "max number of endpoints registered!");
 
     int err;
@@ -92,7 +106,7 @@ int MessageHandler::registerEndpoint(const etl::string_view &epName, Endpoint *h
 
     // create the rpmsg endpoint
     err = rpmsg_create_ept(&info->rpmsgEndpoint, &OpenAmp::GetRpmsgDev().rdev, epName.data(),
-            RPMSG_ADDR_ANY, RPMSG_ADDR_ANY, [](auto ept, auto data, auto dataLen, auto src, auto priv) -> int {
+            srcAddr, RPMSG_ADDR_ANY, [](auto ept, auto data, auto dataLen, auto src, auto priv) -> int {
         auto handler = reinterpret_cast<Endpoint *>(priv);
         auto msgPtr = reinterpret_cast<const uint8_t *>(data);
         handler->handleMessage({msgPtr, msgPtr + dataLen}, src);

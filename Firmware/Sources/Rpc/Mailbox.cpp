@@ -17,8 +17,9 @@ Mailbox::ChannelStatus Mailbox::gStatus[2];
 size_t Mailbox::gMissedIrqs[2];
 
 TaskHandle_t Mailbox::gNotifyTask{nullptr};
-uintptr_t Mailbox::gNotifyBits{0};
 size_t Mailbox::gNotifyIndex{0};
+uintptr_t Mailbox::gVirtioNotifyBits{0};
+uintptr_t Mailbox::gShutdownNotifyBits{0};
 
 /**
  * @brief Initialize the mailbox
@@ -57,7 +58,7 @@ void Mailbox::InstallCallbacks() {
     status = HAL_IPCC_ActivateNotification(&gHandle, IPCC_CHANNEL_1, IPCC_CHANNEL_DIR_RX,
             [](auto hipcc, auto channel, auto dir) {
         if(gStatus[0] != ChannelStatus::Idle) {
-            Logger::Warning("%s: %s (%u)", __FUNCTION__, "missed irq", ++gMissedIrqs[0]);
+            Logger::Warning("%s: %s (%u)", "IPCC M4->A7", "missed irq", ++gMissedIrqs[0]);
         }
 
         gStatus[0] = ChannelStatus::RxBufferFreed;
@@ -65,7 +66,7 @@ void Mailbox::InstallCallbacks() {
         // request work
         if(gNotifyTask) {
             BaseType_t woken{pdFALSE};
-            xTaskNotifyIndexedFromISR(gNotifyTask, gNotifyIndex, gNotifyBits, eSetBits, &woken);
+            xTaskNotifyIndexedFromISR(gNotifyTask, gNotifyIndex, gVirtioNotifyBits, eSetBits, &woken);
             portYIELD_FROM_ISR(woken);
         }
 
@@ -78,7 +79,7 @@ void Mailbox::InstallCallbacks() {
     status = HAL_IPCC_ActivateNotification(&gHandle, IPCC_CHANNEL_2, IPCC_CHANNEL_DIR_RX,
             [](auto hipcc, auto channel, auto dir) {
         if(gStatus[1] != ChannelStatus::Idle) {
-            Logger::Warning("%s: %s (%u)", __FUNCTION__, "missed irq", ++gMissedIrqs[1]);
+            Logger::Warning("%s: %s (%u)", "IPCC A7->M4", "missed irq", ++gMissedIrqs[1]);
         }
 
         gStatus[1] = ChannelStatus::RxBufferAvailable;
@@ -86,12 +87,28 @@ void Mailbox::InstallCallbacks() {
         // request work
         if(gNotifyTask) {
             BaseType_t woken{pdFALSE};
-            xTaskNotifyIndexedFromISR(gNotifyTask, gNotifyIndex, gNotifyBits, eSetBits, &woken);
+            xTaskNotifyIndexedFromISR(gNotifyTask, gNotifyIndex, gVirtioNotifyBits, eSetBits, &woken);
             portYIELD_FROM_ISR(woken);
         }
 
         // acknowledge reception
         HAL_IPCC_NotifyCPU(hipcc, channel, IPCC_CHANNEL_DIR_RX);
+    });
+    REQUIRE(status == HAL_OK, "%s failed: %d", "HAL_IPCC_ActivateNotification", status);
+
+    // install Ch3 callback (shutdown request)
+    status = HAL_IPCC_ActivateNotification(&gHandle, IPCC_CHANNEL_3, IPCC_CHANNEL_DIR_RX,
+            [](auto hipcc, auto channel, auto dir) {
+        // notify the message handler task
+        if(gNotifyTask) {
+            BaseType_t woken{pdFALSE};
+            xTaskNotifyIndexedFromISR(gNotifyTask, gNotifyIndex, gShutdownNotifyBits, eSetBits,
+                    &woken);
+            portYIELD_FROM_ISR(woken);
+        }
+
+        // do NOT acknowledge the message yet; we'll get turned off as soon as we do
+        // HAL_IPCC_NotifyCPU(hipcc, IPCC_CHANNEL_3, IPCC_CHANNEL_DIR_RX);
     });
     REQUIRE(status == HAL_OK, "%s failed: %d", "HAL_IPCC_ActivateNotification", status);
 }
@@ -177,6 +194,23 @@ int Mailbox::Notify(void *priv, const uint32_t id) {
 
     return 0;
 }
+
+
+
+/**
+ * @brief Acknowledge a shutdown request
+ *
+ * Notify the host that we've finished processing a shutdown request; we'll get turned off
+ * immediately after.
+ *
+ * @remark Even if we do not send this acknowledgement, we'll get turned off within half a second
+ *         of receiving the shutdown request.
+ */
+void Mailbox::AckShutdownRequest() {
+    // acknowledge reception
+    HAL_IPCC_NotifyCPU(&gHandle, IPCC_CHANNEL_3, IPCC_CHANNEL_DIR_RX);
+}
+
 
 
 /**

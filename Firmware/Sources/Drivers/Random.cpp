@@ -20,6 +20,13 @@ void Random::Init() {
     __HAL_RCC_RNG2_CLK_ENABLE();
     __HAL_RCC_RNG2_CONFIG(RCC_RNG2CLKSOURCE_LSE);
 
+    // reset RNG
+    __HAL_RCC_RNG2_FORCE_RESET();
+    timeout = 100;
+    while(timeout--) {}
+
+    __HAL_RCC_RNG2_RELEASE_RESET();
+
     // enable RNG; enable clock error detection
     RNG2->CR = 0;
     RNG2->CR = RNG_CR_CED;
