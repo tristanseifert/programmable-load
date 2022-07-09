@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <etl/delegate.h>
 #include <etl/unordered_map.h>
 #include <etl/span.h>
 #include <etl/string.h>
@@ -106,6 +107,8 @@ class Handler: public Rpc::Endpoint {
             etl::variant<etl::monostate, GetResponse, SetResponse> response;
         };
 
+        using DecoderCallback = etl::delegate<int(etl::span<const uint8_t>, InfoBlock *)>;
+
         /// rpmsg channel name
         constexpr static const etl::string_view kRpmsgName{"confd"};
         /// rpmsg address
@@ -115,8 +118,7 @@ class Handler: public Rpc::Endpoint {
         /// Maximum number of requests that may be in flight simultaneously
         constexpr static const size_t kMaxInflight{4};
 
-        void handleQueryResponse(etl::span<const uint8_t>, const uint32_t);
-        void decodeQueryPayload(etl::span<const uint8_t>, InfoBlock *);
+        void handleResponse(etl::span<const uint8_t>, const uint32_t, DecoderCallback);
 
         int sendRequestAndBlock(etl::span<uint8_t> message, InfoBlock* &outInfoBlock,
                 TickType_t timeout = portMAX_DELAY);

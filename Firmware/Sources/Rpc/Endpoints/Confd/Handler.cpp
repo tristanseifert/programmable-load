@@ -84,7 +84,7 @@ void Handler::handleMessage(etl::span<const uint8_t> message, const uint32_t src
 
         // response to a query for a value
         case static_cast<uint8_t>(MsgType::Query):
-            this->handleQueryResponse(message, srcAddr);
+            this->handleResponse(message, srcAddr, DecoderCallback::create<Service::DeserializeQuery>());
             break;
 
         // unhandled message
@@ -92,23 +92,19 @@ void Handler::handleMessage(etl::span<const uint8_t> message, const uint32_t src
             Logger::Notice("unknown msg type %02x from %08x", hdr->type, srcAddr);
             break;
     }
-
-/*
-    int err = rpmsg_sendto(this->ep, message.data(), message.size(), srcAddr);
-    Logger::Notice("rpmsg_sendto (%p, %p, %u, %08x): %d", this->ep, message.data(), message.size(), srcAddr, err);
-*/
 }
 
 /**
- * @brief Process a response to a previously sent config query
+ * @brief Process a response to a previously sent packet
  *
- * First, identify what task is blocked on the result of this query, then decode the CBOR payload
- * and copy its results to the task's block information structure; then go ahead and wake the task
- * up so it can read that data out.
+ * Notify the task that originally sent this set request. The flow is the same for get and set
+ * requests (and any other type we implement) with the deviation being the custom decoder
+ * function that's passed in.
  *
  * @remark This method assumes the rpc header in the provided message is valid.
  */
-void Handler::handleQueryResponse(etl::span<const uint8_t> message, const uint32_t srcAddr) {
+void Handler::handleResponse(etl::span<const uint8_t> message, const uint32_t srcAddr,
+        etl::delegate<int(etl::span<const uint8_t>, InfoBlock *)> decoder) {
     int err;
     BaseType_t ok;
     InfoBlock *info{nullptr};
@@ -141,7 +137,7 @@ void Handler::handleQueryResponse(etl::span<const uint8_t> message, const uint32
     xSemaphoreGive(this->lock);
 
     // if we get here, the task should still be blocking, so deserialize the message fully
-    err = Service::DeserializeQuery(message.subspan<offsetof(struct rpc_header, payload)>(), info);
+    err = decoder(message.subspan<offsetof(struct rpc_header, payload)>(), info);
     if(err) {
         Logger::Warning("%s failed: %d", "Service::DeserializeQuery", err);
         info->error = err;
@@ -152,8 +148,6 @@ void Handler::handleQueryResponse(etl::span<const uint8_t> message, const uint32
             eSetBits);
     REQUIRE(ok == pdTRUE, "%s failed", "xTaskNotifyIndexed");
 }
-
-
 
 /**
  * @brief Send the specified packet and wait for a response
