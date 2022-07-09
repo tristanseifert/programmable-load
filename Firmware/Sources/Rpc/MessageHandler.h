@@ -148,8 +148,13 @@ class MessageHandler {
 
         /// priority of the task
         static const constexpr uint8_t kPriority{Rtos::TaskPriority::Middleware};
-        /// Size of the task stack, in words
-        static const constexpr size_t kStackSize{420};
+        /**
+         * @brief Size of the task stack, in words
+         *
+         * This should be relatively large to accomodate large message buffers and such being
+         * allocated on the stack.
+         */
+        static const constexpr size_t kStackSize{600};
         /// Task name (for display purposes)
         static const constexpr etl::string_view kName{"MsgHandler"};
         /// Notification index

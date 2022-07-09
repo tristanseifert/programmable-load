@@ -1,12 +1,15 @@
 #ifndef RPC_ENDPOINTS_CONFD_HANDLER_H
 #define RPC_ENDPOINTS_CONFD_HANDLER_H
 
+#include <stddef.h>
 #include <stdint.h>
 
 #include <etl/unordered_map.h>
 #include <etl/span.h>
+#include <etl/string.h>
 #include <etl/string_view.h>
 #include <etl/variant.h>
+#include <etl/vector.h>
 
 #include "Rtos/Rtos.h"
 #include "../Handler.h"
@@ -63,11 +66,21 @@ class Handler: public Rpc::Endpoint {
              * than causing rpmsg buffer shortages)
              */
             struct GetResponse {
-                /// was the key found?
-                bool keyFound{false};
+                /// Maximum length of string data
+                constexpr static const size_t kMaxStringLen{486};
+                /// Maximum length of binary data
+                constexpr static const size_t kMaxBlobLen{486};
+
+                /// String type used for result data
+                using StringType = etl::string<kMaxStringLen>;
+                /// Container type for binary data
+                using BlobType = etl::vector<uint8_t, kMaxBlobLen>;
 
                 /// returned key value
-                etl::variant<uint64_t, float> value;
+                etl::variant<etl::monostate, uint64_t, float, StringType, BlobType> value;
+
+                /// was the key found?
+                bool keyFound{false};
             };
             /**
              * @brief Response data for a "update config" (set) request

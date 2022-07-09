@@ -38,9 +38,14 @@ class Service {
             ValueTypeMismatch           = 3,
             PermissionDenied            = 4,
             MalformedResponse           = 5,
+            IsNull                      = 6,
         };
 
-        int get(const etl::string_view &key, etl::span<uint8_t> outBuffer);
+        int get(const etl::string_view &key, etl::span<uint8_t> outBuffer, size_t &outNumBytes);
+        inline int get(const etl::string_view &key, etl::span<uint8_t> outBuffer) {
+            size_t temp;
+            return this->get(key, outBuffer, temp);
+        }
         int get(const etl::string_view &key, etl::istring &outValue);
         int get(const etl::string_view &key, uint64_t &outValue);
         int get(const etl::string_view &key, float &outValue);
@@ -52,6 +57,7 @@ class Service {
         void *getPacketBuffer();
         void discardPacketBuffer(void *buffer);
 
+        int getCommon(const etl::string_view &key, Handler::InfoBlock* &outBlock, bool &outFound);
         int serializeQuery(const etl::string_view &key, etl::span<uint8_t> &outPacket);
         static int DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlock *info);
 

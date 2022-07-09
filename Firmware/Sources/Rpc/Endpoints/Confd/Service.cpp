@@ -99,18 +99,21 @@ void Service::discardPacketBuffer(void *buffer) {
 
 
 /**
- * @brief Read an integer configuration value
+ * @brief Common code to send a query
  *
- * @param key Property key to query
- * @param outValue Variable to receive the value of this property
+ * Serializes a request for the given key into a packet buffer, then sends it (while blocking on a
+ * response) to the host.
  *
- * @return One of the Status enum values (or a negative system error code)
+ * @param key Key name to query
+ * @param outBlock Variable to receive the allocated info block
+ * @param outFound Whether the key was found
+ *
+ * @remark The allocated info block must be deleted by the caller when done.
  */
-int Service::get(const etl::string_view &key, uint64_t &outValue) {
+int Service::getCommon(const etl::string_view &key, Handler::InfoBlock* &outBlock,
+        bool &outFound) {
     int err;
     etl::span<uint8_t> packet;
-    Handler::InfoBlock *block{nullptr};
-    bool found{false}, typeMatch{false};
 
     // format and send request
     err = this->serializeQuery(key, packet);
@@ -118,7 +121,7 @@ int Service::get(const etl::string_view &key, uint64_t &outValue) {
         return err;
     }
 
-    err = this->handler->sendRequestAndBlock(packet, block);
+    err = this->handler->sendRequestAndBlock(packet, outBlock);
 
     this->discardPacketBuffer(packet.data());
 
@@ -130,20 +133,129 @@ int Service::get(const etl::string_view &key, uint64_t &outValue) {
         return err;
     }
 
-    // handle response (generic part)
-    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&block->response);
+    // no error, so pull out some info
+    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&outBlock->response);
     REQUIRE(res, "invalid confd response type (expected %s)", "get");
 
-    found = res->keyFound;
+    outFound = res->keyFound;
+    return 0;
+}
 
-    // parse response (integer part)
+/**
+ * @brief Read a binary configuration value
+ *
+ * @param key Property key to query
+ * @param outValue Buffer to receive the configuration value
+ * @param outNumBytes Variable to receive the actual number of bytes written
+ *
+ * @return One of the Status enum values (or a negative system error code)
+ *
+ * @remark The returned data may be truncated, if its length is larger than either the maximum
+ *         receive buffer size, or the specified buffer's size.
+ */
+int Service::get(const etl::string_view &key, etl::span<uint8_t> outBuffer, size_t &outNumBytes) {
+    int err;
+    Handler::InfoBlock *block{nullptr};
+    bool found{false}, typeMatch{false};
+
+    // send and handle common response type
+    err = this->getCommon(key, block, found);
+    if(err) {
+        return err;
+    }
+    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&block->response);
+
+    // extract value
     if(found) {
+        using BlobType = Handler::InfoBlock::GetResponse::BlobType;
         // ensure type matches
-        if(!etl::holds_alternative<uint64_t>(res->value)) {
+        if(!etl::holds_alternative<BlobType>(res->value)) {
+            goto beach;
+        }
+
+        // copy the value out
+        const auto &vec = etl::get<BlobType>(res->value);
+        auto end = etl::copy_s(vec.begin(), vec.end(), outBuffer.begin(), outBuffer.end());
+
+        typeMatch = true;
+        outNumBytes = (end - outBuffer.begin());
+    }
+
+beach:;
+    // finish up
+    delete block;
+    return found ? (typeMatch ? Status::Success : Status::ValueTypeMismatch) : Status::KeyNotFound;
+}
+
+/**
+ * @brief Read a string configuration value
+ *
+ * @param key Property key to query
+ * @param outValue String to receive the configuration data
+ *
+ * @return One of the Status enum values (or a negative system error code)
+ *
+ * @remark The returned data may be truncated, if the value is larger than either the maximum
+ *         receive buffer size, or because the specified string is too small. In either case, the
+ *         call still succeeds; the caller should check whether the string has a null termination
+ *         to determine if it was completely received.
+ */
+int Service::get(const etl::string_view &key, etl::istring &outValue) {
+    int err;
+    Handler::InfoBlock *block{nullptr};
+    bool found{false}, typeMatch{false};
+
+    // send and handle common response type
+    err = this->getCommon(key, block, found);
+    if(err) {
+        return err;
+    }
+    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&block->response);
+
+    // extract value
+    if(found) {
+        using StringType = Handler::InfoBlock::GetResponse::StringType;
+        // ensure type matches
+        if(!etl::holds_alternative<StringType>(res->value)) {
             goto beach;
         }
 
         // yeet out the value
+        outValue = etl::get<StringType>(res->value);
+        typeMatch = true;
+    }
+
+beach:;
+    // finish up
+    delete block;
+    return found ? (typeMatch ? Status::Success : Status::ValueTypeMismatch) : Status::KeyNotFound;
+}
+
+/**
+ * @brief Read an integer configuration value
+ *
+ * @param key Property key to query
+ * @param outValue Variable to receive the value of this property
+ *
+ * @return One of the Status enum values (or a negative system error code)
+ */
+int Service::get(const etl::string_view &key, uint64_t &outValue) {
+    int err;
+    Handler::InfoBlock *block{nullptr};
+    bool found{false}, typeMatch{false};
+
+    // send and handle common response type
+    err = this->getCommon(key, block, found);
+    if(err) {
+        return err;
+    }
+    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&block->response);
+
+    // extract value
+    if(found) {
+        if(!etl::holds_alternative<uint64_t>(res->value)) {
+            goto beach;
+        }
         outValue = etl::get<uint64_t>(res->value);
         typeMatch = true;
     }
@@ -151,8 +263,46 @@ int Service::get(const etl::string_view &key, uint64_t &outValue) {
 beach:;
     // finish up
     delete block;
-
     return found ? (typeMatch ? Status::Success : Status::ValueTypeMismatch) : Status::KeyNotFound;
+}
+
+/**
+ * @brief Read a floating point configuration value
+ *
+ * @param key Property key to query
+ * @param outValue Variable to receive the value of this property
+ *
+ * @return One of the Status enum values (or a negative system error code)
+ *
+ * @remark While real valued numbers are stored as doubles on the host, they're down-converted to
+ *         float (32-bit precision) when we request them, as we cannot handle doubles in hardware.
+ */
+int Service::get(const etl::string_view &key, float &outValue) {
+    int err;
+    Handler::InfoBlock *block{nullptr};
+    bool found{false}, typeMatch{false};
+
+    // send and handle common response type
+    err = this->getCommon(key, block, found);
+    if(err) {
+        return err;
+    }
+    const auto res = etl::get_if<Handler::InfoBlock::GetResponse>(&block->response);
+
+    // extract value
+    if(found) {
+        if(!etl::holds_alternative<float>(res->value)) {
+            goto beach;
+        }
+        outValue = etl::get<float>(res->value);
+        typeMatch = true;
+    }
+
+beach:;
+    // finish up
+    delete block;
+    return found ? (typeMatch ? Status::Success : Status::ValueTypeMismatch) : Status::KeyNotFound;
+
 }
 
 /**
@@ -187,7 +337,7 @@ int Service::serializeQuery(const etl::string_view &key, etl::span<uint8_t> &out
     const auto maxPayloadSize = kMaxPacketSize - sizeof(*hdr);
     cbor_encoder_init(&encoder, hdr->payload, maxPayloadSize, 0);
 
-    err = cbor_encoder_create_map(&encoder, &encoderMap, 1);
+    err = cbor_encoder_create_map(&encoder, &encoderMap, 2);
     if(err) {
         Logger::Warning("%s failed: %d", "cbor_encoder_create_map", err);
         goto fail;
@@ -196,6 +346,9 @@ int Service::serializeQuery(const etl::string_view &key, etl::span<uint8_t> &out
     // write the body
     cbor_encode_text_stringz(&encoderMap, "key");
     cbor_encode_text_string(&encoderMap, key.data(), key.length());
+
+    cbor_encode_text_stringz(&encoderMap, "forceFloat");
+    cbor_encode_boolean(&encoderMap, true);
 
     // finish encoding
     err = cbor_encoder_close_container(&encoder, &encoderMap);
@@ -220,10 +373,17 @@ fail:;
 
 /**
  * @brief Decode the CBOR-encoded payload provided
+ *
+ * @param payload Buffer containing the payload of the rpc packet
+ * @param info Information block to receive the decoded query information
+ *
+ * @remark This is one gigantic function and it kind of sucks :(
  */
 int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlock *info) {
     int err;
-    Handler::InfoBlock::GetResponse resp{};
+    info->response = Handler::InfoBlock::GetResponse{};
+    auto &resp = etl::get<Handler::InfoBlock::GetResponse>(info->response);
+
     CborParser parser;
     CborValue it, map;
     CborType type;
@@ -260,9 +420,10 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
 
     Key next{Key::Unknown};
 
-
     // iterate through the map; we'll alternately get keys and values
     while(!cbor_value_at_end(&map)) {
+        // set to skip advancing to next item at end of loop
+        bool noAdvance{false};
         type = cbor_value_get_type(&map);
 
         // handle keys
@@ -282,30 +443,26 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
                 Logger::Warning("invalid %s in confd response (%s)", "key", "too long");
 
                 next = Key::Unknown;
-                goto noAdvance;
+            } else {
+                // select the appropriate key
+                if(!strncmp(stringBuf.data(), "found", stringBuf.size())) {
+                    next = Key::IsFound;
+                }
+                else if(!strncmp(stringBuf.data(), "key", stringBuf.size())) {
+                    next = Key::KeyName;
+                }
+                else if(!strncmp(stringBuf.data(), "value", stringBuf.size())) {
+                    next = Key::Value;
+                }
+                else {
+                    next = Key::Unknown;
+                }
             }
 
-            // Logger::Trace("Key: '%s'", stringBuf.data());
-
-            // select the appropriate key
-            if(!strncmp(stringBuf.data(), "found", stringBuf.size())) {
-                next = Key::IsFound;
-            }
-            else if(!strncmp(stringBuf.data(), "key", stringBuf.size())) {
-                next = Key::KeyName;
-            }
-            else if(!strncmp(stringBuf.data(), "value", stringBuf.size())) {
-                next = Key::Value;
-            }
-            else {
-                next = Key::Unknown;
-            }
-
-            goto noAdvance;
+            noAdvance = true;
         }
         // handle values
         else {
-            // Logger::Trace("Key %u (type %02x)", next, type);
             switch(next) {
                 // whether we found data
                 case Key::IsFound:
@@ -329,6 +486,70 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
                             resp.value = temp;
                             break;
                         }
+                        // all double values are downcast to float by the server
+                        case CborFloatType: {
+                            float temp;
+                            err = cbor_value_get_float(&map, &temp);
+                            resp.value = temp;
+                            break;
+                        }
+                        // strings are copied (as much as fits, anyhow) into the string value
+                        case CborTextStringType: {
+                            using StringType = Handler::InfoBlock::GetResponse::StringType;
+                            size_t len;
+
+                            // default construct an empty string
+                            resp.value = StringType{};
+                            // get the result string length
+                            err = cbor_value_get_string_length(&map, &len);
+                            if(err != CborNoError) {
+                                goto error;
+                            }
+
+                            // resize string and copy
+                            auto strRef = etl::get_if<StringType>(&resp.value);
+                            strRef->resize(etl::min(len, strRef->capacity()));
+
+                            len = strRef->size();
+                            err = cbor_value_copy_text_string(&map, strRef->data(), &len, &map);
+                            if(err != CborNoError) {
+                                goto error;
+                            }
+
+                            // we've already advanced to the next item
+                            noAdvance = true;
+                            break;
+                        }
+                        // BLOBs work similarly to strings, sans null termination
+                        case CborByteStringType: {
+                            using BlobType = Handler::InfoBlock::GetResponse::BlobType;
+                            size_t len;
+
+                            // default construct an empty buffer
+                            resp.value = BlobType{};
+                            err = cbor_value_get_string_length(&map, &len);
+                            if(err != CborNoError) {
+                                goto error;
+                            }
+
+                            // resize buffer and copy
+                            auto vecRef = etl::get_if<BlobType>(&resp.value);
+                            vecRef->resize(etl::min(len, vecRef->capacity()));
+
+                            len = vecRef->size();
+                            err = cbor_value_copy_byte_string(&map, vecRef->data(), &len, &map);
+                            if(err != CborNoError) {
+                                goto error;
+                            }
+
+                            // we've already advanced to the next item
+                            noAdvance = true;
+                            break;
+                        }
+                        // null values are represented by the "monostate" value
+                        case CborNullType:
+                            resp.value = etl::monostate{};
+                            break;
 
                         default:
                             Logger::Warning("invalid %s in confd response (type=%02x)", "value", type);
@@ -337,7 +558,8 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
 
                     // process errors from retrieving
                     if(err) {
-                        Logger::Warning("%s failed: %d", "cbor_value_get_XXX", err);
+error:;
+                        Logger::Warning("failed to get cbor value: %d (type=%02x)", err, type);
                         return err;
                     }
                     break;
@@ -349,14 +571,13 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
         }
 
         // advance to the next value
-        err = cbor_value_advance_fixed(&map);
-        if(err) {
-            Logger::Warning("%s failed: %d", "cbor_value_advance_fixed", err);
-            return err;
+        if(!noAdvance) {
+            err = cbor_value_advance_fixed(&map);
+            if(err) {
+                Logger::Warning("%s failed: %d", "cbor_value_advance_fixed", err);
+                return err;
+            }
         }
-
-        // or jump here to skip advancing
-        noAdvance:;
 
         // ensure we alternate between keys and values
         isKey = !isKey;
@@ -365,7 +586,6 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
     cbor_value_leave_container(&it, &map);
 
     // store result struct info block
-    info->response = resp;
     return 0;
 }
 
