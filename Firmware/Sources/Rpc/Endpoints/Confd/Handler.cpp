@@ -84,7 +84,14 @@ void Handler::handleMessage(etl::span<const uint8_t> message, const uint32_t src
 
         // response to a query for a value
         case static_cast<uint8_t>(MsgType::Query):
-            this->handleResponse(message, srcAddr, DecoderCallback::create<Service::DeserializeQuery>());
+            this->handleResponse(message, srcAddr,
+                    DecoderCallback::create<Service::DeserializeQuery>());
+            break;
+
+        // response to a set request
+        case static_cast<uint8_t>(MsgType::Update):
+            this->handleResponse(message, srcAddr,
+                    DecoderCallback::create<Service::DeserializeUpdate>());
             break;
 
         // unhandled message

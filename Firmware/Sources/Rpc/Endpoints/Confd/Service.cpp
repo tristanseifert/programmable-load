@@ -2,6 +2,7 @@
 
 #include <etl/algorithm.h>
 #include <etl/array.h>
+#include <etl/type_traits.h>
 
 #include <cbor.h>
 #include <string.h>
@@ -87,6 +88,10 @@ beach:;
  * @param buffer A buffer pointer as returned by getPacketBuffer
  */
 void Service::discardPacketBuffer(void *buffer) {
+    if(!buffer) {
+        return;
+    }
+
     auto ok = xSemaphoreTake(this->cacheLock, portMAX_DELAY);
     REQUIRE(ok == pdTRUE, "failed to acquire %s", "confd packet cache lock");
 
@@ -372,7 +377,7 @@ fail:;
 }
 
 /**
- * @brief Decode the CBOR-encoded payload provided
+ * @brief Decode the CBOR-encoded payload provided for a query request
  *
  * @param payload Buffer containing the payload of the rpc packet
  * @param info Information block to receive the decoded query information
@@ -417,7 +422,6 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
         IsFound         = 2,
         Value           = 3,
     };
-
     Key next{Key::Unknown};
 
     // iterate through the map; we'll alternately get keys and values
@@ -441,7 +445,6 @@ int Service::DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlo
             err = cbor_value_copy_text_string(&map, stringBuf.data(), &len, &map);
             if(err == CborErrorOutOfMemory) {
                 Logger::Warning("invalid %s in confd response (%s)", "key", "too long");
-
                 next = Key::Unknown;
             } else {
                 // select the appropriate key
@@ -589,3 +592,255 @@ error:;
     return 0;
 }
 
+
+
+/**
+ * @brief Common code to send an update request
+ *
+ * Serializes a write request for the given key into a packet buffer, then sends it (while
+ * blocking on a response) to the host.
+ *
+ * @param key Key name to query
+ * @param newValue Value to set the key to
+ * @param outBlock Variable to receive the allocated info block
+ * @param outUpdated Whether the key was updated
+ *
+ * @remark The allocated info block must be deleted by the caller when done.
+ */
+int Service::setCommon(const etl::string_view &key, const ValueType &newValue,
+        Handler::InfoBlock* &outBlock, bool &outUpdated) {
+    int err;
+    etl::span<uint8_t> packet;
+
+    // format and send request
+    err = this->serializeUpdate(key, newValue, packet);
+    if(err) {
+        return err;
+    }
+
+    err = this->handler->sendRequestAndBlock(packet, outBlock);
+
+    this->discardPacketBuffer(packet.data());
+
+    // handle error case
+    if(err) {
+        if(err == 1) {
+            return Status::Timeout;
+        }
+        return err;
+    }
+
+    // no error, so pull out some info
+    const auto res = etl::get_if<Handler::InfoBlock::SetResponse>(&outBlock->response);
+    REQUIRE(res, "invalid confd response type (expected %s)", "set");
+
+    outUpdated = res->updated;
+    return 0;
+}
+
+/**
+ * @brief Acquire a packet buffer and encode a "set" request for the given key/value
+ *
+ * Allocate a packet buffer (which may fail!) and then place inside it an rpc_header, as well as
+ * the CBOR payload which will contain a serialized set request.
+ *
+ * @param key Property key to update
+ * @param newValue Value to set the key to
+ * @param outPacket Variable to hold the packet buffer on success
+ *
+ * @return 0 on success or a negative error code
+ */
+int Service::serializeUpdate(const etl::string_view &key, const ValueType &newValue,
+        etl::span<uint8_t> &outPacket) {
+    int err;
+    size_t totalNumBytes{0};
+    CborEncoder encoder, encoderMap;
+
+    // get a buffer first
+    auto buffer = this->getPacketBuffer();
+    if(!buffer) {
+        return -1;
+    }
+
+    // reserve space for the rpc header and prepare it
+    auto hdr = reinterpret_cast<struct rpc_header *>(buffer);
+
+    hdr->version = kRpcVersionLatest;
+    hdr->type = static_cast<uint8_t>(Handler::MsgType::Update);
+
+    // set up the CBOR encoder for the remaining memory
+    const auto maxPayloadSize = kMaxPacketSize - sizeof(*hdr);
+    cbor_encoder_init(&encoder, hdr->payload, maxPayloadSize, 0);
+
+    err = cbor_encoder_create_map(&encoder, &encoderMap, 2);
+    if(err) {
+        Logger::Warning("%s failed: %d", "cbor_encoder_create_map", err);
+        goto fail;
+    }
+
+    // write the body
+    cbor_encode_text_stringz(&encoderMap, "key");
+    cbor_encode_text_string(&encoderMap, key.data(), key.length());
+
+    cbor_encode_text_stringz(&encoderMap, "value");
+    etl::visit([&err, &encoderMap](auto&& arg) {
+        using T = etl::decay_t<decltype(arg)>;
+
+        if constexpr(etl::is_same_v<T, etl::span<uint8_t>>) {
+            err = cbor_encode_byte_string(&encoderMap, arg.data(), arg.size());
+        }
+        else if constexpr(etl::is_same_v<T, etl::string_view>) {
+            err = cbor_encode_text_string(&encoderMap, arg.data(), arg.size());
+        }
+        else if constexpr(etl::is_same_v<T, uint64_t>) {
+            err = cbor_encode_uint(&encoderMap, arg);
+        }
+        else if constexpr(etl::is_same_v<T, float>) {
+            err = cbor_encode_float(&encoderMap, arg);
+        }
+        // encode unknown types as null (shouldn't happen)
+        else {
+            err = cbor_encode_null(&encoderMap);
+        }
+    }, newValue);
+
+    if(err) {
+        Logger::Warning("failed to encode set value: %d", err);
+        goto fail;
+    }
+
+    // finish encoding
+    err = cbor_encoder_close_container(&encoder, &encoderMap);
+    if(err) {
+        Logger::Warning("%s failed: %d", "cbor_encoder_close_container", err);
+        goto fail;
+    }
+
+    // return the buffer of just the message
+    totalNumBytes = sizeof(*hdr) + cbor_encoder_get_buffer_size(&encoder, hdr->payload);
+
+    hdr->length = totalNumBytes;
+    outPacket = {reinterpret_cast<uint8_t *>(buffer), totalNumBytes};
+
+    return 0;
+
+fail:;
+    // handle an error
+    this->discardPacketBuffer(buffer);
+    return err;
+}
+
+/**
+ * @brief Decode the CBOR-encoded payload provided for an update request
+ *
+ * @param payload Buffer containing the payload of the rpc packet
+ * @param info Information block to receive the decoded information
+ */
+int Service::DeserializeUpdate(etl::span<const uint8_t> payload, Handler::InfoBlock *info) {
+    int err;
+    info->response = Handler::InfoBlock::SetResponse{};
+    auto &resp = etl::get<Handler::InfoBlock::SetResponse>(info->response);
+
+    CborParser parser;
+    CborValue it, map;
+    CborType type;
+
+    // set up CBOR decoder
+    err = cbor_parser_init(payload.data(), payload.size(), 0, &parser, &it);
+    if(err) {
+        Logger::Warning("%s failed: %d", "cbor_parser_init", err);
+        return err;
+    }
+
+    // the first field _must_ be a map
+    type = cbor_value_get_type(&it);
+    if(type != CborMapType) {
+        Logger::Warning("invalid %s in confd response (type=%02x)", "root object", type);
+        return Status::MalformedResponse;
+    }
+
+    err = cbor_value_enter_container(&it, &map);
+    if(err) {
+        Logger::Warning("%s failed: %d", "cbor_value_enter_container", err);
+        return err;
+    }
+
+    // iterate over the contents of the map
+    etl::array<char, 12> stringBuf;
+    bool isKey{true};
+    enum class Key {
+        Unknown         = 0,
+        DidUpdate       = 1,
+    };
+    Key next{Key::Unknown};
+
+    // iterate through the map; we'll alternately get keys and values
+    while(!cbor_value_at_end(&map)) {
+        // set to skip advancing to next item at end of loop
+        bool noAdvance{false};
+        type = cbor_value_get_type(&map);
+
+        // handle keys
+        if(isKey) {
+            if(type != CborTextStringType) {
+                Logger::Warning("invalid %s in confd response (type=%02x)", "key", type);
+                return Status::MalformedResponse;
+            }
+
+            size_t len = stringBuf.size();
+            etl::fill(stringBuf.begin(), stringBuf.end(), '\0');
+
+            err = cbor_value_copy_text_string(&map, stringBuf.data(), &len, &map);
+            if(err == CborErrorOutOfMemory) {
+                Logger::Warning("invalid %s in confd response (%s)", "key", "too long");
+                next = Key::Unknown;
+            } else {
+                if(!strncmp(stringBuf.data(), "updated", stringBuf.size())) {
+                    next = Key::DidUpdate;
+                }
+                else {
+                    next = Key::Unknown;
+                }
+            }
+
+            noAdvance = true;
+        }
+        // handle values
+        else {
+            switch(next) {
+                case Key::DidUpdate:
+                    if(type != CborBooleanType) {
+                        Logger::Warning("invalid %s in confd response (type=%02x)", "updated", type);
+                    } else {
+                        err = cbor_value_get_boolean(&map, &resp.updated);
+                        if(err) {
+                            Logger::Warning("%s failed: %d", "cbor_value_get_boolean", err);
+                            return err;
+                        }
+                    }
+                    break;
+
+                // ignore other types of keys
+                default:
+                    break;
+            }
+        }
+
+        // advance to the next value
+        if(!noAdvance) {
+            err = cbor_value_advance_fixed(&map);
+            if(err) {
+                Logger::Warning("%s failed: %d", "cbor_value_advance_fixed", err);
+                return err;
+            }
+        }
+
+        // ensure we alternate between keys and values
+        isKey = !isKey;
+    }
+
+    cbor_value_leave_container(&it, &map);
+
+    // store result struct info block
+    return 0;
+}

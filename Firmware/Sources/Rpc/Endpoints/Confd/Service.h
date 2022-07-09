@@ -4,11 +4,11 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <etl/array.h>
 #include <etl/queue.h>
 #include <etl/span.h>
 #include <etl/string.h>
 #include <etl/string_view.h>
+#include <etl/variant.h>
 
 #include "Rtos/Rtos.h"
 #include "Handler.h"
@@ -50,7 +50,83 @@ class Service {
         int get(const etl::string_view &key, uint64_t &outValue);
         int get(const etl::string_view &key, float &outValue);
 
+        /**
+         * @brief Set a blob configuration value
+         *
+         * @param key Name of the key to set
+         * @param value Blob value to set
+         */
+        int set(const etl::string_view &key, const etl::span<uint8_t> value) {
+            Handler::InfoBlock *block{nullptr};
+            bool updated{false};
+
+            int err = this->setCommon(key, value, block, updated);
+            if(err) {
+                return err;
+            }
+
+            delete block;
+            return updated ? Status::Success : Status::PermissionDenied;
+        }
+        /**
+         * @brief Set a string configuration value
+         *
+         * @param key Name of the key to set
+         * @param value String value to set
+         */
+        int set(const etl::string_view &key, const etl::string_view &value) {
+            Handler::InfoBlock *block{nullptr};
+            bool updated{false};
+
+            int err = this->setCommon(key, value, block, updated);
+            if(err) {
+                return err;
+            }
+
+            delete block;
+            return updated ? Status::Success : Status::PermissionDenied;
+        }
+        /**
+         * @brief Set an integer configuration value
+         *
+         * @param key Name of the key to set
+         * @param value Integer value to set
+         */
+        int set(const etl::string_view &key, const uint64_t value) {
+            Handler::InfoBlock *block{nullptr};
+            bool updated{false};
+
+            int err = this->setCommon(key, value, block, updated);
+            if(err) {
+                return err;
+            }
+
+            delete block;
+            return updated ? Status::Success : Status::PermissionDenied;
+        }
+        /**
+         * @brief Set an floating point configuration value
+         *
+         * @param key Name of the key to set
+         * @param value Float value to set
+         */
+        int set(const etl::string_view &key, const float value) {
+            Handler::InfoBlock *block{nullptr};
+            bool updated{false};
+
+            int err = this->setCommon(key, value, block, updated);
+            if(err) {
+                return err;
+            }
+
+            delete block;
+            return updated ? Status::Success : Status::PermissionDenied;
+        }
+
     private:
+        using ValueType = etl::variant<etl::monostate, etl::span<uint8_t>, etl::string_view,
+              uint64_t, float>;
+
         Service(Handler *handler);
         ~Service();
 
@@ -60,6 +136,12 @@ class Service {
         int getCommon(const etl::string_view &key, Handler::InfoBlock* &outBlock, bool &outFound);
         int serializeQuery(const etl::string_view &key, etl::span<uint8_t> &outPacket);
         static int DeserializeQuery(etl::span<const uint8_t> payload, Handler::InfoBlock *info);
+
+        int setCommon(const etl::string_view &key, const ValueType &newValue,
+                Handler::InfoBlock* &outBlock, bool &outUpdated);
+        int serializeUpdate(const etl::string_view &key, const ValueType &newValue,
+                etl::span<uint8_t> &outPacket);
+        static int DeserializeUpdate(etl::span<const uint8_t> payload, Handler::InfoBlock *info);
 
     private:
         /// Maximum number of packet buffers to allocate
