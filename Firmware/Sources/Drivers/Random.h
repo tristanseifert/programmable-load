@@ -21,7 +21,7 @@ class Random {
 
     private:
         /// Timeout (in cycles) for the RNG to become ready after initialization
-        constexpr static const size_t kInitTimeout{1'000'000};
+        constexpr static const size_t kInitTimeout{10'000'000};
         /// Timeout (in cycles) for the RNG to produce data
         constexpr static const size_t kRefillTimeout{10'000};
 

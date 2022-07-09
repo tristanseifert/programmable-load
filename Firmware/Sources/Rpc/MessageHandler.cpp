@@ -4,7 +4,7 @@
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
-#include "Endpoint.h"
+#include "Endpoints/Handler.h"
 #include "OpenAmp.h"
 #include "Mailbox.h"
 #include "MessageHandler.h"
@@ -63,20 +63,110 @@ void MessageHandler::main() {
         if(note & TaskNotifyBits::MailboxDeferredIrq) {
             Mailbox::ProcessDeferredIrq(OpenAmp::GetRpmsgDev().vdev);
         }
+        xSemaphoreGive(this->lock);
+
         // handle a shutdown request
         if(note & TaskNotifyBits::ShutdownRequest) {
-            Logger::Warning("Shutdown request received!");
-            // TODO: ensure it doesn't get overwritten by watchdog blinker
-            Hw::StatusLed::Set(Hw::StatusLed::Color::Red);
-
-            // when we return, all tasks will have been notified and done, so ack shutdown
-            Hw::StatusLed::Set(Hw::StatusLed::Color::Off);
-            Mailbox::AckShutdownRequest();
+            this->handleShutdown();
         }
-
-        xSemaphoreGive(this->lock);
     }
 }
+
+/**
+ * @brief Handle shutdown request
+ *
+ * Notify all tasks (which care about this notification) that we're shutting down; then wait for
+ * all of them to acknowledge shutdown.
+ */
+void MessageHandler::handleShutdown() {
+    BaseType_t ok;
+    uint32_t note;
+
+    // TODO: ensure it doesn't get overwritten by watchdog blinker
+    // update indicators
+    Hw::StatusLed::Set(Hw::StatusLed::Color::Red);
+    Logger::Warning("Shutdown request received!");
+
+    // notify all of the tasks we're shutting down (in reverse order)
+    for(auto it = this->shutdownHandlers.rbegin(); it != this->shutdownHandlers.rend(); ++it) {
+        auto &info = *it;
+        info.callback(this, info.context);
+    }
+
+    // wait for all tasks to acknowledge
+    if(!this->shutdownHandlers.empty()) {
+        const auto shutdownTotal = this->shutdownCounter;
+
+        while(shutdownCounter) {
+            Logger::Debug("waiting for shutdown ack (%u/%u)", shutdownTotal - this->shutdownCounter,
+                    shutdownTotal);
+
+            // TODO: use a different timeout?
+            ok = xTaskNotifyWaitIndexed(kNotificationIndex, 0,
+                    static_cast<uint32_t>(TaskNotifyBits::ShutdownAck), &note, portMAX_DELAY);
+            REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
+        }
+    }
+
+    Logger::Notice("all shutdown acks received, proceeding");
+
+    // TODO: shut down vdev interface to host
+
+    // extinguish the LED and acknowledge shutdown to the host
+    Hw::StatusLed::Set(Hw::StatusLed::Color::Off);
+
+    Logger::Notice("acknowledging shutdown request to host");
+    Mailbox::AckShutdownRequest();
+}
+
+/**
+ * @brief Install a shutdown handler
+ *
+ * Insert the given callback to be invoked when the system receives a shutdown request from the
+ * host.
+ *
+ * @param callback Function to invoke during shutdown
+ * @param ctx Additional argument passed to the callback
+ *
+ * @remark Callbacks are invoked in the reverse order they're added.
+ */
+void MessageHandler::addShutdownHandler(const ShutdownCallback &callback, void *ctx) {
+    taskENTER_CRITICAL();
+
+    this->shutdownHandlers.emplace_back(ShutdownCallbackInfo{callback, ctx});
+    this->shutdownCounter++;
+
+    taskEXIT_CRITICAL();
+}
+
+
+/**
+ * @brief Acknowledge shutdown notification
+ *
+ * Acknowledges a shutdown notification sent to a task.
+ *
+ * @remark Invoke this after you have completed _all_ shutdown-related processing; if there are no
+ *         other tasks the shutdown is waiting on, the system powers off immediately after.
+ *
+ * @remark This method is not ISR safe.
+ *
+ * @note It is important this method is invoked _only_ if the calling task received a shutdown
+ *       notification. Invoking it without receiving such a notification can cause internal state
+ *       to be corrupted.
+ */
+void MessageHandler::ackShutdown() {
+    if(!__atomic_sub_fetch(&this->shutdownCounter, 1, __ATOMIC_RELAXED)) {
+        // all tasks shut down, pack it in
+    }
+
+    // notify the message handler task
+    const auto ok = xTaskNotifyIndexed(this->handle, kNotificationIndex,
+            static_cast<uint32_t>(TaskNotifyBits::ShutdownAck), eSetBits);
+    REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyIndexed", ok);
+}
+
+
+
 
 /**
  * @brief Register a message endpoint
@@ -122,6 +212,9 @@ int MessageHandler::registerEndpoint(const etl::string_view &epName, Endpoint *h
     // store the info
     this->endpoints.insert({epName, info});
     xSemaphoreGive(this->lock);
+
+    // invoke the handler method
+    handler->endpointIsAvailable(&info->rpmsgEndpoint);
 
     Logger::Debug("%s: registered endpoint '%s' = %p", "MsgHandler", epName.data(), handler);
 

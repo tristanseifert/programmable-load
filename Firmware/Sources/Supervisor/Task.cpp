@@ -1,6 +1,8 @@
 #include "Drivers/Watchdog.h"
 #include "Hw/StatusLed.h"
 #include "Log/Logger.h"
+#include "Rpc/MessageHandler.h"
+#include "Rpc/Rpc.h"
 #include "Rtos/Rtos.h"
 
 #include "Task.h"
@@ -50,6 +52,12 @@ void Task::main() {
 
     Logger::Notice("Supervisor: %s", "task start");
 
+    // install a shutdown handler
+    Rpc::GetHandler()->addShutdownHandler([](auto mh, auto ctx) {
+        reinterpret_cast<Task *>(ctx)->isHeartbeatEnabled = false;
+        mh->ackShutdown();
+    }, this);
+
     // enable watchdog
     if(kUseTimer) {
         xTimerStart(this->checkinTimer, portMAX_DELAY);
@@ -81,9 +89,13 @@ void Task::wdgEarlyWarning() {
     Drivers::Watchdog::Pet();
 
     // alternate the status LED
-    if(++this->numSuccessfulCheckins & 1) {
-        Hw::StatusLed::Set(Hw::StatusLed::Color::Cyan);
-    } else {
-        Hw::StatusLed::Set(Hw::StatusLed::Color::Green);
+    this->numSuccessfulCheckins++;
+
+    if(this->isHeartbeatEnabled) {
+        if(this->numSuccessfulCheckins & 1) {
+            Hw::StatusLed::Set(Hw::StatusLed::Color::Cyan);
+        } else {
+            Hw::StatusLed::Set(Hw::StatusLed::Color::Green);
+        }
     }
 }

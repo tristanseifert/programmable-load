@@ -53,7 +53,7 @@ class Task {
 
     private:
         /// priority of the supervisor task
-        static const constexpr uint8_t kPriority{Rtos::TaskPriority::Middleware};
+        static const constexpr uint8_t kPriority{Rtos::TaskPriority::Supervisory};
         /// Size of the task stack, in words
         static const constexpr size_t kStackSize{300};
         /// Task name (for display purposes)
@@ -73,6 +73,8 @@ class Task {
 
         /// number of successful checkins
         size_t numSuccessfulCheckins{0};
+        /// whether we should be alternating the status LED as a heartbeat
+        bool isHeartbeatEnabled{true};
 };
 }
 

@@ -1,5 +1,5 @@
-#ifndef RPC_ENDPOINT_H
-#define RPC_ENDPOINT_H
+#ifndef RPC_ENDPOINT_HANDLER_H
+#define RPC_ENDPOINT_HANDLER_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -38,6 +38,22 @@ class Endpoint {
         virtual void hostDidUnbind() {
             // the default implementation is to do nothing
         }
+
+        /**
+         * @brief Endpoint has been created
+         *
+         * The rpmsg endpoint has been created, and the handler can now invoke methods on it to
+         * send messages.
+         *
+         * @remark You should not try to receive messages through means other than the callbacks
+         *         that will automagically be invoked.
+         */
+        virtual void endpointIsAvailable(struct rpmsg_endpoint *newEp) {
+            this->ep = newEp;
+        }
+
+    protected:
+        struct rpmsg_endpoint *ep{nullptr};
 };
 }
 
