@@ -143,9 +143,7 @@ void OpenAmp::InitVdev() {
             Mailbox::Notify, nullptr);
     REQUIRE(gVdev, "%s failed", "rproc_virtio_create_vdev");
 
-    Logger::Trace("vdev created %p", gVdev);
     rproc_virtio_wait_remote_ready(gVdev);
-    Logger::Trace("remote ready!");
 
     // create vring0
     vi = &ResourceTable::GetVring0();

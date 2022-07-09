@@ -25,7 +25,7 @@ class Mailbox {
     public:
         static void Init();
 
-        static int ProcessDeferredIrq(struct virtio_device *vdev);
+        static void ProcessDeferredIrq(struct virtio_device *vdev);
         static int Notify(void *priv, const uint32_t id);
 
         static void AckShutdownRequest();

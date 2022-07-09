@@ -11,9 +11,13 @@
 #include "MessageHandler.h"
 #include "Rpc.h"
 
+#include "Endpoints/Confd/Handler.h"
+#include "Endpoints/Confd/Service.h"
+
 using namespace Rpc;
 
 static MessageHandler *gTask{nullptr};
+static Confd::Service *gConfdService{nullptr};
 
 /**
  * Set up the hardware required by the RPC communications (namely, IPCC) and then start the task
@@ -22,10 +26,17 @@ static MessageHandler *gTask{nullptr};
 void Rpc::Init() {
     REQUIRE(!gTask, "cannot re-initialize RPC");
 
+    // initialize the OpenAMP framework and our message handling machinery
     Mailbox::Init();
     OpenAmp::Init();
 
     gTask = new MessageHandler;
+
+    // set up the endpoints
+    auto confdHandler = new Rpc::Confd::Handler;
+    confdHandler->attach(gTask);
+
+    gConfdService = new Rpc::Confd::Service(confdHandler);
 }
 
 /**
@@ -37,4 +48,8 @@ void Rpc::Init() {
  */
 MessageHandler *Rpc::GetHandler() {
     return gTask;
+}
+
+Rpc::Confd::Service *Rpc::GetConfigService() {
+    return gConfdService;
 }

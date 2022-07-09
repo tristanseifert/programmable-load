@@ -122,19 +122,14 @@ void Mailbox::InstallCallbacks() {
  * in the context of the calling task.
  *
  * @param vdev Virtio device owning the buffers
- *
- * @return Number of events processed, or -1 if none
  */
-int Mailbox::ProcessDeferredIrq(struct virtio_device *vdev) {
-    int status{-1};
-
+void Mailbox::ProcessDeferredIrq(struct virtio_device *vdev) {
     // handle ch1 messages (A7 has processed message and released buffer)
     if(gStatus[0] == ChannelStatus::RxBufferFreed) {
         rproc_virtio_notified(vdev, 0/* VRING0_ID */);
 
         // clear its status
         gStatus[0] = ChannelStatus::Idle;
-        status = 0;
     }
 
     // handle ch2 messages (message available)
@@ -142,15 +137,12 @@ int Mailbox::ProcessDeferredIrq(struct virtio_device *vdev) {
         rproc_virtio_notified(vdev, 1/* VRING1_ID */);
 
         // clear state
-        gStatus[1] = ChannelStatus::RxBufferAvailable;
-        status = 0;
+        gStatus[1] = ChannelStatus::Idle;
 
         // XXX: copied from ST sample code, why do we do this?
         // The OpenAMP framework does not notify for free buf: do it here
-        rproc_virtio_notified(nullptr, 1/* VRING_ID */);
+        rproc_virtio_notified(nullptr, 1/* VRING1_ID */);
     }
-
-    return status;
 }
 
 /**

@@ -76,6 +76,8 @@ add_executable(firmware
     Sources/Rpc/MessageHandler.cpp
     Sources/Rpc/OpenAmp.cpp
     Sources/Rpc/ResourceTable.cpp
+    Sources/Rpc/Endpoints/Confd/Handler.cpp
+    Sources/Rpc/Endpoints/Confd/Service.cpp
     Sources/Log/Logger.cpp
     Sources/Rtos/Idle.cpp
     Sources/Rtos/Memory.cpp

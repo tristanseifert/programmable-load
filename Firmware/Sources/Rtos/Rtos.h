@@ -75,7 +75,12 @@ static_assert(TaskPriority::Background < configMAX_PRIORITIES);
 enum TaskNotifyIndex: size_t {
     /// reserved for FreeRTOS message buffer api
     Stream                              = 0,
-    /// Reserved for drivers
+    /**
+     * @brief Notification bits reserved for driver and middleware use
+     *
+     * The assignment is as follows:
+     * - Bit 0: confd service requests
+     */
     DriverPrivate                       = 1,
     /// First task specific value
     TaskSpecific                        = 2,

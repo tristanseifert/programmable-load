@@ -20,7 +20,7 @@ MessageHandler::MessageHandler() {
     }, kName.data(), kStackSize, this, kPriority, &this->handle);
     REQUIRE(ok == pdPASS, "failed to create task");
 
-    this->lock = xSemaphoreCreateMutex();
+    this->lock = xSemaphoreCreateRecursiveMutex();
 
     // sign it up for mailbox interrupt events
     Mailbox::SetDeferredIsrHandler(this->handle, kNotificationIndex,
@@ -31,6 +31,10 @@ MessageHandler::MessageHandler() {
  * @brief Terminate the message handler task
  */
 MessageHandler::~MessageHandler() {
+    for(auto [key, info] : this->endpoints) {
+        delete info;
+    }
+
     vTaskDelete(this->handle);
     vSemaphoreDelete(this->lock);
 }
@@ -47,7 +51,6 @@ void MessageHandler::main() {
 
     Logger::Notice("MsgHandler: %s", "task start");
 
-
     // process events
     Logger::Trace("MsgHandler: %s", "enter main loop");
 
@@ -57,13 +60,13 @@ void MessageHandler::main() {
         REQUIRE(ok == pdTRUE, "%s failed: %d", "xTaskNotifyWaitIndexed", ok);
 
         // collect the lock
-        xSemaphoreTake(this->lock, portMAX_DELAY);
+        xSemaphoreTakeRecursive(this->lock, portMAX_DELAY);
 
         // process a virtio event
         if(note & TaskNotifyBits::MailboxDeferredIrq) {
             Mailbox::ProcessDeferredIrq(OpenAmp::GetRpmsgDev().vdev);
         }
-        xSemaphoreGive(this->lock);
+        xSemaphoreGiveRecursive(this->lock);
 
         // handle a shutdown request
         if(note & TaskNotifyBits::ShutdownRequest) {
@@ -190,7 +193,7 @@ int MessageHandler::registerEndpoint(const etl::string_view &epName, Endpoint *h
     info->handler = handler;
 
     // acquire the lock
-    if(xSemaphoreTake(this->lock, timeout) != pdTRUE) {
+    if(xSemaphoreTakeRecursive(this->lock, timeout) != pdTRUE) {
         return -1;
     }
 
@@ -211,7 +214,7 @@ int MessageHandler::registerEndpoint(const etl::string_view &epName, Endpoint *h
 
     // store the info
     this->endpoints.insert({epName, info});
-    xSemaphoreGive(this->lock);
+    xSemaphoreGiveRecursive(this->lock);
 
     // invoke the handler method
     handler->endpointIsAvailable(&info->rpmsgEndpoint);

@@ -5,7 +5,8 @@
 #include <stdint.h>
 
 #include <etl/delegate.h>
-#include <etl/map.h>
+#include <etl/unordered_map.h>
+#include <etl/span.h>
 #include <etl/string_view.h>
 #include <etl/vector.h>
 
@@ -88,6 +89,37 @@ class MessageHandler {
         void addShutdownHandler(const ShutdownCallback &callback, void *ctx = nullptr);
         void ackShutdown();
 
+        /**
+         * @brief Send a packet on the given endpoint
+         *
+         * Acquires the required locks and then sends a packet on the endpoint specified.
+         *
+         * @param ep Endpoint to send on
+         * @param message Packet to send
+         * @param address Host channel address to send to
+         * @param timeout How long to wait to acquire the lock
+         *
+         * @return Positive number of bytes sent, or an error code
+         */
+        inline int sendTo(struct rpmsg_endpoint *ep, etl::span<const uint8_t> message,
+                const uint32_t address, const TickType_t timeout = portMAX_DELAY) {
+            BaseType_t ok;
+            int err{-1};
+
+            // get lock
+            ok = xSemaphoreTakeRecursive(this->lock, timeout);
+            if(ok == pdFALSE) {
+                return -1;
+            }
+
+            // perform the send
+            err = rpmsg_sendto(ep, message.data(), message.size(), address);
+
+            // release lock and return
+            xSemaphoreGiveRecursive(this->lock);
+            return err;
+        }
+
     private:
         void main();
 
@@ -132,11 +164,16 @@ class MessageHandler {
 
         /// RTOS task handle
         TaskHandle_t handle;
-        /// Lock protecting access to OpenAMP resources
+        /**
+         * @brief Lock protecting access to OpenAMP resources
+         *
+         * This is a recursive lock so we can use the `send()` helper (and other external methods)
+         * from the context of a message callback.
+         */
         SemaphoreHandle_t lock;
 
         /// installed endpoint handlers
-        etl::map<etl::string_view, EndpointInfo *, kMaxNumEndpoints> endpoints;
+        etl::unordered_map<etl::string_view, EndpointInfo *, kMaxNumEndpoints> endpoints;
 
         /// message endpoint (control)
         struct rpmsg_endpoint epControl;
