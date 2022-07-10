@@ -3451,7 +3451,7 @@
     (at 148.2 160.5 180)
     (descr "CP, Radial series, Radial, pin pitch=2.50mm, , diameter=6.3mm, Electrolytic Capacitor")
     (tags "CP Radial series Radial pin pitch 2.50mm  diameter 6.3mm Electrolytic Capacitor")
-    (property "MPN" "A758EK226M1EAAE050")
+    (property "MPN" "A750EK476M1EAAE040")
     (property "Sheetfile" "io-rear.kicad_sch")
     (property "Sheetname" "Rear IO Connections")
     (property "ki_description" "Polarized capacitor, small symbol")
@@ -3462,7 +3462,7 @@
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 00f63e63-838e-4c36-ae37-4b02831e2b61)
     )
-    (fp_text value "22µF" (at 1.25 4.4) (layer "F.Fab") hide
+    (fp_text value "47µF" (at 1.25 4.4) (layer "F.Fab") hide
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp d16ad930-d5f8-49a2-bb13-7465b698e0c1)
     )
@@ -5277,7 +5277,7 @@
 
   (footprint "Varistor:RV_Disc_D7mm_W3.4mm_P5mm" (layer "F.Cu")
     (tstamp 4b812a87-d2da-4fe4-9180-60ffc1be4d77)
-    (at 120 28.25 -90)
+    (at 115 28.25 -90)
     (descr "Varistor, diameter 7mm, width 3.4mm, pitch 5mm")
     (tags "varistor SIOV")
     (property "MPN" "MOV-07D181K")
@@ -13697,7 +13697,7 @@
     (at 66.35 94.15 180)
     (descr "CP, Radial series, Radial, pin pitch=2.50mm, , diameter=6.3mm, Electrolytic Capacitor")
     (tags "CP Radial series Radial pin pitch 2.50mm  diameter 6.3mm Electrolytic Capacitor")
-    (property "MPN" "A758EK226M1EAAE050")
+    (property "MPN" "A750EK476M1EAAE040")
     (property "Sheetfile" "analog-io.kicad_sch")
     (property "Sheetname" "Analog (Load) Connection")
     (property "ki_description" "Polarized capacitor, small symbol")
@@ -13708,7 +13708,7 @@
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 2c6ecae6-695a-4365-bb75-6b90b3a86673)
     )
-    (fp_text value "22µF" (at 1.25 4.4) (layer "F.Fab") hide
+    (fp_text value "47µF" (at 1.25 4.4) (layer "F.Fab") hide
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 797c185b-46fb-45f7-b97e-cdaa611e5537)
     )
@@ -14738,7 +14738,7 @@
     (at 71 111.7 180)
     (descr "CP, Radial series, Radial, pin pitch=2.50mm, , diameter=6.3mm, Electrolytic Capacitor")
     (tags "CP Radial series Radial pin pitch 2.50mm  diameter 6.3mm Electrolytic Capacitor")
-    (property "MPN" "A758EK226M1EAAE050")
+    (property "MPN" "A750EK476M1EAAE040")
     (property "Sheetfile" "cpu.kicad_sch")
     (property "Sheetname" "CPU")
     (property "ki_description" "Polarized capacitor, small symbol")
@@ -14749,7 +14749,7 @@
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 3c24f1e9-2ae7-44c6-bfe1-0da9b60e9f21)
     )
-    (fp_text value "22µF" (at 1.25 4.4) (layer "F.Fab") hide
+    (fp_text value "47µF" (at 1.25 4.4) (layer "F.Fab") hide
         (effects (font (size 1 1) (thickness 0.15)))
       (tstamp c0f1602d-0f18-40a2-8f93-5aaaf68743cf)
     )

@@ -1083,7 +1083,7 @@
     (property "Datasheet" "~" (id 3) (at 91.44 40.005 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "A758EK226M1EAAE050" (id 4) (at 91.44 40.005 0)
+    (property "MPN" "A750EK476M1EAAE040" (id 4) (at 91.44 40.005 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid f02aeab3-84a4-4f37-a9bf-7d33988bea87))

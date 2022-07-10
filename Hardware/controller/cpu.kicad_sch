@@ -6521,7 +6521,7 @@
     (property "Datasheet" "~" (id 3) (at 31.115 173.99 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "A758EK226M1EAAE050" (id 4) (at 31.115 173.99 0)
+    (property "MPN" "A750EK476M1EAAE040" (id 4) (at 31.115 173.99 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid f74d89d6-ac45-4a7b-8c13-bc3005a20cc1))
