@@ -128,7 +128,7 @@
   * @param  None
   * @retval None
   */
-void SystemInit (void)
+__attribute__((section(".startup"))) void SystemInit (void)
 {
   /* FPU settings ------------------------------------------------------------*/
 #if defined (CORE_CM4)
@@ -218,7 +218,7 @@ void SystemInit (void)
   * @param  None
   * @retval None
   */
-void SystemCoreClockUpdate (void)
+__attribute__((section(".startup"))) void SystemCoreClockUpdate (void)
 {
   uint32_t   pllsource, pll3m, pll3fracen;
   float fracn1, pll3vco;

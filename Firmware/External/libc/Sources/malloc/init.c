@@ -17,7 +17,7 @@ extern uint8_t _sheap, _eheap;
  * This sets up the system's heap based on the _sheap and _eheap symbols exported by the linker
  * script.
  */
-void __libc_heap_init() {
+__attribute__((section(".startup"))) void __libc_heap_init() {
     const size_t heapBytes = ((uintptr_t) &_eheap) - ((uintptr_t) &_sheap);
 
     // first, zero the heap area
