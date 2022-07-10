@@ -26,10 +26,17 @@ MEMORY
 
 /* program headers (for loading stuff) */
 PHDRS {
+    /* app text section (in retram) */
     text        PT_LOAD;
+    /* read-only data (in retram) */
     rodata      PT_LOAD;
+    /* coprocessor resources (in retram) */
     coprorsrc   PT_LOAD;
+    /* library .text section (in sram 1) */
+    libtext     PT_LOAD;
+    /* rw data (in sram 1) */
     data        PT_LOAD;
+    /* bss (in sram 1) */
     bss         PT_LOAD;
 }
 
@@ -59,7 +66,7 @@ SECTIONS
         KEEP(*(.vectors .vectors.*))
         KEEP(*(.startup .startup.*))
 
-        *(.text .text.* .gnu.linkonce.t.*)
+        *(EXCLUDE_FILE(*libfreertos_kernel.a* *libfreertos_kernel_port.a* *libvendor-st.a* *liblibc.a* *libumm_malloc.a* *libmetal-machine.a* *libmetal.a* *libprintf.a* *libopen_amp.a* *libtinycbor.a*) .text .text.* .gnu.linkonce.t.*)
         *(.glue_7t) *(.glue_7)
     } >retram :text
 
@@ -154,6 +161,26 @@ SECTIONS
         . = ALIGN(16);
         _estack = .;
     } >sram1 :bss
+
+    /* secondary text section (for library code) */
+    .libtext :
+    {
+        /* FreeRTOS */
+        *libfreertos_kernel.a* (.text .text.*)
+        *libfreertos_kernel_port.a* (.text .text.*)
+
+        *liblibc.a* (.text .text.*)
+        *libumm_malloc.a* (.text .text.*)
+        *libprintf.a* (.text .text.*)
+
+        *libmetal.a* (.text .text.*)
+        *liblibmetal-machine.a* (.text .text.*)
+        *libopen_amp.a* (.text .text.*)
+
+        *libvendor-st.a* (.text .text.*)
+
+        *libtinycbor.a* (.text .text.*)
+    } >sram1 :libtext
 
     _end = . ;
 }
