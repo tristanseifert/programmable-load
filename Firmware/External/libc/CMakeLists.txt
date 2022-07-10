@@ -26,6 +26,8 @@ add_library(libc STATIC
     Sources/malloc/malloc_api.c
 
     Sources/math/trig.c
+
+    Sources/runtime/init.c
 )
 
 target_include_directories(libc PUBLIC ${CMAKE_CURRENT_LIST_DIR}/Includes)

@@ -99,11 +99,8 @@ Reset_Handler:
     bl          SystemInit
 
     // init runtime, run static constructors
-    // TODO: set up C runtime (including heap)
     bl          __libc_heap_init
-
-    // TODO: implement this
-    // bl __libc_init_array
+    bl          __libc_init_constructors
 
     // execute app main
     bl          main

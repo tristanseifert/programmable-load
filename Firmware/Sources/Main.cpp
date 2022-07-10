@@ -25,7 +25,7 @@ static void EarlyHwInit() {
     Hw::StatusLed::Set(Hw::StatusLed::Color::Yellow);
 
     // initialize a few peripherals
-    Drivers::Random::Init();
+    // Drivers::Random::Init();
 }
 
 /**
