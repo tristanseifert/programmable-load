@@ -128,9 +128,13 @@ class Handler: public Rpc::Endpoint {
         /// mapping of tag -> info blocks
         etl::unordered_map<uint8_t, InfoBlock *, kMaxInflight> requests;
 
-        /// Address we most recently received a message from
+        /// Semaphore signalled when we receive a message from the remote channel
+        SemaphoreHandle_t msgRxSem{nullptr};
+
         /// Tag value to use for the next message
         uint8_t nextTag{0};
+        /// Is the identity of the remote endpoint known? (e.g. have we received at least 1 msg)
+        bool hasReceivedMsg{false};
 };
 }
 
