@@ -13,11 +13,14 @@
 
 #include "Endpoints/Confd/Handler.h"
 #include "Endpoints/Confd/Service.h"
+#include "Endpoints/ResourceManager/Handler.h"
+#include "Endpoints/ResourceManager/Service.h"
 
 using namespace Rpc;
 
 static MessageHandler *gTask{nullptr};
 static Confd::Service *gConfdService{nullptr};
+static ResourceManager::Service *gResMgrService{nullptr};
 
 /**
  * Set up the hardware required by the RPC communications (namely, IPCC) and then start the task
@@ -37,6 +40,11 @@ void Rpc::Init() {
     confdHandler->attach(gTask);
 
     gConfdService = new Rpc::Confd::Service(confdHandler);
+
+    auto resmgrHandler = new Rpc::ResourceManager::Handler;
+    resmgrHandler->attach(gTask);
+
+    gResMgrService = new Rpc::ResourceManager::Service(resmgrHandler);
 }
 
 /**
@@ -52,4 +60,7 @@ MessageHandler *Rpc::GetHandler() {
 
 Rpc::Confd::Service *Rpc::GetConfigService() {
     return gConfdService;
+}
+Rpc::ResourceManager::Service *Rpc::GetResMgrService() {
+    return gResMgrService;
 }

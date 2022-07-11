@@ -12,6 +12,9 @@ namespace Drivers {
  *
  * @TODO: Figure out how to get Linux to un-gate the PLL4R clock - it's not running, hence the
  *        need to manually change clock sources.
+ *
+ * @remark This driver requires RPC runtime services to be up and running, and will block until
+ *         they are during initialization. Therefore, it cannot be used during bootup.
  */
 class Random {
     public:
@@ -21,7 +24,7 @@ class Random {
 
     private:
         /// Timeout (in cycles) for the RNG to become ready after initialization
-        constexpr static const size_t kInitTimeout{10'000'000};
+        constexpr static const size_t kInitTimeout{1'000'000};
         /// Timeout (in cycles) for the RNG to produce data
         constexpr static const size_t kRefillTimeout{10'000};
 

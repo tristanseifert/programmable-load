@@ -80,6 +80,7 @@ enum TaskNotifyIndex: size_t {
      *
      * The assignment is as follows:
      * - Bit 0: confd service requests
+     * - Bit 1: ResourceManager requests
      */
     DriverPrivate                       = 1,
     /// First task specific value

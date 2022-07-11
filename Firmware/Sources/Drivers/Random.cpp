@@ -2,6 +2,8 @@
 #include "stm32mp1xx_hal_rcc.h"
 
 #include "Log/Logger.h"
+#include "Rpc/Rpc.h"
+#include "Rpc/Endpoints/ResourceManager/Service.h"
 
 #include "Random.h"
 
@@ -14,11 +16,25 @@ using namespace Drivers;
  * This enables the clock and reset the TRNG.
  */
 void Random::Init() {
+    using ResMgr = Rpc::ResourceManager::Service;
+
+    int err;
     volatile size_t timeout;
+
+    // acquire RNG2 and configure its clock
+    ResMgr::ClockConfig requestedClk{
+        .index = 0,
+        // this is what's specified for PLL4R in the device tree config
+        .rate = 40'000'000,
+    }, actualClk;
+
+    err = Rpc::GetResMgrService()->setConfig(Rpc::ResourceManager::RESMGR_ID_RNG2, nullptr,
+            requestedClk, actualClk, pdMS_TO_TICKS(1000));
+    REQUIRE(!err, "failed to set resmgr cfg: %d", err);
 
     // enable clocks
     __HAL_RCC_RNG2_CLK_ENABLE();
-    __HAL_RCC_RNG2_CONFIG(RCC_RNG2CLKSOURCE_LSE);
+    __HAL_RCC_RNG2_CONFIG(RCC_RNG2CLKSOURCE_PLL4);
 
     // reset RNG
     __HAL_RCC_RNG2_FORCE_RESET();

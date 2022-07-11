@@ -4,6 +4,9 @@
 namespace Rpc::Confd {
 class Service;
 }
+namespace Rpc::ResourceManager {
+class Service;
+}
 
 /**
  * @brief Remote procedure call interface to host
@@ -12,6 +15,7 @@ namespace Rpc {
 class MessageHandler;
 
 using ConfdService = Rpc::Confd::Service;
+using ResMgrService = Rpc::ResourceManager::Service;
 
 /// Initialize the RPC system, including OpenAMP
 void Init();
@@ -20,6 +24,8 @@ MessageHandler *GetHandler();
 
 /// Get the configuration service interface
 ConfdService *GetConfigService();
+/// Get the resource manager interface
+ResMgrService *GetResMgrService();
 }
 
 #endif

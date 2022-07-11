@@ -17,9 +17,6 @@ using namespace Rpc::Confd;
 Handler::Handler() {
     this->lock = xSemaphoreCreateMutex();
     REQUIRE(this->lock, "%s failed", "xSemaphoreCreateMutex");
-
-    this->msgRxSem = xSemaphoreCreateBinary();
-    REQUIRE(this->msgRxSem, "%s failed", "xSemaphoreCreateBinary");
 }
 
 /**
@@ -39,7 +36,6 @@ Handler::~Handler() {
 
     // clean up resources
     vSemaphoreDelete(this->lock);
-    vSemaphoreDelete(this->msgRxSem);
 }
 
 /**
@@ -60,10 +56,7 @@ void Handler::attach(Rpc::MessageHandler *mh) {
  * handle directly (no-op) or correspond to a waiting request.
  */
 void Handler::handleMessage(etl::span<const uint8_t> message, const uint32_t srcAddr) {
-    // notify "rx waiting" semaphore if needed (used to pend initial request til we receive)
-    if(!__atomic_test_and_set(&this->hasReceivedMsg, __ATOMIC_RELAXED)) {
-        xSemaphoreGive(this->msgRxSem);
-    }
+    Endpoint::handleMessage(message, srcAddr);
 
     // bail early if it's 0 length (sent to notify us of the remote endpoint becoming alive)
     if(message.empty()) {
@@ -230,33 +223,14 @@ int Handler::sendRequestAndBlock(etl::span<uint8_t> message, InfoBlock* &outInfo
     auto hdr = reinterpret_cast<struct rpc_header *>(message.data());
     hdr->tag = info->tag;
 
-    /*
-     * In case the remote confd endpoint isn't set up yet when this call is made (as indicated by
-     * `hasReceivedMsg` being cleared) we don't know the address of the remote endpoint to send the
-     * packet to.
-     *
-     * So, chill and wait for the semaphore to be signalled in that case, and set a flag so that
-     * we signal the semaphore also when we've sent the packet. This ensures that if there are any
-     * additional tasks that come along and want to send a request _after_ us, but _before_ the
-     * remote endpoint becomes available, will get a chance to run and not get blocked.
-     */
-    bool didWaitForReady{false};
-    if(!__atomic_load_n(&this->hasReceivedMsg, __ATOMIC_RELAXED)) {
-        didWaitForReady = true;
-        ok = xSemaphoreTake(this->msgRxSem, timeout);
-
-        if(ok == pdFALSE) {
-            // go to the same path as if the request itself timed out
-            goto timedout;
-        }
+    // wait for remote endpoint to become available
+    if(!this->waitForRemote(timeout)) {
+        goto timedout;
     }
+
 
     // request message transmission (and wake up next waiting to send task)
     err = Rpc::GetHandler()->sendTo(this->ep, message, this->ep->dest_addr, timeout);
-
-    if(didWaitForReady) {
-        xSemaphoreGive(this->msgRxSem);
-    }
 
     if(err < 0) {
         delete info;
