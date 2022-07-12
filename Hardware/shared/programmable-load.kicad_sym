@@ -9485,7 +9485,7 @@
         (name "DVDD" (effects (font (size 1.27 1.27))))
         (number "23" (effects (font (size 1.27 1.27))))
       )
-      (pin output line (at -16.51 -49.53 0) (length 2.54)
+      (pin input line (at -16.51 -49.53 0) (length 2.54)
         (name "SWCLK" (effects (font (size 1.27 1.27))))
         (number "24" (effects (font (size 1.27 1.27))))
       )
