@@ -865,7 +865,7 @@
     (property "Datasheet" "~" (id 3) (at 33.02 33.655 0)
       (effects (font (size 1.27 1.27)) hide)
     )
-    (property "MPN" "0ZCJ0050FF2G" (id 4) (at 33.02 33.655 90)
+    (property "MPN" "0ZCJ0050AF2E" (id 4) (at 33.02 33.655 90)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid fe9d1223-61f6-4c48-9970-dd37cea59323))
