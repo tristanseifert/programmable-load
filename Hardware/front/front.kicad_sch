@@ -4079,6 +4079,9 @@
     (path "/7241d088-8274-4968-b145-4efacdc92185/867176a1-6860-45d5-8b69-d72e4e8cb4f8"
       (reference "C401") (unit 1) (value "4.7µF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
+    (path "/7241d088-8274-4968-b145-4efacdc92185/72271f3f-8c9b-4d26-ba03-f99713eeef62"
+      (reference "C402") (unit 1) (value "4.7µF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+    )
     (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/cebf80dc-4c76-4005-81e0-95e67fed4f08"
       (reference "C501") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
@@ -4104,10 +4107,10 @@
       (reference "C508") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/3e41408a-7b7a-4d43-9af7-11ac16ad576a"
-      (reference "C509") (unit 1) (value "18pF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+      (reference "C509") (unit 1) (value "22pF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/3cf8c0a5-4ab2-41af-8887-a6a3a30bb637"
-      (reference "C510") (unit 1) (value "18pF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
+      (reference "C510") (unit 1) (value "22pF") (footprint "Capacitor_SMD:C_0603_1608Metric_Pad1.08x0.95mm_HandSolder")
     )
     (path "/7241d088-8274-4968-b145-4efacdc92185/258ccb42-932e-43ad-b732-c555055381c3"
       (reference "D401") (unit 1) (value "LED_Dual_AAKK") (footprint "programmable-load:LED-3227")
@@ -4258,6 +4261,12 @@
     )
     (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/7cbb6a0c-e0c5-46c9-9fd0-fec23d01ecae"
       (reference "R505") (unit 1) (value "2k2") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/94f26e21-2763-47e6-a9bd-7fdf2d906df2"
+      (reference "R506") (unit 1) (value "1k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
+    )
+    (path "/ebee26f7-6842-4b55-9c2f-f547551ac88e/d4e68f9e-7e39-4086-988f-33d1df797b4c"
+      (reference "R507") (unit 1) (value "10k") (footprint "Resistor_SMD:R_0603_1608Metric_Pad0.98x0.95mm_HandSolder")
     )
     (path "/a8fde560-0e63-43c7-9deb-0b1ecb7246d2/56ab23f3-37f7-40c7-b1fa-710414ad6f01"
       (reference "SW201") (unit 1) (value "B3W-9002-Y1C") (footprint "programmable-load:Omron-B3W-90XX-X1X")
