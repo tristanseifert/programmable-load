@@ -83,8 +83,10 @@
         "lib_footprint_mismatch|138200000|133500000|a42730e0-0879-416a-a6bb-1d64c4b3ed7b|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|84000000|140980059|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|84350000|138950000|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|85000000|140980059|58dda66e-10de-466e-a5fb-68483e1ac77c|00000000-0000-0000-0000-000000000000",
         "lib_footprint_mismatch|88000000|140715774|546083bf-4fd3-4e4a-b1db-68fe3adc67cb|00000000-0000-0000-0000-000000000000",
-        "lib_footprint_mismatch|88000000|140980059|546083bf-4fd3-4e4a-b1db-68fe3adc67cb|00000000-0000-0000-0000-000000000000"
+        "lib_footprint_mismatch|88000000|140980059|546083bf-4fd3-4e4a-b1db-68fe3adc67cb|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|89000000|140980059|546083bf-4fd3-4e4a-b1db-68fe3adc67cb|00000000-0000-0000-0000-000000000000"
       ],
       "meta": {
         "version": 2
@@ -92,6 +94,7 @@
       "rule_severities": {
         "annular_width": "error",
         "clearance": "error",
+        "connection_width": "ignore",
         "copper_edge_clearance": "error",
         "copper_sliver": "warning",
         "courtyards_overlap": "warning",
@@ -143,6 +146,7 @@
         "allow_microvias": false,
         "max_error": 0.005,
         "min_clearance": 0.127,
+        "min_connection": 0.0,
         "min_copper_edge_clearance": 0.39999999999999997,
         "min_hole_clearance": 0.254,
         "min_hole_to_hole": 0.5,
