@@ -91,6 +91,7 @@ add_executable(firmware
     Sources/Drivers/Watchdog.cpp
     Sources/Supervisor/Supervisor.cpp
     Sources/Supervisor/Task.cpp
+    Sources/App/Rpmsg/Task.cpp
 )
 
 # Set defines for the platform

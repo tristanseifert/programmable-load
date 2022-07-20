@@ -101,7 +101,7 @@ class MessageHandler {
          *
          * @return Positive number of bytes sent, or an error code
          */
-        inline int sendTo(struct rpmsg_endpoint *ep, etl::span<const uint8_t> message,
+        inline int sendTo(struct ::rpmsg_endpoint *ep, etl::span<const uint8_t> message,
                 const uint32_t address, const TickType_t timeout = portMAX_DELAY) {
             BaseType_t ok;
             int err{-1};
@@ -131,7 +131,7 @@ class MessageHandler {
          */
         struct EndpointInfo {
             /// remote endpoint info structure
-            struct rpmsg_endpoint rpmsgEndpoint;
+            struct ::rpmsg_endpoint rpmsgEndpoint;
             /// endpoint class
             Endpoint *handler;
         };
@@ -179,9 +179,6 @@ class MessageHandler {
 
         /// installed endpoint handlers
         etl::unordered_map<etl::string_view, EndpointInfo *, kMaxNumEndpoints> endpoints;
-
-        /// message endpoint (control)
-        struct rpmsg_endpoint epControl;
 
         /**
          * @brief Shutdown handlers

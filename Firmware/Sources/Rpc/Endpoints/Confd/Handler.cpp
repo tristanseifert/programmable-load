@@ -65,21 +65,21 @@ void Handler::handleMessage(etl::span<const uint8_t> message, const uint32_t src
 
     // discard if not large enough for an rpc header
     if(message.size() < sizeof(struct rpc_header)) {
-        Logger::Warning("discarding message (%p, %lu) from %08x: %s", message.data(),
-                message.size(), srcAddr, "msg too short");
+        Logger::Warning("%s: discarding message (%p, %lu) from %08x: %s", kRpmsgName.data(),
+                message.data(), message.size(), srcAddr, "msg too short");
         return;
     }
 
     // basic header validation
     auto hdr = reinterpret_cast<const struct rpc_header *>(message.data());
     if(hdr->length < sizeof(struct rpc_header)) {
-        Logger::Warning("discarding message (%p, %lu) from %08x: %s", message.data(),
-                message.size(), srcAddr, "invalid hdr length");
+        Logger::Warning("%s: discarding message (%p, %lu) from %08x: %s", kRpmsgName.data(),
+                message.data(), message.size(), srcAddr, "invalid hdr length");
         return;
     }
     else if(hdr->version != kRpcVersionLatest) {
-        Logger::Warning("discarding message (%p, %lu) from %08x: %s", message.data(),
-                message.size(), srcAddr, "invalid rpc version");
+        Logger::Warning("%s: discarding message (%p, %lu) from %08x: %s", kRpmsgName.data(),
+                message.data(), message.size(), srcAddr, "invalid rpc version");
         return;
     }
 

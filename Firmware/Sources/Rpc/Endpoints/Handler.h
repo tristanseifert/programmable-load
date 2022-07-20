@@ -9,6 +9,8 @@
 #include "Log/Logger.h"
 #include "Rtos/Rtos.h"
 
+struct rpmsg_endpoint;
+
 namespace Rpc {
 /**
  * @brief Abstract RPC endpoint class
@@ -72,7 +74,7 @@ class Endpoint {
          * @remark You should not try to receive messages through means other than the callbacks
          *         that will automagically be invoked.
          */
-        virtual void endpointIsAvailable(struct rpmsg_endpoint *newEp) {
+        virtual void endpointIsAvailable(struct ::rpmsg_endpoint *newEp) {
             this->ep = newEp;
         }
 
@@ -106,7 +108,7 @@ class Endpoint {
 
     protected:
         /// Pointer to the underlying OpenAMP endpoint
-        struct rpmsg_endpoint *ep{nullptr};
+        struct ::rpmsg_endpoint *ep{nullptr};
         /// Semaphore signalled whenever a message is received, addressed to this endpoint
         SemaphoreHandle_t msgRxSem{nullptr};
 

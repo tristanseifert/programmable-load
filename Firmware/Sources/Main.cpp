@@ -8,7 +8,10 @@
 #include "Drivers/Random.h"
 #include "Hw/StatusLed.h"
 #include "Rpc/Rpc.h"
+#include "Rtos/Rtos.h"
 #include "Supervisor/Supervisor.h"
+
+#include "App/Rpmsg/Task.h"
 
 /**
  * @brief Early hardware init
@@ -69,6 +72,16 @@ extern "C" int main() {
      * These in turn feed into the hw watchdog, which is activated from this point on.
      */
     Supervisor::Init();
+
+    /*
+     * Set up the actual application specific tasks
+     *
+     * This consists of the load interface (this runs the driver communicating with the
+     * peripherals on the analog board over SPI and I²C) task, the control loop task, and the
+     * associated remote message io handlers.
+     */
+    App::Control::Start();
+    App::Rpmsg::Start();
 
     /*
      * Last, transfer control to the FreeRTOS scheduler. This will begin executing the app main
