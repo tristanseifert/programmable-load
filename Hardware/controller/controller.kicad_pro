@@ -67,6 +67,7 @@
         "courtyards_overlap|148850001|99770001|6a5ccb39-6bbf-45b2-a1b8-cd640beb422b|91345f4f-4b69-4d05-8981-713b330b3e23",
         "courtyards_overlap|148850001|99770001|91345f4f-4b69-4d05-8981-713b330b3e23|6a5ccb39-6bbf-45b2-a1b8-cd640beb422b",
         "courtyards_overlap|54930001|89750001|206dfda0-2292-44df-b1ec-682e00175a8a|b67e29fc-622a-4ac3-b356-69c53bf7272a",
+        "courtyards_overlap|55080001|89750001|206dfda0-2292-44df-b1ec-682e00175a8a|b67e29fc-622a-4ac3-b356-69c53bf7272a",
         "courtyards_overlap|59164002|88540001|206dfda0-2292-44df-b1ec-682e00175a8a|8adef741-3f2e-4528-93ae-3d545b737168",
         "footprint_type_mismatch|168500000|190900000|3e601a5d-2c73-4794-864d-c03259e0c319|00000000-0000-0000-0000-000000000000",
         "footprint_type_mismatch|86000000|123500000|35ed0873-7a99-4dbb-95a5-2b062cf8e98a|00000000-0000-0000-0000-000000000000",
@@ -640,10 +641,6 @@
     [
       "a3dc49ef-6ec8-49ad-a37e-7f39ce6ddd3a",
       "Rear IO Connections"
-    ],
-    [
-      "d2a88cdd-60c5-4a80-9083-78712e11c498",
-      "Bus Multiplexers"
     ],
     [
       "5cd6141d-a7c3-4d18-9c4e-0d48e1f0ea25",
