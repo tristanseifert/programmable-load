@@ -2748,7 +2748,7 @@
       (reference "SW201") (unit 1) (value "NE1838EE") (footprint "programmable-load:NE1838EE")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/b58cf72b-7566-460e-a30e-e69b11eb2720"
-      (reference "SW301") (unit 1) (value "SW_DIP_x03") (footprint "programmable-load:CUI-DS04-254-2-03BK-SMT")
+      (reference "SW301") (unit 1) (value "SW_DIP_x03") (footprint "Button_Switch_THT:SW_DIP_SPSTx03_Slide_6.7x9.18mm_W7.62mm_P2.54mm_LowProfile")
     )
     (path "/67d5a359-e645-42fd-8878-688bcd98810b/1bca54b3-6946-4844-8746-e2b000d07e4f"
       (reference "SW302") (unit 1) (value "SW_MEC_5E") (footprint "Button_Switch_SMD:SW_SPST_TL3342")
