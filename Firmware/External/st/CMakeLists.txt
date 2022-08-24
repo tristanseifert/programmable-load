@@ -53,7 +53,7 @@ target_include_directories(vendor-st PUBLIC Includes/config)
 target_include_directories(vendor-st PUBLIC Includes/hal)
 target_include_directories(vendor-st PUBLIC Includes/Runtime)
 
-target_include_directories(vendor-st PRIVATE ${CMSIS_INCLUDE_DIR})
+target_link_libraries(vendor-st PUBLIC embedded-fw-base::cmsis)
 
 # shut up some errors
 target_compile_options(vendor-st PRIVATE -Wno-cast-qual -Wno-parentheses-equality)

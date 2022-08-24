@@ -20,7 +20,7 @@ FetchContent_Declare(libmetal
 )
 FetchContent_MakeAvailable(libmetal)
 
-target_link_libraries(metal-static PRIVATE libc freertos_kernel)
+target_link_libraries(metal-static PRIVATE freertos_kernel)
 target_include_directories(metal-static PUBLIC ${CMAKE_CURRENT_LIST_DIR}/libmetal/machine)
 
 # no support for 64-bit atomics
@@ -39,7 +39,10 @@ FetchContent_Declare(openamp
 )
 FetchContent_MakeAvailable(openamp)
 
-target_link_libraries(open_amp-static PRIVATE libc freertos_kernel)
+# silence some aggressive warnings
+target_compile_options(open_amp-static PRIVATE -Wno-unused-but-set-variable
+    -Wno-incompatible-pointer-types-discards-qualifiers -Wno-cast-qual)
+target_link_libraries(open_amp-static PRIVATE freertos_kernel)
 
 target_include_directories(open_amp-static PUBLIC ${openamp_SOURCE_DIR}/lib/include ${LIBMETAL_INCLUDE_DIR} ${CMAKE_CURRENT_LIST_DIR}/libmetal/machine)
 target_link_libraries(open_amp-static PRIVATE metal-static)

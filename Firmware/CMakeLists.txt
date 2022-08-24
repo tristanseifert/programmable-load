@@ -62,6 +62,20 @@ add_compile_options(-fno-use-cxa-atexit)
 # enable stack guards
 add_compile_options(-fstack-protector-strong)
 
+# external embedded base lib
+set(EFWB_TARGET "stm32mp15x")
+
+# XXX: figure out how to support floating point only mode
+set(EFWB_CBOR_HAS_FLOAT NO)
+
+FetchContent_Declare(
+    fw-base
+    GIT_REPOSITORY https://github.com/tristanseifert/embedded-fw-base.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(fw-base)
+link_libraries(embedded-fw-base::libc)
+
 ###############
 # Set up the primary firmware target
 add_executable(firmware
@@ -123,63 +137,18 @@ endif()
 # tree and included here.
 
 ###############
-# CMSIS 5
-FetchContent_Declare(cmsis_5
-    GIT_REPOSITORY https://github.com/ARM-software/CMSIS_5.git
-    GIT_TAG 5.9.0
-)
-FetchContent_MakeAvailable(cmsis_5)
-
-set(CMSIS_INCLUDE_DIR ${cmsis_5_SOURCE_DIR}/CMSIS/Core/Include)
-
-# let everything we compile pull in the CMSIS headers
-include_directories(${CMSIS_INCLUDE_DIR})
-
-###############
 # C library
-#
-# This is our loose conglomeration of C/C++ code flying in close formation that resembles a C
-# library. It's most definitely not standards compliant, but sufficient to get embedded stuff
-# going.
-add_subdirectory(External/libc EXCLUDE_FROM_ALL)
-target_link_libraries(firmware PRIVATE libc)
+target_link_libraries(firmware PRIVATE embedded-fw-base::cmsis)
 
-###############
-# Embedded template library
-option(NO_STL "" ON)
-
-FetchContent_Declare(etl
-    GIT_REPOSITORY https://github.com/ETLCPP/etl.git
-    GIT_TAG 20.29.3
-)
-FetchContent_MakeAvailable(etl)
-target_compile_options(etl INTERFACE -DETL_NO_STL -DETL_NO_CPP_NAN_SUPPORT)
-
-target_link_libraries(firmware PRIVATE etl)
+# libraries
+target_link_libraries(firmware PRIVATE embedded-fw-base::etl)
+target_link_libraries(firmware PRIVATE embedded-fw-base::tinycbor)
 
 # ST-provided vendor code: headers and low level drivers
 add_subdirectory(External/st)
 
 target_include_directories(firmware PUBLIC External/st/Includes)
 target_link_libraries(firmware PRIVATE vendor-st)
-
-###############
-# printf
-set(BUILD_STATIC_LIBRARY "" ON)
-set(SUPPORT_WRITEBACK_SPECIFIER "" OFF)
-
-set(SUPPORT_DECIMAL_SPECIFIERS "" OFF)
-set(SUPPORT_EXPONENTIAL_SPECIFIERS "" OFF)
-
-FetchContent_Declare(printf_library
-    GIT_REPOSITORY https://github.com/eyalroz/printf.git
-    GIT_TAG v6.0.0
-)
-FetchContent_MakeAvailable(printf_library)
-
-target_compile_options(printf PRIVATE -Wno-implicit-int-float-conversion)
-target_link_libraries(firmware PRIVATE printf)
-target_compile_definitions(firmware PUBLIC -DPRINTF_ALIAS_STANDARD_FUNCTION_NAMES=1)
 
 ###############
 # FreeRTOS
@@ -199,59 +168,5 @@ target_link_libraries(freertos_kernel libc vendor-st)
 target_link_libraries(firmware PRIVATE freertos_kernel)
 
 ###############
-# CMSIS DSP
-#
-# This is primarily used for some fast math functions, which the C library then re-exports as
-# builtin C library functions.
-set(ROOT ${cmsis_5_SOURCE_DIR})
-set(DSP ${cmsis_5_SOURCE_DIR}/CMSIS/DSP)
-set(ARM_CPU "cortex-m4f")
-
-# hack to get cmake step to work
-function(compilerSpecificCompileOptions PROJECTNAME ROOT)
-endfunction()
-
-# disable a lot of code
-set(DISABLEFLOAT16 ON CACHE INTERNAL "" FORCE)
-set(COMPLEXMATH OFF CACHE INTERNAL "" FORCE)
-set(CONTROLLER OFF CACHE INTERNAL "" FORCE)
-set(FILTERING OFF CACHE INTERNAL "" FORCE)
-set(MATRIX OFF CACHE INTERNAL "" FORCE)
-set(TRANSFORM OFF CACHE INTERNAL "" FORCE)
-set(SVM OFF CACHE INTERNAL "" FORCE)
-set(BAYES OFF CACHE INTERNAL "" FORCE)
-set(DISTANCE OFF CACHE INTERNAL "" FORCE)
-set(INTERPOLATION OFF CACHE INTERNAL "" FORCE)
-set(QUATERNIONMATH OFF CACHE INTERNAL "" FORCE)
-
-list(APPEND CMAKE_MODULE_PATH ${DSP})
-
-# this is a disgusting hack, we should figure out how to change it out
-add_compile_options(-Wno-error)
-include_directories(External/libc/Includes)
-
-add_subdirectory(${DSP}/Source bin_dsp EXCLUDE_FROM_ALL)
-
-target_link_libraries(libc PRIVATE CMSISDSP)
-
-###############
 add_subdirectory(External/openamp EXCLUDE_FROM_ALL)
-
 target_link_libraries(firmware PRIVATE open_amp-static)
-
-###############
-# TinyCBOR
-#
-# A C/C++ library to encode objects as CBOR (a binary object representation)
-add_subdirectory(External/tinycbor EXCLUDE_FROM_ALL)
-target_link_libraries(tinycbor PRIVATE libc)
-
-target_link_libraries(firmware PRIVATE tinycbor)
-
-###############
-# Print the size of the firmware after building
-find_program(CMAKE_SIZE size)
-
-add_custom_command(TARGET firmware POST_BUILD
-    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:firmware>
-)
