@@ -17,15 +17,19 @@ class Gpio {
          * @brief GPIO port
          *
          * The device has multiple "banks" of IO ports, each identified by a single letter. Inside
-         * each port are up to 32 pins, numbered 0-31.
-         *
-         * @remark Port D and E are only supported in larger devices. We can add them easily when
-         *         needed down the road.
+         * each port are up to 16 pins, numbered 0-31.
          */
         enum class Port: uint8_t {
-            PortA,
-            PortB,
-            PortC,
+            PortA                       = 1,
+            PortB                       = 2,
+            PortC                       = 3,
+            PortD                       = 4,
+            PortE                       = 5,
+            PortF                       = 6,
+            PortG                       = 7,
+            PortH                       = 8,
+            PortI                       = 9,
+            // Port Z is accessible only from the A7 core
         };
 
         /**
@@ -43,7 +47,7 @@ class Gpio {
             /// Use the pin for analog functions
             Analog,
             /**
-             * @brief Peripheral multiplexer mode
+             * @brief Peripheral multiplexer mode (alternate function)
              *
              * The direction and output drive is controlled by the peripheral associated by the
              * port mux function specified in the `function` field of PinMode.
@@ -93,18 +97,27 @@ class Gpio {
             Pull pull{Pull::None};
 
             /**
+             * @brief Whether the output operates in open drain mode
+             *
+             * When set, the output operates in open drain mode: that is, the output will only be
+             * pulled low. This bit is ignored if the pin is not configured as an output.
+             */
+            uint8_t isOpenDrain: 1{0};
+
+            /**
              * @brief Peripheral function
              *
-             * @remark Only relevant when the pin mode is Mode::PortMux.
+             * @remark Only relevant when the pin mode is Mode::Peripheral.
              */
             uint8_t function: 4{0};
 
             /**
-             * @brief High drive strength
+             * @brief Pin IO speed
              *
-             * When set (1) the pin uses a higher drive strength value.
+             * Sets the expected IO output speed, from low (0) to highest (3). This affects the
+             * drive strength and other properties.
              */
-            uint8_t driveStrength: 1{0};
+            uint8_t speed: 2{1};
 
             /**
              * @brief Initial output state
@@ -113,15 +126,6 @@ class Gpio {
              * the output driver is enabled, so the pin starts at a predictable level.
              */
             uint8_t initialOutput: 1{0};
-
-            /**
-             * @brief Enable pin mux
-             *
-             * If the pin is configured as a digital input or output, set this bit to enable the
-             * pin mux to the specified function. This can be used to, for example, route an input
-             * to the external interrupt controller.
-             */
-            uint8_t pinMuxEnable: 1{0};
         };
 
     public:
@@ -132,6 +136,25 @@ class Gpio {
         static void SetOutputState(const Pin pin, const bool state);
 
         static bool GetInputState(const Pin pin);
+
+    private:
+        static void EnablePortClock(const Port);
+
+        static void AcquireLock();
+        static void UnlockGpio();
+
+        /// ID of the semaphore slot used for GPIOs; fixed by linux code
+        constexpr static const size_t kSemaphoreId{0};
+        /// Maximum number of times to try acquiring the lock before giving up
+        constexpr static const size_t kLockRetries{5000};
+
+        /**
+         * @brief Bitmask of which ports are currently clocked
+         *
+         * This is consulted when an IO pin is first configured; if the port does not have the
+         * corresponding bit set (that is, its clock isn't enabled) we'll do that and set the bit.
+         */
+        static uint32_t gEnabledPorts;
 };
 }
 

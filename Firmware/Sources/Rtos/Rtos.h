@@ -31,22 +31,29 @@ enum TaskPriority: UBaseType_t {
      */
     Driver                              = (Dpc - 1),
     /**
-     * @brief Middleware
+     * @brief Supervisory tasks
      *
-     * This includes stuff such as high-level protocol drivers (such as USB or network protocol
-     * handlers) and timers.
+     * Any class of task responsible for making sure we don't self destruct: watchdog checkins,
+     * thermal management, etc.
      */
-    Middleware                          = (Driver - 1),
+    Supervisory                         = (Driver - 1),
     /**
      * @brief High priority app
      *
      * Application tasks that have a relatively higher priority, such as control loops.
      */
-    AppHigh                             = (Middleware - 1),
+    AppHigh                             = (Supervisory - 1),
+    /**
+     * @brief Middleware
+     *
+     * This includes stuff such as high-level protocol drivers (over the message passing interface)
+     * and timers.
+     */
+    Middleware                          = (AppHigh - 1),
     /**
      * @brief Low priority app
      *
-     * Low priority application tasks, such as user interfaces.
+     * Low priority application tasks, such as user interface or periodic recalibration.
      */
     AppLow                              = (AppHigh - 1),
     /**
@@ -68,10 +75,29 @@ static_assert(TaskPriority::Background < configMAX_PRIORITIES);
 enum TaskNotifyIndex: size_t {
     /// reserved for FreeRTOS message buffer api
     Stream                              = 0,
-    /// Reserved for drivers
+    /**
+     * @brief Notification bits reserved for driver and middleware use
+     *
+     * The assignment is as follows:
+     * - Bit 0: confd service requests
+     * - Bit 1: ResourceManager requests
+     */
     DriverPrivate                       = 1,
     /// First task specific value
     TaskSpecific                        = 2,
+};
+
+/**
+ * @brief Thread-local storage indices
+ *
+ * System-wide reserved indices for thread local storage.
+ */
+enum ThreadLocalIndex: size_t {
+    /// Used by logging infrastructure
+    TLSLogBuffer                        = 0,
+
+    /// First task specific value
+    TLSTaskSpecific                     = 1,
 };
 }
 
