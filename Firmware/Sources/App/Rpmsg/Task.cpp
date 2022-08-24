@@ -131,15 +131,15 @@ void Task::sendMeasurements() {
     // TODO: read actual values instead of made-up stuff here
     // voltage
     cbor_encode_text_stringz(&encoderMap, "v");
-    cbor_encode_float(&encoderMap, fabsf(sinf(t)));
+    cbor_encode_float(&encoderMap, 2.f * fabsf(sinf(t * 1.33f)));
     // current
     cbor_encode_text_stringz(&encoderMap, "i");
-    cbor_encode_float(&encoderMap, fabsf(cosf(t)));
+    cbor_encode_float(&encoderMap, 70.f * fabsf(cosf(t)));
     // temperature
     cbor_encode_text_stringz(&encoderMap, "t");
     cbor_encode_float(&encoderMap, 20.f + fabsf(50.f * cosf(t)));
 
-    t += 0.1f;
+    t += 0.05f;
 
     // finish encoding
     err = cbor_encoder_close_container(&encoder, &encoderMap);

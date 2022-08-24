@@ -49,22 +49,11 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         -Wno-expansion-to-defined -Wno-undef -Wno-unused-private-field -Wno-deprecated-volatile)
 endif()
 
-###############
-# Define the target/system flags
-# place functions into their own sections (for LTO)
-add_compile_options(-ffunction-sections -fdata-sections -fno-common)
-# disable exceptions, stack unwinding
-add_compile_options(-ffreestanding -fno-exceptions -fno-unwind-tables -fno-rtti)
-# note that we can only support single precision float: warn when promoting to double
+# don't allow upcasts to double
 add_compile_options(-Wdouble-promotion)
-# no need for teardown code/destructors
-add_compile_options(-fno-use-cxa-atexit)
-# enable stack guards
-add_compile_options(-fstack-protector-strong)
 
 # external embedded base lib
 set(EFWB_TARGET "stm32mp15x")
-
 # XXX: figure out how to support floating point only mode
 set(EFWB_CBOR_HAS_FLOAT NO)
 
@@ -78,7 +67,10 @@ link_libraries(embedded-fw-base::libc)
 
 ###############
 # Set up the primary firmware target
-add_executable(firmware
+add_firmware_executable(NAME firmware FILENAME "programmable-load-firmware"
+    LDSCRIPT ${CMAKE_CURRENT_LIST_DIR}/stm32mp15x.ld
+    LDMAP ${CMAKE_CURRENT_BINARY_DIR}/output.map
+    SOURCES
     ${BuildInfoFile}
     Sources/Init/StackGuard.cpp
     Sources/Init/CppHeap.cpp
@@ -105,68 +97,22 @@ add_executable(firmware
     Sources/Drivers/Watchdog.cpp
     Sources/Supervisor/Supervisor.cpp
     Sources/Supervisor/Task.cpp
+    Sources/App/Control/Hardware.cpp
+    Sources/App/Control/Task.cpp
     Sources/App/Rpmsg/Task.cpp
 )
 
-# Set defines for the platform
-add_compile_definitions(CORE_CM4 STM32MP151Axx)
-# add_compile_definitions(__FPU_PRESENT __FPU_USED)
-
-# Include directories
 target_include_directories(firmware PUBLIC Includes)
 target_include_directories(firmware PRIVATE Sources)
 
-# Configure it to build a static image
-target_compile_options(firmware PRIVATE -flto)
-target_link_options(firmware PRIVATE --static -nostartfiles -nostdlib -ffreestanding -flto)
-
-# Use the appropriate linker script
-set_target_properties(firmware PROPERTIES OUTPUT_NAME "programmable-load-firmware")
-set_target_properties(firmware PROPERTIES SUFFIX ".elf")
-
-set_target_properties(firmware PROPERTIES LINK_DEPENDS ${CMAKE_CURRENT_LIST_DIR}/stm32mp15x.ld)
-
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    target_link_options(firmware PRIVATE "-Wl,-T${CMAKE_CURRENT_LIST_DIR}/stm32mp15x.ld")
-endif()
-
 ####################################################################################################
-# Build various external components and libraries
-#
-# Most of these are declared in external projects, fetched as needed, but some are in the source
-# tree and included here.
-
-###############
-# C library
-target_link_libraries(firmware PRIVATE embedded-fw-base::cmsis)
-
-# libraries
-target_link_libraries(firmware PRIVATE embedded-fw-base::etl)
+# Configure and include various external components
 target_link_libraries(firmware PRIVATE embedded-fw-base::tinycbor)
 
-# ST-provided vendor code: headers and low level drivers
-add_subdirectory(External/st)
-
-target_include_directories(firmware PUBLIC External/st/Includes)
-target_link_libraries(firmware PRIVATE vendor-st)
-
-###############
 # FreeRTOS
 set(FREERTOS_CONFIG_FILE_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/Includes/FreeRTOS/" CACHE STRING "")
-# wrap our C library's allocator
-set(FREERTOS_HEAP "3" CACHE STRING "")
-set(FREERTOS_PORT GCC_ARM_CM4F CACHE STRING "")
+target_link_libraries(firmware PRIVATE embedded-fw-base::FreeRTOS)
 
-FetchContent_Declare(FreeRTOS-Kernel
-    GIT_REPOSITORY https://github.com/FreeRTOS/FreeRTOS-Kernel.git
-    # CMake support not yet in a release version
-    GIT_TAG main
-)
-FetchContent_MakeAvailable(FreeRTOS-Kernel)
-
-target_link_libraries(freertos_kernel libc vendor-st)
-target_link_libraries(firmware PRIVATE freertos_kernel)
-
-###############
+# OpenAMP (all components)
 add_subdirectory(External/openamp EXCLUDE_FROM_ALL)
 target_link_libraries(firmware PRIVATE open_amp-static)

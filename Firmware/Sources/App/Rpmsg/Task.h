@@ -92,6 +92,24 @@ class Task: public Rpc::Endpoint {
             /// Do nothing
             NoOp                        = 0x00,
             /**
+             * @brief Auxiliary output configuration
+             *
+             * Get or set the analog auxiliary output configuration
+             */
+            AuxOutConfig                = 0x01,
+            /**
+             * @brief Trigger configuration
+             *
+             * Get or set the trigger configuration
+             */
+            TriggerConfig               = 0x02,
+            /**
+             * @brief System mode configuration
+             *
+             * This updates the current operating mode of the load.
+             */
+            OpMode                      = 0x03,
+            /**
              * @brief Periodic measurement update
              *
              * This message carries a payload that contains measurement values from the load. This
@@ -121,7 +139,7 @@ class Task: public Rpc::Endpoint {
          *
          * Default reporting interval for updated current, voltage, measurements
          */
-        constexpr static const size_t kMeasureInterval{1000};
+        constexpr static const size_t kMeasureInterval{100};
 
         /// Preallocated stack for the task
         StackType_t stack[kStackSize];
